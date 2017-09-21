@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-
-	float speed = 500.0f;
+   
+	float speed = 50.0f;
+    float jumpspeed = 2.0f;
 
 	Rigidbody2D player;
 
-	// Use this for initialization
-	void Start () {
+
+    // Use this for initialization
+    void Start () {
 
 		player = GetComponent<Rigidbody2D> ();
 
@@ -18,18 +20,31 @@ public class PlayerMovement : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
 
-		//var move = new Vector3 (Input.GetAxis ("Horizontal"), Input.GetAxis ("Vertical"), 0);
-		//transform.position += move * speed * Time.deltaTime;
-
+        
 	}
+
 
 
 	void FixedUpdate(){
 
 
-		player.velocity = new Vector2 (Input.GetAxis ("Horizontal") * speed * Time.deltaTime, player.velocity.y);
+        float horizontalMovement = Input.GetAxis("Horizontal");
+        float verticalMovement = Input.GetAxis("Vertical");
+
+        Vector3 direction = new Vector3(horizontalMovement, 0.0f, verticalMovement);
+
+        player.AddForce(direction * speed);
+
+        if (Input.GetButton("Jump"))
+        {
+            player.AddForce(Vector2.up*jumpspeed, ForceMode2D.Impulse);
+
+        }
+       
+
+
+
 
 
 
