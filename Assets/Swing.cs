@@ -19,10 +19,15 @@ public class Swing : MonoBehaviour {
 	GameObject circle;
 	Rigidbody2D pendulum;
 	LineRenderer[] lines;
+	GameObject collidee;
+	GameObject prevcollidee;
+	GameObject preFab;
 	double radius;
 	double radiusDelta;
 	// Use this for initialization
 	void Start () {
+		preFab = GameObject.Find ("GrapplingHook");
+		preFab.SetActive (false);
 		PendulumState = PendulumStates.Swinging;
 		circle = GameObject.Find("Dot");
 		for (int j = 1; j <= 3 ; j++) {
@@ -65,7 +70,11 @@ public class Swing : MonoBehaviour {
 			radiusDelta += 0.1;
 		else if (Input.GetKeyUp (KeyCode.DownArrow))
 			radiusDelta -= 0.1;
-		
+		if (Input.GetMouseButtonDown(0)) {
+			preFab.SetActive (true);
+			Instantiate (preFab).SetActive(true);
+			preFab.SetActive(false);
+		}
 		if (radiusDelta < 0) {
 			if ((radius > Math.Abs (radiusDelta)) && (radius + radiusDelta > 1)) {
 				radius += radiusDelta;
@@ -122,6 +131,17 @@ public class Swing : MonoBehaviour {
 		x = pendulum.position.x - pivot.x;
 		y = pendulum.position.y - pivot.y;
 		hyp = Math.Sqrt ((Math.Pow (x, 2) + Math.Pow (y, 2)));
+		RaycastHit2D hit = Physics2D.Raycast (new Vector2 ((float)pivot.x, (float)pivot.y), new Vector2 ((float)x, (float)y));
+		collidee = hit.collider.gameObject;
+		if (collidee != pendulum.gameObject) collidee.GetComponent<SpriteRenderer>().material.color = Color.yellow;
+		if ((collidee != null) && (prevcollidee != null)) {
+			if (collidee != prevcollidee) {
+				if (prevcollidee != pendulum.gameObject) {
+					prevcollidee.GetComponent<SpriteRenderer> ().material.color = Color.white ;
+				}
+			}
+		}
+		prevcollidee = collidee;
 		double angle = Math.Atan (y / x);
 		if (x < 0) {
 			angle += Math.PI;
