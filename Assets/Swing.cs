@@ -3,159 +3,89 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Swing : MonoBehaviour {
-	class VectorD2 {
-		public VectorD2(double x, double y){
-			this.x = x;
-			this.y = y;
-		}
-		public double x;
-		public double y;
+class VectorD2 {
+	public VectorD2(double x, double y){
+		this.x = x;
+		this.y = y;
 	}
-	enum PendulumStates { Free, Swinging };
-	PendulumStates PendulumState;
-	float accel;
-	VectorD2 pivot;
-	GameObject circle;
-	Rigidbody2D pendulum;
+	public double x;
+	public double y;
+}
+
+public class Pivot {
+	public enum Direction { Neg, Pos, UNDEF };
+	public bool isOrigin;
+	public Pivot Parent;
+	public float ParentAngle;
+	public Direction ParentDir;
+	public double X, Y;
+
+	public Pivot(double x , double y){
+		X = x;
+		Y = y;
+		isOrigin = true;
+		Parent = null;
+		ParentAngle = 0;
+		ParentDir = Direction.UNDEF;
+	}
+
+	public Pivot(double x , double y, Pivot parent, float angle, Direction dir){
+		X = x;
+		Y = y;
+		isOrigin = false;
+		Parent = parent;
+		ParentAngle = angle;
+		ParentDir = dir;
+	}
+}
+
+public class PendulumController {
+	Stack<Pivot> Pivots;
+	Rigidbody2D Pendulum;
 	LineRenderer[] lines;
 	GameObject collidee;
 	GameObject prevcollidee;
-	GameObject preFab;
 	double radius;
 	double radiusDelta;
-	// Use this for initialization
-	void Start () {
-		preFab = GameObject.Find ("GrapplingHook");
-		preFab.SetActive (false);
-		PendulumState = PendulumStates.Swinging;
-		circle = GameObject.Find("Dot");
-		for (int j = 1; j <= 3 ; j++) {
-			double angle = Math.PI * 2;
-			for (int i = 0; i < 5; i++) {
-				GameObject _circle = Instantiate (circle);
-				double x = Math.Cos (angle) * ((5 * Convert.ToInt64(j > 1) * (j-1)) + Convert.ToInt64(j == 1));
-				double y = Math.Sin (angle) * ((5 * Convert.ToInt64(j > 1) * (j-1)) + Convert.ToInt64(j == 1));	
-				_circle.transform.position = new Vector2 ((float)x, (float)y);
-				angle -= Math.PI / 4;
-			}
-		}
-		radius = 5;
-		radiusDelta = 0;
-		pivot = new VectorD2(0,0);
-		accel = 0;
-		pendulum = GetComponent<Rigidbody2D> ();
-		lines = this.GetComponentsInChildren<LineRenderer> ();
-		lines [0].material.color = Color.black;
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			switch (PendulumState) {
-			case PendulumStates.Free:
-				PendulumState = PendulumStates.Swinging;
-				radius = Math.Sqrt ((Math.Pow (pendulum.position.x, 2) + Math.Pow (pendulum.position.y, 2)));
-				break;
-			case PendulumStates.Swinging:
-				PendulumState = PendulumStates.Free;
-				break;
-			}
-		}
-		if (Input.GetKeyDown (KeyCode.UpArrow))
-			radiusDelta += -0.1;
-		else if (Input.GetKeyUp (KeyCode.UpArrow))
-			radiusDelta -= -0.1;
-		if (Input.GetKeyDown (KeyCode.DownArrow))
-			radiusDelta += 0.1;
-		else if (Input.GetKeyUp (KeyCode.DownArrow))
-			radiusDelta -= 0.1;
-		if (Input.GetMouseButtonDown(0)) {
-			preFab.SetActive (true);
-			Instantiate (preFab).SetActive(true);
-			preFab.SetActive(false);
-		}
-		if (radiusDelta < 0) {
-			if ((radius > Math.Abs (radiusDelta)) && (radius + radiusDelta > 1)) {
-				radius += radiusDelta;
-			}
-		} else {
-			radius += radiusDelta;
-		}
+	float accel;
 
-		if (Input.GetKeyDown (KeyCode.RightArrow))
-			accel += 3;
-		else if (Input.GetKeyUp (KeyCode.RightArrow))
-			accel -= 3;
-		if (Input.GetKeyDown (KeyCode.LeftArrow))
-			accel += -3;
-		else if (Input.GetKeyUp (KeyCode.LeftArrow))
-			accel -= -3;
-		double x = pendulum.position.x;
-		double y = pendulum.position.y;
-		double angle = Math.Atan (y / x);
-		if (x < 0) {
-			angle += Math.PI;
-		} else if (y < 0) {
-			angle += 2 * Math.PI;
-		}
-		double layer;
-		double hyp = Math.Sqrt ((Math.Pow (x, 2) + Math.Pow (y, 2)));
-		if (hyp < radius) {
-			layer = 1;
-		} else {
-			layer = -1;
-		}
-		lines[0].SetPosition (1, new Vector3 (pendulum.position.x, pendulum.position.y, 0));
-		lines[1].SetPosition (1, new Vector3 ((float)(Math.Cos(angle) * radius), (float)(Math.Sin(angle) * radius), (float)layer));
+	PendulumController(Vector2 origin, Rigidbody2D pendulum){
+		Pivots = new Stack<Pivot> ();
+		Pendulum = pendulum;
+		Pivots.Push (new Pivot (origin.x, origin.y));
 	}
 
-	void FixedUpdate (){
-		switch (PendulumState) {
-		case PendulumStates.Free:
-				
-			break;
-		case PendulumStates.Swinging:
-			SwingingUpdate ();
-			break;
-		}
-	}
-
-	void SwingingUpdate () {
+	void SwingingFixedUpdate() {
+		Pivot pivot = Pivots.Peek ();
 		VectorD2 tension = new VectorD2(0,0);
 		double centrifugal = 0.00000;
-		double x;
-		double y;
-		double hyp;
-		double normalForce = Physics2D.gravity.y * pendulum.mass;
-		x = pendulum.position.x - pivot.x;
-		y = pendulum.position.y - pivot.y;
-		hyp = Math.Sqrt ((Math.Pow (x, 2) + Math.Pow (y, 2)));
-		RaycastHit2D hit = Physics2D.Raycast (new Vector2 ((float)pivot.x, (float)pivot.y), new Vector2 ((float)x, (float)y));
+		double x, y, hyp;
+		double normalForce = Physics2D.gravity.y * Pendulum.mass;
+
+		x = Pendulum.position.x - Pivots.Peek().X;
+		y = Pendulum.position.y - Pivots.Peek().Y;
+
+		hyp = Trig.GetHyp (x, y);
+		RaycastHit2D hit = Physics2D.Raycast (new Vector2 ((float)pivot.X, (float)pivot.Y), new Vector2 ((float)x, (float)y));
 		collidee = hit.collider.gameObject;
-		if (collidee != pendulum.gameObject) collidee.GetComponent<SpriteRenderer>().material.color = Color.yellow;
+		if (collidee != Pendulum.gameObject) collidee.GetComponent<SpriteRenderer>().material.color = Color.yellow;
 		if ((collidee != null) && (prevcollidee != null)) {
 			if (collidee != prevcollidee) {
-				if (prevcollidee != pendulum.gameObject) {
+				if (prevcollidee != Pendulum.gameObject) {
 					prevcollidee.GetComponent<SpriteRenderer> ().material.color = Color.white ;
 				}
 			}
 		}
 		prevcollidee = collidee;
-		double angle = Math.Atan (y / x);
-		if (x < 0) {
-			angle += Math.PI;
-		} else if (y < 0) {
-			angle += 2 * Math.PI;
-		}
+		double angle = Trig.GetAngle (x, y);
 		if ((hyp >= radius)) {
 			if (angle > Math.PI) centrifugal += normalForce * Math.Sin (angle);
-			double tangentialV = -1 * (pendulum.velocity.x * Math.Sin (angle)) + (pendulum.velocity.y * Math.Cos (angle));
-			double perpindicularV =  (pendulum.velocity.x * Math.Cos (angle)) + (pendulum.velocity.y * Math.Sin (angle));
+			double tangentialV = -1 * (Pendulum.velocity.x * Math.Sin (angle)) + (Pendulum.velocity.y * Math.Cos (angle));
+			double perpindicularV =  (Pendulum.velocity.x * Math.Cos (angle)) + (Pendulum.velocity.y * Math.Sin (angle));
 			//double angularV = tangentialV / ((radius)/2);
 			double angularV = tangentialV / ((radius + hyp)/2);
 			centrifugal += perpindicularV * 30;
-			centrifugal += pendulum.mass * Math.Pow (angularV, 2) * ((radius + hyp)/2);
+			centrifugal += Pendulum.mass * Math.Pow (angularV, 2) * ((radius + hyp)/2);
 			//centrifugal += pendulum.mass * Math.Pow (angularV, 2) * ((radius)/2);
 			if (radiusDelta < 0)
 				centrifugal += (hyp - radius) * 100;//(hyp - radius) * normalForce * Math.Sin (angle) ;
@@ -169,6 +99,7 @@ public class Swing : MonoBehaviour {
 
 		tension.y += centrifugal * -Math.Sin (angle);
 		tension.x += centrifugal * -Math.Cos (angle);
-		pendulum.AddForce (new Vector2((float)tension.x, (float)tension.y), ForceMode2D.Force);
+		Pendulum.AddForce (new Vector2((float)tension.x, (float)tension.y), ForceMode2D.Force);
 	}
+
 }
