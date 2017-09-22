@@ -18,7 +18,7 @@ public class PlayerController : C_WorldObjectController {
 	PlayerController() {
 		InputUpdates = new Dictionary<E_PlayerInputState, InputUpdate> ();
 		InputUpdates.Add (E_PlayerInputState.Swinging, SwingingUpdate);
-		InputUpdates.Add (E_PlayerInputState.Ground, GoundUpdate);
+		InputUpdates.Add (E_PlayerInputState.Ground, GroundUpdate);
 		InputUpdates.Add (E_PlayerInputState.Free, FreeUpdate);
 
 		FixedUpdates = new Dictionary<E_PlayerInputState, FixedUpdate> ();
@@ -86,7 +86,7 @@ public class PlayerController : C_WorldObjectController {
 		*/
 	}
 
-	void GoundUpdate(){
+	void GroundUpdate(){
 		C_Player Player = Object as C_Player;
 		if (Input.GetKeyDown (Player.YPos))
 			body.AddForce (Vector2.up * -Physics.gravity.y, ForceMode2D.Impulse);
@@ -94,7 +94,10 @@ public class PlayerController : C_WorldObjectController {
 
 	public void SwingingUpdate(){
 		C_Player Player = Object as C_Player;
-		PendulumController.Update ();
+        if (PendulumController != null)
+        {
+            PendulumController.Update();
+        }
 	}
 
 	void FreeUpdate() {
@@ -158,7 +161,10 @@ public class PlayerController : C_WorldObjectController {
 	}
 
 	void SwingingFixedUpdate() {
-		PendulumController.FixedUpdate ();
+        if (PendulumController != null)
+        {
+            PendulumController.FixedUpdate();
+        }
 	}
 
 	public void CreateAnchor(float x, float y){
