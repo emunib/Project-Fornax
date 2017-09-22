@@ -10,9 +10,11 @@ public class PlayerController : C_WorldObjectController {
 	Dictionary<E_PlayerInputState, InputUpdate> InputUpdates;
 	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
 	Rigidbody2D body;
-	GameObject GraplingHookBase;
-	GameObject ActiveGraplingHook;
+	GameObject GrapplingHookBase;
+	GameObject ActiveGrapplingHook;
 	C_PendulumController PendulumController;
+    LineRenderer RopeLine;
+
 	PlayerController() {
 		InputUpdates = new Dictionary<E_PlayerInputState, InputUpdate> ();
 		InputUpdates.Add (E_PlayerInputState.Swinging, SwingingUpdate);
@@ -30,10 +32,11 @@ public class PlayerController : C_WorldObjectController {
 		SetObject (new C_Player ());
 		body = GetComponent<Rigidbody2D> ();
 		Manager.ObjectLog.Add (gameObject, this);
-		GraplingHookBase = GameObject.Find ("GrapplingHook");
-		GraplingHookBase.SetActive (false);
-		((C_Player)Object).GraplingState = E_GraplingState.Dettached;
-	}
+		GrapplingHookBase = GameObject.Find ("GrapplingHook");
+		GrapplingHookBase.SetActive (false);
+		((C_Player)Object).GrapplingState = E_GrapplingState.Detached;
+        RopeLine = gameObject.GetComponent<LineRenderer>();
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -53,16 +56,16 @@ public class PlayerController : C_WorldObjectController {
 		}
 			*/
 		if (Input.GetMouseButtonDown(0)) {
-			if (ActiveGraplingHook != null)
-				GameObject.Destroy (ActiveGraplingHook);
+			if (ActiveGrapplingHook != null)
+				GameObject.Destroy (ActiveGrapplingHook);
 			Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			float vx = v3.x - body.position.x;
 			float vy = v3.y - body.position.y;
 			double vangle = Trig.GetAngle (vx, vy);
-			ActiveGraplingHook = Instantiate (GraplingHookBase, new Vector3(body.position.x + Mathf.Cos((float)vangle) , body.position.y + Mathf.Sin((float)vangle), 0), new Quaternion());
-			ActiveGraplingHook.SetActive (true);
-			ActiveGraplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (10 * Mathf.Cos((float)vangle), 10 * Mathf.Sin((float)vangle));
-			ActiveGraplingHook.GetComponent<C_WorldObjectController>().SetObject (new GrapplingHook (this));
+			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3(body.position.x + Mathf.Cos((float)vangle) , body.position.y + Mathf.Sin((float)vangle), 0), new Quaternion());
+			ActiveGrapplingHook.SetActive (true);
+			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (20 * Mathf.Cos((float)vangle), 20 * Mathf.Sin((float)vangle));
+			ActiveGrapplingHook.GetComponent<C_WorldObjectController>().SetObject (new GrapplingHook (this));
 		}
 			
 		/*
@@ -101,7 +104,8 @@ public class PlayerController : C_WorldObjectController {
 		C_Player Player = Object as C_Player;
 		RaycastHit2D[] lineGround = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
 		RaycastHit2D nearestTile = lineGround[0];
-		bool found = false;
+
+        bool found = false;
 		foreach (RaycastHit2D obj in lineGround) {
 			if (Manager.ObjectLog [obj.collider.gameObject].Object.GetType () == typeof(Tile)) {
 				if (found == false) {
@@ -117,9 +121,9 @@ public class PlayerController : C_WorldObjectController {
 		if (found) {
 			if ((nearestTile.distance > 0.6) && (Player.PlayerInputState == E_PlayerInputState.Ground)) {
 				Debug.Log ("Left Ground");
-				if (Player.GraplingState == E_GraplingState.Attached)
+				if (Player.GrapplingState == E_GrapplingState.Attached)
 					Player.PlayerInputState = E_PlayerInputState.Swinging;
-				else if (Player.GraplingState == E_GraplingState.Dettached) {
+				else if (Player.GrapplingState == E_GrapplingState.Detached) {
 					Player.PlayerInputState = E_PlayerInputState.Free;
 				}
 			} else if ((nearestTile.distance <= 0.6) && (Player.PlayerInputState != E_PlayerInputState.Ground)) {
@@ -128,9 +132,9 @@ public class PlayerController : C_WorldObjectController {
 			}
 		} else if (Player.PlayerInputState == E_PlayerInputState.Ground) {
 			Debug.Log ("Left Ground");
-			if (Player.GraplingState == E_GraplingState.Attached)
+			if (Player.GrapplingState == E_GrapplingState.Attached)
 				Player.PlayerInputState = E_PlayerInputState.Swinging;
-			else if (Player.GraplingState == E_GraplingState.Dettached) {
+			else if (Player.GrapplingState == E_GrapplingState.Detached) {
 				Player.PlayerInputState = E_PlayerInputState.Free;
 			}
 		}
@@ -159,8 +163,8 @@ public class PlayerController : C_WorldObjectController {
 	public void CreateAnchor(float x, float y){
 		C_Player Player = Object as C_Player;
 		PendulumController = new C_PendulumController (new Vector2 (x, y), Object as C_Player, body);
-		Player.GraplingState = E_GraplingState.Attached;
-		if (Player.PlayerInputState == E_PlayerInputState.Free)
+        Player.GrapplingState = E_GrapplingState.Attached;
+        if (Player.PlayerInputState == E_PlayerInputState.Free)
 			Player.PlayerInputState = E_PlayerInputState.Swinging;
 	}
 }

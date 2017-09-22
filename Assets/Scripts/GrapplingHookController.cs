@@ -28,7 +28,8 @@ public class GrapplingHookController : C_WorldObjectController {
 		if ( Manager.ObjectLog[collision.gameObject].Object.GetType() == typeof(Tile)) {
 			GrapplingHook hook = Object as GrapplingHook;
 			hook.PlayerObject.CreateAnchor (Body.position.x, Body.position.y);
-			GameObject.Destroy (this.gameObject);
+            Body.bodyType = RigidbodyType2D.Static;
+            //GameObject.Destroy (this.gameObject);
 		}
 	}
 }

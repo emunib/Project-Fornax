@@ -40,7 +40,7 @@ public class Pivot {
 }
 
 public class C_PendulumController {
-	Stack<Pivot> Pivots;
+    Stack<Pivot> Pivots;
 	C_Player Player;
 	Rigidbody2D Pendulum;
 	LineRenderer[] lines;
@@ -76,7 +76,7 @@ public class C_PendulumController {
 		x = Pendulum.position.x - Pivots.Peek().X;
 		y = Pendulum.position.y - Pivots.Peek().Y;
 
-		hyp = Trig.GetHyp (x, y);
+        hyp = Trig.GetHyp (x, y);
 		RaycastHit2D hit = Physics2D.Raycast (new Vector2 ((float)pivot.X, (float)pivot.Y), new Vector2 ((float)x, (float)y));
 		collidee = hit.collider.gameObject;
 		if (collidee != Pendulum.gameObject) collidee.GetComponent<SpriteRenderer>().material.color = Color.yellow;
