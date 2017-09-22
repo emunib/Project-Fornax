@@ -35,7 +35,6 @@ public class PlayerController : C_WorldObjectController {
 		GrapplingHookBase = GameObject.Find ("GrapplingHook");
 		GrapplingHookBase.SetActive (false);
 		((C_Player)Object).GrapplingState = E_GrapplingState.Detached;
-        RopeLine = gameObject.GetComponent<LineRenderer>();
     }
 	
 	// Update is called once per frame
@@ -56,9 +55,11 @@ public class PlayerController : C_WorldObjectController {
 		}
 			*/
 		if (Input.GetMouseButtonDown(0)) {
-			if (ActiveGrapplingHook != null)
+			if (ActiveGrapplingHook != null) {
 				GameObject.Destroy (ActiveGrapplingHook);
-			Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                PendulumController = null;
+            }
+            Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			float vx = v3.x - body.position.x;
 			float vy = v3.y - body.position.y;
 			double vangle = Trig.GetAngle (vx, vy);
