@@ -5,11 +5,19 @@ using UnityEngine;
 public class GrapplingHookController : C_WorldObjectController {
 	LineRenderer RopeLine;
 	Rigidbody2D Body;
+	Stack<Pivot> Pivots;
+
 	// Use this for initialization
 	void Start () {
 		RopeLine = gameObject.GetComponent<LineRenderer>();
 		Body = gameObject.GetComponent<Rigidbody2D> () ;
 		Manager.ObjectLog.Add (gameObject, this);
+		Pivots = new Stack<Pivot>();
+
+	}
+
+	void OnDestroy () {
+		Manager.ObjectLog.Remove (gameObject);
 	}
 
 	// Update is called once per frame

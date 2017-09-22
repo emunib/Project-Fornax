@@ -64,6 +64,8 @@ public class C_PendulumController {
 		} else {
 			Radius += -y;
 		}
+		float x = Input.GetAxis ("Horizontal");
+		Player.AngularAccel = x;
 	}
 
 	public void FixedUpdate() {

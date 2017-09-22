@@ -56,8 +56,11 @@ public class PlayerController : C_WorldObjectController {
 			*/
 		if (Input.GetMouseButtonDown(0)) {
 			if (ActiveGrapplingHook != null) {
+				Player.GrapplingState = E_GrapplingState.Detached;
+				if (Player.PlayerInputState == E_PlayerInputState.Swinging) {
+					Player.PlayerInputState = E_PlayerInputState.Free;
+				}
 				GameObject.Destroy (ActiveGrapplingHook);
-                PendulumController = null;
             }
             Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			float vx = v3.x - body.position.x;
@@ -68,6 +71,14 @@ public class PlayerController : C_WorldObjectController {
 			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (20 * Mathf.Cos((float)vangle), 20 * Mathf.Sin((float)vangle));
 			ActiveGrapplingHook.GetComponent<C_WorldObjectController>().SetObject (new GrapplingHook (this));
 		}
+
+		if ((Input.GetMouseButtonDown(1)) && (Player.GrapplingState == E_GrapplingState.Attached)) {
+			Player.GrapplingState = E_GrapplingState.Detached;
+			GameObject.Destroy (ActiveGrapplingHook);
+			if (Player.PlayerInputState == E_PlayerInputState.Swinging) {
+				Player.PlayerInputState = E_PlayerInputState.Free;
+			}
+		} 
 			
 		/*
 
@@ -161,10 +172,7 @@ public class PlayerController : C_WorldObjectController {
 	}
 
 	void SwingingFixedUpdate() {
-        if (PendulumController != null)
-        {
             PendulumController.FixedUpdate();
-        }
 	}
 
 	public void CreateAnchor(float x, float y){
