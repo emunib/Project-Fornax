@@ -8,7 +8,6 @@ public class Tile : C_WorldObject {
 }
 
 public class TileController : C_WorldObjectController {
-
 	// Use this for initialization
 	void Start () {
 		SetObject (new Tile ());

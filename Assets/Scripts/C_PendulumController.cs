@@ -39,23 +39,34 @@ public class Pivot {
 	}
 }
 
-public class PendulumController {
+public class C_PendulumController {
 	Stack<Pivot> Pivots;
+	C_Player Player;
 	Rigidbody2D Pendulum;
 	LineRenderer[] lines;
 	GameObject collidee;
 	GameObject prevcollidee;
-	double radius;
-	double radiusDelta;
-	float accel;
-
-	PendulumController(Vector2 origin, Rigidbody2D pendulum){
+	public float Radius;
+	public C_PendulumController(Vector2 origin, C_Player player, Rigidbody2D body){
 		Pivots = new Stack<Pivot> ();
-		Pendulum = pendulum;
+		Pendulum = body;
+		Player = player;
+		Radius = (float)Trig.GetHyp (origin.x - body.position.x, origin.y - body.position.y);
 		Pivots.Push (new Pivot (origin.x, origin.y));
 	}
 
-	void SwingingFixedUpdate() {
+	public void Update(){
+		float y = Input.GetAxis ("Vertical");
+		if (y > 0) {
+			if ((Radius > y) && (Radius + y> 1)) {
+				Radius += -y;
+			}
+		} else {
+			Radius += -y;
+		}
+	}
+
+	public void FixedUpdate() {
 		Pivot pivot = Pivots.Peek ();
 		VectorD2 tension = new VectorD2(0,0);
 		double centrifugal = 0.00000;
@@ -78,23 +89,23 @@ public class PendulumController {
 		}
 		prevcollidee = collidee;
 		double angle = Trig.GetAngle (x, y);
-		if ((hyp >= radius)) {
+		if ((hyp >= Radius)) {
 			if (angle > Math.PI) centrifugal += normalForce * Math.Sin (angle);
 			double tangentialV = -1 * (Pendulum.velocity.x * Math.Sin (angle)) + (Pendulum.velocity.y * Math.Cos (angle));
 			double perpindicularV =  (Pendulum.velocity.x * Math.Cos (angle)) + (Pendulum.velocity.y * Math.Sin (angle));
 			//double angularV = tangentialV / ((radius)/2);
-			double angularV = tangentialV / ((radius + hyp)/2);
+			double angularV = tangentialV / ((Radius + hyp)/2);
 			centrifugal += perpindicularV * 30;
-			centrifugal += Pendulum.mass * Math.Pow (angularV, 2) * ((radius + hyp)/2);
+			centrifugal += Pendulum.mass * Math.Pow (angularV, 2) * ((Radius + hyp)/2);
 			//centrifugal += pendulum.mass * Math.Pow (angularV, 2) * ((radius)/2);
-			if (radiusDelta < 0)
-				centrifugal += (hyp - radius) * 100;//(hyp - radius) * normalForce * Math.Sin (angle) ;
+			if (Input.GetAxis ("Vertical") > 0)
+				centrifugal += (hyp - Radius) * 100;//(hyp - radius) * normalForce * Math.Sin (angle) ;
 		}
 		tension.x = 0;
 		tension.y = 0;
 		if (angle > Math.PI) {
-			tension.y += accel * Math.Cos ((Math.PI * 2) - angle);
-			tension.x += accel * Math.Sin ((Math.PI * 2) - angle);
+			tension.y += Player.AngularAccel * Math.Cos ((Math.PI * 2) - angle);
+			tension.x += Player.AngularAccel * Math.Sin ((Math.PI * 2) - angle);
 		}
 
 		tension.y += centrifugal * -Math.Sin (angle);

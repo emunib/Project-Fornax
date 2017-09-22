@@ -26,7 +26,9 @@ public class GrapplingHookController : C_WorldObjectController {
 
 	void OnCollisionEnter2D(Collision2D collision){
 		if ( Manager.ObjectLog[collision.gameObject].Object.GetType() == typeof(Tile)) {
-			gameObject.GetComponent<Rigidbody2D> ().simulated = false;
+			GrapplingHook hook = Object as GrapplingHook;
+			hook.PlayerObject.CreateAnchor (Body.position.x, Body.position.y);
+			GameObject.Destroy (this.gameObject);
 		}
 	}
 }

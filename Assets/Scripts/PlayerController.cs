@@ -1,25 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
+public delegate void InputUpdate();
+public delegate void FixedUpdate();
+
 public class PlayerController : C_WorldObjectController {
+	Dictionary<E_PlayerInputState, InputUpdate> InputUpdates;
+	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
 	Rigidbody2D body;
 	GameObject GraplingHookBase;
 	GameObject ActiveGraplingHook;
+	C_PendulumController PendulumController;
+	PlayerController() {
+		InputUpdates = new Dictionary<E_PlayerInputState, InputUpdate> ();
+		InputUpdates.Add (E_PlayerInputState.Swinging, SwingingUpdate);
+		InputUpdates.Add (E_PlayerInputState.Ground, GoundUpdate);
+		InputUpdates.Add (E_PlayerInputState.Free, FreeUpdate);
+
+		FixedUpdates = new Dictionary<E_PlayerInputState, FixedUpdate> ();
+		FixedUpdates.Add (E_PlayerInputState.Swinging, SwingingFixedUpdate);
+		FixedUpdates.Add (E_PlayerInputState.Ground, GroundFixedUpdate);
+		FixedUpdates.Add (E_PlayerInputState.Free, FreeFixedUpdate);
+
+	}
 	// Use this for initialization
 	void Start () {
-		SetObject (new Player ());
+		SetObject (new C_Player ());
 		body = GetComponent<Rigidbody2D> ();
 		Manager.ObjectLog.Add (gameObject, this);
 		GraplingHookBase = GameObject.Find ("GrapplingHook");
 		GraplingHookBase.SetActive (false);
+		((C_Player)Object).GraplingState = E_GraplingState.Dettached;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			body.AddForce (Vector2.up * body.mass * -Physics2D.gravity.y, ForceMode2D.Impulse);
-		}
+		C_Player Player = Object as C_Player;
+		InputUpdates [Player.PlayerInputState] ();
 		/*
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			switch (PendulumState) {
@@ -32,14 +51,6 @@ public class PlayerController : C_WorldObjectController {
 				break;
 			}
 		}
-		if (Input.GetKeyDown (KeyCode.UpArrow))
-			radiusDelta += -0.1;
-		else if (Input.GetKeyUp (KeyCode.UpArrow))
-			radiusDelta -= -0.1;
-		if (Input.GetKeyDown (KeyCode.DownArrow))
-			radiusDelta += 0.1;
-		else if (Input.GetKeyUp (KeyCode.DownArrow))
-			radiusDelta -= 0.1;
 			*/
 		if (Input.GetMouseButtonDown(0)) {
 			if (ActiveGraplingHook != null)
@@ -51,25 +62,11 @@ public class PlayerController : C_WorldObjectController {
 			ActiveGraplingHook = Instantiate (GraplingHookBase, new Vector3(body.position.x + Mathf.Cos((float)vangle) , body.position.y + Mathf.Sin((float)vangle), 0), new Quaternion());
 			ActiveGraplingHook.SetActive (true);
 			ActiveGraplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (10 * Mathf.Cos((float)vangle), 10 * Mathf.Sin((float)vangle));
-			ActiveGraplingHook.GetComponent<C_WorldObjectController>().SetObject (new GrapplingHook (gameObject));
+			ActiveGraplingHook.GetComponent<C_WorldObjectController>().SetObject (new GrapplingHook (this));
 		}
+			
 		/*
-		if (radiusDelta < 0) {
-			if ((radius > Math.Abs (radiusDelta)) && (radius + radiusDelta > 1)) {
-				radius += radiusDelta;
-			}
-		} else {
-			radius += radiusDelta;
-		}
 
-		if (Input.GetKeyDown (KeyCode.RightArrow))
-			accel += 3;
-		else if (Input.GetKeyUp (KeyCode.RightArrow))
-			accel -= 3;
-		if (Input.GetKeyDown (KeyCode.LeftArrow))
-			accel += -3;
-		else if (Input.GetKeyUp (KeyCode.LeftArrow))
-			accel -= -3;
 		double x = pendulum.position.x;
 		double y = pendulum.position.y;
 		double angle = Trig.GetAngle (x, y);
@@ -85,32 +82,85 @@ public class PlayerController : C_WorldObjectController {
 		*/
 	}
 
-	void FixedUpdate (){
+	void GoundUpdate(){
+		C_Player Player = Object as C_Player;
+		if (Input.GetKeyDown (Player.YPos))
+			body.AddForce (Vector2.up * -Physics.gravity.y, ForceMode2D.Impulse);
+	}
+
+	public void SwingingUpdate(){
+		C_Player Player = Object as C_Player;
+		PendulumController.Update ();
+	}
+
+	void FreeUpdate() {
 		
 	}
 
-	void SwitchMovState(PlayerMovState newState){
+	void FixedUpdate (){
+		C_Player Player = Object as C_Player;
+		RaycastHit2D[] lineGround = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
+		RaycastHit2D nearestTile = lineGround[0];
+		bool found = false;
+		foreach (RaycastHit2D obj in lineGround) {
+			if (Manager.ObjectLog [obj.collider.gameObject].Object.GetType () == typeof(Tile)) {
+				if (found == false) {
+					nearestTile = obj;
+					found = true;
+				} else {
+					if (obj.distance < nearestTile.distance) {
+						nearestTile = obj;
+					}
+				}
+			}
+		}
+		if (found) {
+			if ((nearestTile.distance > 0.6) && (Player.PlayerInputState == E_PlayerInputState.Ground)) {
+				Debug.Log ("Left Ground");
+				if (Player.GraplingState == E_GraplingState.Attached)
+					Player.PlayerInputState = E_PlayerInputState.Swinging;
+				else if (Player.GraplingState == E_GraplingState.Dettached) {
+					Player.PlayerInputState = E_PlayerInputState.Free;
+				}
+			} else if ((nearestTile.distance <= 0.6) && (Player.PlayerInputState != E_PlayerInputState.Ground)) {
+				Debug.Log ("Hit Ground");
+				Player.PlayerInputState = E_PlayerInputState.Ground;
+			}
+		} else if (Player.PlayerInputState == E_PlayerInputState.Ground) {
+			Debug.Log ("Left Ground");
+			if (Player.GraplingState == E_GraplingState.Attached)
+				Player.PlayerInputState = E_PlayerInputState.Swinging;
+			else if (Player.GraplingState == E_GraplingState.Dettached) {
+				Player.PlayerInputState = E_PlayerInputState.Free;
+			}
+		}
+		FixedUpdates [Player.PlayerInputState] ();
+	}
+
+	void SwitchMovState(E_PlayerMovState newState){
 
 	}
 
-	void GroundFixedUpdate() {
 
+	void GroundFixedUpdate() {
+		C_Player Player = Object as C_Player;
+		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Player.Xaccel;
+		body.AddForce(direction);
 	}
 
 	void FreeFixedUpdate() {
 
 	}
-		
-	void OnCollisionEnter2D(Collision2D collision){
-		if (Manager.ObjectLog[collision.gameObject].Object.GetType() == typeof(Tile)) {
-			Debug.Log ("Hit Ground");
-		}
+
+	void SwingingFixedUpdate() {
+		PendulumController.FixedUpdate ();
 	}
 
-
-	void OnCollisionExit2D(Collision2D coll) {
-		if (Manager.ObjectLog[coll.gameObject].Object.GetType() == typeof(Tile)) {
-			Debug.Log ("Left Ground");
-		}
+	public void CreateAnchor(float x, float y){
+		C_Player Player = Object as C_Player;
+		PendulumController = new C_PendulumController (new Vector2 (x, y), Object as C_Player, body);
+		Player.GraplingState = E_GraplingState.Attached;
+		if (Player.PlayerInputState == E_PlayerInputState.Free)
+			Player.PlayerInputState = E_PlayerInputState.Swinging;
 	}
 }
