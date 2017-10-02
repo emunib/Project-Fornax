@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HazardController : MonoBehaviour {
+public class HarzardController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -12,5 +12,14 @@ public class HazardController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		
+	}
+
+	private void OnCollisionEnter2D(Collision2D other)
+	{
+		if (other.gameObject.CompareTag("Player"))
+		{
+			Destroy(other.gameObject);
+			Destroy(gameObject);
+		}
 	}
 }
