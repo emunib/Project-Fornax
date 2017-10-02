@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HarzardController : MonoBehaviour {
+public class HazardController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
