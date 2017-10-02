@@ -24,17 +24,9 @@ public class PlayerController : MonoBehaviour
     
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (!grounded && other.gameObject.CompareTag("Ground"))
+        if (other.gameObject.CompareTag("Ground"))
         {
             grounded = true;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if (grounded && other.gameObject.CompareTag("Ground"))
-        {
-            grounded = false;
         }
     }
 
