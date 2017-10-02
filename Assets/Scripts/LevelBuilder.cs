@@ -52,7 +52,7 @@ public class LevelBuilder : MonoBehaviour
 	
 	void BuildMap()
 	{
-		for (int i = 0; i < 15; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			var randLen = Random.Range(5, 10);
 			int randX, randY;
@@ -98,6 +98,8 @@ public class LevelBuilder : MonoBehaviour
 					map[randY, randX + j] = 1;
 				}
 			}
+
+			map[0, width / 2] = 2;
 		}
 		
 		
