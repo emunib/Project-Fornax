@@ -52,9 +52,9 @@ public class LevelBuilder : MonoBehaviour
 	
 	void BuildMap()
 	{
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < 13; i++)
 		{
-			var randLen = Random.Range(5, 10);
+			var randLen = Random.Range(4, 10);
 			int randX, randY;
 			
 			if (i%2 == 0)
