@@ -30,14 +30,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        if (grounded && other.gameObject.CompareTag("Ground"))
-        {
-            grounded = false;
-        }
-    }
-
     private void FixedUpdate()
     {
         xForce = Input.GetAxis("Horizontal");
