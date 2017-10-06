@@ -11,6 +11,11 @@ public class Trig {
 		} else if (opposite < 0) {
 			angle += 2 * Math.PI;
 		}
+		if ((angle > Math.PI * 2) || (angle < 0)){
+			throw new Exception();
+		} else if (double.IsNaN(angle)){
+			throw new Exception ("adjacent: " + adjacent + " opposite: " + opposite);
+		}
 		return angle;
 	}
 

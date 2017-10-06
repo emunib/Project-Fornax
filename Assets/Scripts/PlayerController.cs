@@ -9,6 +9,7 @@ public delegate void FixedUpdate();
 public class PlayerController : C_WorldObjectController {
 	Dictionary<E_PlayerInputState, InputUpdate> InputUpdates;
 	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
+	Dictionary<E_GrapplingState, InputUpdate> GraplingUpdates;
 	Rigidbody2D body;
 	public Transform GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
@@ -25,7 +26,6 @@ public class PlayerController : C_WorldObjectController {
 		FixedUpdates.Add (E_PlayerInputState.Swinging, SwingingFixedUpdate);
 		FixedUpdates.Add (E_PlayerInputState.Ground, GroundFixedUpdate);
 		FixedUpdates.Add (E_PlayerInputState.Free, FreeFixedUpdate);
-
 	}
 	// Use this for initialization
 	void Start () {
@@ -41,19 +41,6 @@ public class PlayerController : C_WorldObjectController {
 	void Update () {
 		C_Player Player = Object as C_Player;
 		InputUpdates [Player.PlayerInputState] ();
-		/*
-		if (Input.GetKeyDown (KeyCode.Space)) {
-			switch (PendulumState) {
-			case PendulumStates.Free:
-				PendulumState = PendulumStates.Swinging;
-				radius = Trig.GetHyp (pendulum.position.x, pendulum.position.y);
-				break;
-			case PendulumStates.Swinging:
-				PendulumState = PendulumStates.Free;
-				break;
-			}
-		}
-			*/
 		if (Input.GetMouseButtonDown(0)) {
 			if (ActiveGrapplingHook != null) {
 				Player.GrapplingState = E_GrapplingState.Detached;
@@ -80,26 +67,11 @@ public class PlayerController : C_WorldObjectController {
 			}
 		} 
 			
-		/*
-
-		double x = pendulum.position.x;
-		double y = pendulum.position.y;
-		double angle = Trig.GetAngle (x, y);
-		double layer;
-		double hyp = Math.Sqrt ((Math.Pow (x, 2) + Math.Pow (y, 2)));
-		if (hyp < radius) {
-			layer = 1;
-		} else {
-			layer = -1;
-		}
-		lines[0].SetPosition (1, new Vector3 (pendulum.position.x, pendulum.position.y, 0));
-		lines[1].SetPosition (1, new Vector3 ((float)(Math.Cos(angle) * radius), (float)(Math.Sin(angle) * radius), (float)layer));
-		*/
 	}
 
 	void GroundUpdate(){
 		C_Player Player = Object as C_Player;
-		if (Input.GetKeyDown (Player.YPos))
+		if (Input.GetAxis("Vertical") > 0)
 			body.AddForce (Vector2.up * -Physics.gravity.y, ForceMode2D.Impulse);
 	}
 
@@ -175,9 +147,9 @@ public class PlayerController : C_WorldObjectController {
             PendulumController.FixedUpdate();
 	}
 
-	public void CreateAnchor(float x, float y){
+	public void CreateAnchor(float x, float y, LineRenderer rope){
 		C_Player Player = Object as C_Player;
-		PendulumController = new C_PendulumController (new Vector2 (x, y), Object as C_Player, body);
+		PendulumController = new C_PendulumController (new Vector2 (x, y), Object as C_Player, body, ActiveGrapplingHook.GetComponent<GrapplingHookController>().Pivots);
         Player.GrapplingState = E_GrapplingState.Attached;
         if (Player.PlayerInputState == E_PlayerInputState.Free)
 			Player.PlayerInputState = E_PlayerInputState.Swinging;
