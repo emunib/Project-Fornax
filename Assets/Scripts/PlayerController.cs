@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
         yForce = 100;
+        Camera.main.GetComponent<MainCameraController>().player = this.gameObject;
     }
 
     // Update is called once per frame
