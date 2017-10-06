@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
 {
-	static int width = 80;
-	static int height = 40;
+	static int width = 200;
+	static int height = 100;
 	public Transform GTile;
 	public Transform Player;
 	public Transform Hazard;
@@ -58,11 +58,10 @@ public class LevelBuilder : MonoBehaviour
      * Test of cellular automata to generate islands as platforms.
      * Play around with the numbers for chance of tiles.
      */
-
-    static int tileChance = 25; // Chance of tile being placed at each x,y at initialization.
-    static int deathLimit = 3;  // Kills tiles with less than deathLimit neighboring tiles each step.
-    static int birthLimit = 3;  // Creates tiles at locations with more than birthLimit neighboring tiles each step.
-    static int numberOfSteps = 3;
+    int tileChance = 25; // Chance of tile being placed at each x,y at initialization.
+    int deathLimit = 3;  // Kills tiles with less than deathLimit neighboring tiles each step.
+    int birthLimit = 3;  // Creates tiles at locations with more than birthLimit neighboring tiles each step.
+    int numberOfSteps = 4;
 
     void CellularAutomata()
     {
@@ -75,6 +74,7 @@ public class LevelBuilder : MonoBehaviour
         {
             levelMap = doSimulationStep(levelMap);
         }
+        // ADD A FINAL STEP SIMULATION HERE TO CLEAN UP THE LEVEL (ie remove small islands by only killing tiles). 
         levelMap[0, width / 2] = 2;
         map = levelMap;
     }
