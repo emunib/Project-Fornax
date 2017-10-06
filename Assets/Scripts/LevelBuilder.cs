@@ -58,7 +58,7 @@ public class LevelBuilder : MonoBehaviour
      * Test of cellular automata to generate islands as platforms.
      * Play around with the numbers for chance of tiles.
      */
-    int tileChance = 25; // Chance of tile being placed at each x,y at initialization.
+    int tileChance = 30; // Chance of tile being placed at each x,y at initialization.
     int deathLimit = 3;  // Kills tiles with less than deathLimit neighboring tiles each step.
     int birthLimit = 3;  // Creates tiles at locations with more than birthLimit neighboring tiles each step.
     int numberOfSteps = 4;
@@ -75,9 +75,32 @@ public class LevelBuilder : MonoBehaviour
             levelMap = doSimulationStep(levelMap);
         }
         // ADD A FINAL STEP SIMULATION HERE TO CLEAN UP THE LEVEL (ie remove small islands by only killing tiles). 
-        levelMap[0, width / 2] = 2;
+		for (int i = 0; i < 3; i++)
+		{
+			levelMap = cleanUpTiles(levelMap, 4);
+		}
+		for (int i = 0; i < 4; i++)
+		{
+			levelMap = cleanUpTiles(levelMap, 2);
+		}
+		levelMap[0, width / 2] = 2;
         map = levelMap;
     }
+
+	int[,] initiliazeLevel(int[,] level)
+	{
+		for (int x = 0; x < height - 1; x++)
+		{
+			for (int y = 0; y < width - 1; y++)
+			{
+				if (Random.Range(0, 100) < tileChance)
+				{
+					level[x, y] = 1;
+				}
+			}
+		}
+		return level;
+	}
 
     int[,] doSimulationStep(int[,] oldLevel)
     {
@@ -118,21 +141,6 @@ public class LevelBuilder : MonoBehaviour
     }
 
 
-    int[,] initiliazeLevel(int[,] level)
-    {
-        for (int x = 0; x < height - 1; x++)
-        {
-            for (int y = 0; y < width - 1; y++)
-            {
-                if (Random.Range(0, 100) < tileChance)
-                {
-                    level[x, y] = 1;
-                }
-            }
-        }
-        return level;
-    }
-
     //Returns the number of cells in a ring around (x,y) that have a tile.
     int countNeighbourTiles(int[,] level, int x, int y)
     {
@@ -151,7 +159,7 @@ public class LevelBuilder : MonoBehaviour
                 else if (neighbourX < 0 || neighbourY < 0 || neighbourX >= height-1 || neighbourY >= width-1)
                 {
                     // Incrementing count here will create a border. 
-                    count++;
+                    //count++;
                 }
                 // Normal check.
                 else if (level[neighbourX, neighbourY] == 1)
@@ -162,6 +170,34 @@ public class LevelBuilder : MonoBehaviour
         }
         return count;
     }
+
+	//int cleanUpLimit - Kills tiles with less than cleanIpLimit neighboring tiles during each clean up step.
+	int[,] cleanUpTiles(int[,] oldLevel, int cleanUpLimit)
+	{
+		int[,] newLevel = new int[height, width];
+		for (int x = 0; x < height - 1; x++)
+		{
+			for (int y = 0; y < width - 1; y++)
+			{
+				int neighbors = countNeighbourTiles (oldLevel, x, y);
+				// If a cell is alive but has too few neighbours, kill it.
+				if (oldLevel [x, y] == 1)
+				{
+					if (neighbors < cleanUpLimit) {
+						newLevel [x, y] = 0;
+					}
+					else {
+						newLevel [x, y] = 1;
+					}
+				}
+				else
+				{
+					newLevel [x, y] = oldLevel [x, y];
+				}
+			}
+		}
+		return newLevel;
+	}
 
 
     /*
