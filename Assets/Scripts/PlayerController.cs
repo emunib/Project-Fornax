@@ -10,7 +10,7 @@ public class PlayerController : C_WorldObjectController {
 	Dictionary<E_PlayerInputState, InputUpdate> InputUpdates;
 	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
 	Rigidbody2D body;
-	GameObject GrapplingHookBase;
+	public Transform GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
 	C_PendulumController PendulumController;
     LineRenderer RopeLine;
@@ -30,10 +30,10 @@ public class PlayerController : C_WorldObjectController {
 	// Use this for initialization
 	void Start () {
 		SetObject (new C_Player ());
+		MainCameraController controller = Camera.main.GetComponent<MainCameraController> ();
+		controller.player = this.gameObject;
 		body = GetComponent<Rigidbody2D> ();
 		Manager.ObjectLog.Add (gameObject, this);
-		GrapplingHookBase = GameObject.Find ("GrapplingHook");
-		GrapplingHookBase.SetActive (false);
 		((C_Player)Object).GrapplingState = E_GrapplingState.Detached;
     }
 	
@@ -66,7 +66,7 @@ public class PlayerController : C_WorldObjectController {
 			float vx = v3.x - body.position.x;
 			float vy = v3.y - body.position.y;
 			double vangle = Trig.GetAngle (vx, vy);
-			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3(body.position.x + Mathf.Cos((float)vangle) , body.position.y + Mathf.Sin((float)vangle), 0), new Quaternion());
+			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
 			ActiveGrapplingHook.SetActive (true);
 			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (20 * Mathf.Cos((float)vangle), 20 * Mathf.Sin((float)vangle));
 			ActiveGrapplingHook.GetComponent<C_WorldObjectController>().SetObject (new GrapplingHook (this));
