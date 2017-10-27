@@ -63,7 +63,7 @@ public class C_PendulumController {
 			Radius -= y;
 		}
 		float x = Input.GetAxis ("Horizontal");
-		Player.AngularAccel = x;
+        Player.AngularAccel = x;
 	}
 
 	public void FixedUpdate() {
