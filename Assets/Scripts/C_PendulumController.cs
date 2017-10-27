@@ -71,9 +71,10 @@ public class C_PendulumController {
 		Vector2 line2pend = Pendulum.position - pivot.Position;
 		double angle = Trig.GetAngle (line2pend.x, line2pend.y);
 		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
-		if (Manager.ObjectLog [collidee.collider.gameObject].Object != Player) {
-			Vector2 line2collision = collidee.point - pivot.Position;
-			float angle2collision = (float)Trig.GetAngle (line2collision.x, line2collision.y);
+        if (Manager.ObjectLog[collidee.collider.gameObject].Object != Player) {
+            Vector2 line2collision = collidee.point - pivot.Position;
+            // ERROR HERE, x and y can be 0 and trig function throws exception.  This breaks the grappling hook when grappling a surface the player is touching.
+            float angle2collision = (float)Trig.GetAngle(line2collision.x, line2collision.y);
 			double tangentialV = -1 * (Pendulum.velocity.x * Math.Sin (angle)) + (Pendulum.velocity.y * Math.Cos (angle));
 			Pivot.Direction dir;
 			double perpindicularAngle;
