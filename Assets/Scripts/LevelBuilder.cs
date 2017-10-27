@@ -25,6 +25,7 @@ public class LevelBuilder : MonoBehaviour
 		{1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}
 	};
     */
+
 	// Use this for initialization
 	void Start()
 	{
