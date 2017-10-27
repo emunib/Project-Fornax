@@ -8,7 +8,7 @@ public class LevelBuilder : MonoBehaviour
 	static int width = 200;
 	static int height = 100;
 	public Transform GTile;
-	public Transform Player;
+	public GameObject Player;
 	public Transform Hazard;
 
     int[,] map = new int[height, width];
