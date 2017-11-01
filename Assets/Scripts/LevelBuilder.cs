@@ -29,10 +29,19 @@ public class LevelBuilder : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-        CellularAutomata();
+        //CellularAutomata();
 
         //BuildMap();
-		for (int x = 0; x < width; x++)
+        PlatformGenerator pg = new PlatformGenerator();
+        replaceArea(5, 0, pg.CreateIsland(40, 40));
+        replaceArea(10, 50, pg.CreateIsland(20, 40));
+        replaceArea(80, 70, pg.CreateIsland(30, 50));
+        replaceArea(60, 40, pg.CreateIsland(20, 30));
+        replaceArea(145, 30, pg.CreateIsland(30, 60));
+        replaceArea(100, 5, pg.CreateIsland(30, 60));
+        map[0, width / 2] = 2;
+
+        for (int x = 0; x < width; x++)
 		{
 			for (int y = 0; y < height; y++)
 			{
@@ -54,6 +63,22 @@ public class LevelBuilder : MonoBehaviour
   
 	}
 
+    // Replaces elements of map with elements of array at location x,y
+    void replaceArea(int x, int y, int[,] array)
+    {
+        for (int i = 0; i < array.GetLength(0); i++)
+        {
+            for (int j = 0; j < array.GetLength(1); j++)
+            {
+                if (y + i < map.GetLength(0) && x + j < map.GetLength(1))
+                {
+                    map[y + i, x + j] = array[i, j];
+                }
+            }
+        }
+    }
+    
+
 
     /*
      * Test of cellular automata to generate islands as platforms.
@@ -69,26 +94,30 @@ public class LevelBuilder : MonoBehaviour
         //Create a new map
         int[,] levelMap = new int[height, width];
         //Set up the map with random values
-        levelMap = initiliazeLevel(levelMap); ;
+        levelMap = InitiliazeLevel(levelMap); ;
         //And now run the simulation for a set number of steps
         for (int i = 0; i < numberOfSteps; i++)
         {
-            levelMap = doSimulationStep(levelMap);
+            levelMap = DoSimulationStep(levelMap);
         }
         // ADD A FINAL STEP SIMULATION HERE TO CLEAN UP THE LEVEL (ie remove small islands by only killing tiles). 
 		for (int i = 0; i < 3; i++)
 		{
-			levelMap = cleanUpTiles(levelMap, 4);
+			levelMap = CleanUpTiles(levelMap, 4);
 		}
 		for (int i = 0; i < 4; i++)
 		{
-			levelMap = cleanUpTiles(levelMap, 2);
+			levelMap = CleanUpTiles(levelMap, 2);
 		}
 		levelMap[0, width / 2] = 2;
         map = levelMap;
+
+        // Concept:
+        // Flood fill algorithm can be used to determine "islands"/platform areas.
+        // Then find the mean of connected tiles to find the center of the islands and we can place a platform there.
     }
 
-	int[,] initiliazeLevel(int[,] level)
+	int[,] InitiliazeLevel(int[,] level)
 	{
 		for (int x = 0; x < height - 1; x++)
 		{
@@ -103,7 +132,7 @@ public class LevelBuilder : MonoBehaviour
 		return level;
 	}
 
-    int[,] doSimulationStep(int[,] oldLevel)
+    int[,] DoSimulationStep(int[,] oldLevel)
     {
         int[,] newLevel = new int[height, width];
         //Loop over each row and column of the map
@@ -111,7 +140,7 @@ public class LevelBuilder : MonoBehaviour
         {
             for (int y = 0; y < width - 1; y++)
             {
-                int neighbors = countNeighbourTiles(oldLevel, x, y);
+                int neighbors = CountNeighbourTiles(oldLevel, x, y);
                 //The new value is based on our simulation rules
                 //First, if a cell is alive but has too few neighbours, kill it.
                 if (oldLevel[x, y] == 1)
@@ -143,7 +172,7 @@ public class LevelBuilder : MonoBehaviour
 
 
     //Returns the number of cells in a ring around (x,y) that have a tile.
-    int countNeighbourTiles(int[,] level, int x, int y)
+    int CountNeighbourTiles(int[,] level, int x, int y)
     {
         int count = 0;
         for (int i = -1; i < 2; i++)
@@ -173,14 +202,14 @@ public class LevelBuilder : MonoBehaviour
     }
 
 	//int cleanUpLimit - Kills tiles with less than cleanIpLimit neighboring tiles during each clean up step.
-	int[,] cleanUpTiles(int[,] oldLevel, int cleanUpLimit)
+	int[,] CleanUpTiles(int[,] oldLevel, int cleanUpLimit)
 	{
 		int[,] newLevel = new int[height, width];
 		for (int x = 0; x < height - 1; x++)
 		{
 			for (int y = 0; y < width - 1; y++)
 			{
-				int neighbors = countNeighbourTiles (oldLevel, x, y);
+				int neighbors = CountNeighbourTiles (oldLevel, x, y);
 				// If a cell is alive but has too few neighbours, kill it.
 				if (oldLevel [x, y] == 1)
 				{

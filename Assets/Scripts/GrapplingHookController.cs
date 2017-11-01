@@ -35,10 +35,11 @@ public class GrapplingHookController : C_WorldObjectController {
 			RopeLine.SetPosition (i--, new Vector3(pivot.Position.x, pivot.Position.y));
 		}
 		Vector3 screenPos = Camera.main.WorldToScreenPoint(new Vector3(this.gameObject.transform.position.x, this.gameObject.transform.position.y, 0));
+        /*
 		if ((screenPos.x < Camera.main.pixelRect.xMin) || (screenPos.x > Camera.main.pixelRect.xMax) || (screenPos.y < Camera.main.pixelRect.yMin) || (screenPos.y > Camera.main.pixelRect.yMax)) {
 			GameObject.Destroy (this.gameObject);
 		}
-
+        */
 	}
 
 	void OnCollisionEnter2D(Collision2D collision){
