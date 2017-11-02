@@ -14,8 +14,8 @@ public class PlatformGenerator {
 
     int[,] PerlinNoiseIsland(int[,] platform)
     {
-        int platformWidth = platform.GetLength(1);
-        int platformHeight = platform.GetLength(0);
+        float platformWidth = platform.GetLength(1);
+        float platformHeight = platform.GetLength(0);
 
         float islandHeight = platformHeight / 10;
         float elevationFrequency = Random.Range(2f, 4f);
@@ -32,18 +32,28 @@ public class PlatformGenerator {
                 platform[elevation, i] = 1;
             }
 
-            // Increase divisor of islandHeight when closer to the edge of the island.
-            float heightScale = islandHeight;
-            /*
-            if (i < 6) {
-                heightScale = islandHeight / ((7 - i)/2);
+            // Increase multiplier of islandHeight when closer to the center of the island.
+            float heightScale;
+            float fractionDistToCenter;
+
+            if (i < platformWidth/2) {
+                fractionDistToCenter = i / (platformWidth / 2);
             }
-            else if (i > platformWidth - 6)
+            else
             {
-                heightScale = islandHeight / ((7 - (platformWidth - i))/2);
+                fractionDistToCenter = ((platformWidth / 2) - (i - (platformWidth / 2))) / (platformWidth / 2);
+
             }
-            */
-            depression = (int)(heightScale * 10 * Mathf.PerlinNoise(i / depressionFrequency * 0.1f, yCoordinate));
+            // Prevent log from returning a negative number.
+            if (fractionDistToCenter < 0.1f)
+            {
+                fractionDistToCenter = 0.1f;
+            }
+            // islandHeight is some constants
+            // Take the log of a fraction of distance to center converted to 1-10 (10 being at the center) with base 6 (higher base = less curve of depression at edges).
+            heightScale = islandHeight * Mathf.Log(fractionDistToCenter * 10, 6) * 10;
+            //Debug.Log(heightScale);
+            depression = (int)(heightScale * Mathf.PerlinNoise(i / depressionFrequency * 0.1f, yCoordinate));
 
             // Floor of platform will never be above ceiling.
             if (depression > elevation)

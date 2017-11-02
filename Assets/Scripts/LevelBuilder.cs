@@ -37,7 +37,7 @@ public class LevelBuilder : MonoBehaviour
         replaceArea(10, 50, pg.CreateIsland(20, 40));
         replaceArea(80, 70, pg.CreateIsland(30, 50));
         replaceArea(60, 40, pg.CreateIsland(20, 30));
-        replaceArea(145, 30, pg.CreateIsland(30, 60));
+        replaceArea(145, 55, pg.CreateIsland(30, 60));
         replaceArea(100, 5, pg.CreateIsland(30, 60));
         map[0, width / 2] = 2;
 
@@ -60,8 +60,7 @@ public class LevelBuilder : MonoBehaviour
 				}
 			}
 		}
-  
-	}
+    }
 
     // Replaces elements of map with elements of array at location x,y
     void replaceArea(int x, int y, int[,] array)
