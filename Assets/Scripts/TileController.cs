@@ -7,9 +7,4 @@ public class TileController : C_WorldObjectController {
 	void Start () {
 		Manager.ObjectLog.Add (gameObject, this);
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

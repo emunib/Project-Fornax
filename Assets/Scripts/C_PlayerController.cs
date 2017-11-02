@@ -61,16 +61,17 @@ public class C_PlayerController : C_WorldObjectController {
             Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			float vx = v3.x - body.position.x;
 			float vy = v3.y - body.position.y;
-			double vangle = Trig.GetAngle (vx, vy);
+			double vangle = Trig.GetAngle (new Vector2(vx,vy));
 			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
 			ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
 			ActiveGrapplingHook.SetActive (true);
-			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (20 * Mathf.Cos((float)vangle), 20 * Mathf.Sin((float)vangle));
+			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (30 * Mathf.Cos((float)vangle), 30 * Mathf.Sin((float)vangle));
 		}
 
-		if ((Input.GetMouseButtonDown(1)) && (GrapplingState == E_GrapplingState.Attached)) {
+		if ((Input.GetMouseButtonDown(1)) && (ActiveGrapplingHook != null)) {
 			GrapplingState = E_GrapplingState.Detached;
 			GameObject.Destroy (ActiveGrapplingHook);
+			ActiveGrapplingHook = null;
 			if (PlayerInputState == E_PlayerInputState.Swinging) {
 				PlayerInputState = E_PlayerInputState.Free;
 			}
@@ -101,7 +102,7 @@ public class C_PlayerController : C_WorldObjectController {
         bool found = false;
 		foreach (RaycastHit2D obj in lineGround) {
 			if (!Manager.ObjectLog.ContainsKey(obj.collider.gameObject)) {
-				print ("Object not found");
+				Debug.Log("Object not found");
 			} else if (Manager.ObjectLog [obj.collider.gameObject].GetType() == typeof(TileController)) {
 				if (found == false) {
 					nearestTile = obj;
@@ -115,25 +116,28 @@ public class C_PlayerController : C_WorldObjectController {
 		}
 		if (found) {
 			if ((nearestTile.distance > 0.6) && (PlayerInputState == E_PlayerInputState.Ground)) {
-				Debug.Log ("Left Ground");
-				if (GrapplingState == E_GrapplingState.Attached)
-					PlayerInputState = E_PlayerInputState.Swinging;
-				else if (GrapplingState == E_GrapplingState.Detached) {
-					PlayerInputState = E_PlayerInputState.Free;
-				}
+				LeftGround ();
 			} else if ((nearestTile.distance <= 0.6) && (PlayerInputState != E_PlayerInputState.Ground)) {
 				Debug.Log ("Hit Ground");
 				PlayerInputState = E_PlayerInputState.Ground;
 			}
 		} else if (PlayerInputState == E_PlayerInputState.Ground) {
-			Debug.Log ("Left Ground");
-			if (GrapplingState == E_GrapplingState.Attached)
-				PlayerInputState = E_PlayerInputState.Swinging;
-			else if (GrapplingState == E_GrapplingState.Detached) {
-				PlayerInputState = E_PlayerInputState.Free;
-			}
+			LeftGround ();
 		}
 		FixedUpdates [PlayerInputState] ();
+	}
+
+	void LeftGround(){
+		Debug.Log ("Left Ground");
+		if (IsAttached())
+			PlayerInputState = E_PlayerInputState.Swinging;
+		else if (GrapplingState == E_GrapplingState.Detached) {
+			PlayerInputState = E_PlayerInputState.Free;
+		}
+	}
+
+	bool IsAttached(){
+		return GrapplingState == E_GrapplingState.Attached;
 	}
 
 

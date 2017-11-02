@@ -4,18 +4,15 @@ using System;
 using UnityEngine;
 
 public class Trig {
-	public static double GetAngle(double adjacent, double opposite){
-		double angle = Math.Atan (opposite / adjacent);
-		if (adjacent < 0) {
-			angle += Math.PI;
-		} else if (opposite < 0) {
-			angle += 2 * Math.PI;
+	public static double GetAngle(Vector2 vec){
+		double hyp = (double)vec.magnitude; 
+		if (hyp == 0) {
+			Debug.Log ("Error GetAngle hyp=0");
+			return 0;
 		}
-		if ((angle > Math.PI * 2) || (angle < 0)){
-			throw new Exception();
-		} else if (double.IsNaN(angle)){
-			throw new Exception ("adjacent: " + adjacent + " opposite: " + opposite);
-		}
+		double angle = Math.Acos (vec.x / hyp);
+		if (vec.y < 0)
+			angle = (2*Math.PI) - angle;
 		return angle;
 	}
 
