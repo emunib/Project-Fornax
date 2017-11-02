@@ -12,6 +12,8 @@ public class PlatformGenerator {
         return platform;
     }
 
+
+
     int[,] PerlinNoiseIsland(int[,] platform)
     {
         float platformWidth = platform.GetLength(1);
@@ -29,7 +31,7 @@ public class PlatformGenerator {
             elevation = (int)(10 * Mathf.PerlinNoise(i/elevationFrequency * 0.1f, yCoordinate));
 
             if (elevation < platformHeight) {
-                platform[elevation, i] = 1;
+                platform[elevation, i] = Tiles.GROUND_TILE;
             }
 
             // Increase multiplier of islandHeight when closer to the center of the island.
@@ -64,7 +66,7 @@ public class PlatformGenerator {
                 {
                     if (k < platformHeight)
                     {
-                        platform[k, i] = 1;
+                        platform[k, i] = Tiles.GROUND_TILE;
                     }
                 }
             }

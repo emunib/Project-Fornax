@@ -10,6 +10,8 @@ public class LevelBuilder : MonoBehaviour
 	public GameObject GTile;
 	public GameObject Player;
 	public GameObject Hazard;
+    public GameObject Ramp;
+
 
     int[,] map = new int[height, width];
 	/*int[,] map = 
@@ -48,16 +50,19 @@ public class LevelBuilder : MonoBehaviour
 
 				switch (map[height - y - 1, x])
 				{
-					case 1:
+					case Tiles.GROUND_TILE:
 						Instantiate(GTile, new Vector3(x, y, 0), Quaternion.identity);
 						break;
-					case 2:
+					case Tiles.PLAYER:
 						Instantiate(Player, new Vector3(x, y, 0), Quaternion.identity);
                         break;
-					case 3:
+					case Tiles.HAZARD:
 						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
 						break;
-				}
+                    case Tiles.RAMP:
+                        Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                }
 			}
 		}
     }
@@ -146,22 +151,22 @@ public class LevelBuilder : MonoBehaviour
                 {
                     if (neighbors < deathLimit)
                     {
-                        newLevel[x, y] = 0;
+                        newLevel[x, y] = Tiles.EMPTY_TILE;
                     }
                     else
                     {
-                        newLevel[x, y] = 1;
+                        newLevel[x, y] = Tiles.GROUND_TILE;
                     }
                 } //Otherwise, if the cell is dead now, check if it has the right number of neighbours to be 'born'
                 else
                 {
                     if (neighbors > birthLimit)
                     {
-                        newLevel[x, y] = 1;
+                        newLevel[x, y] = Tiles.GROUND_TILE;
                     }
                     else
                     {
-                        newLevel[x, y] = 0;
+                        newLevel[x, y] = Tiles.EMPTY_TILE;
                     }
                 }
             }
@@ -191,7 +196,7 @@ public class LevelBuilder : MonoBehaviour
                     //count++;
                 }
                 // Normal check.
-                else if (level[neighbourX, neighbourY] == 1)
+                else if (level[neighbourX, neighbourY] == Tiles.GROUND_TILE)
                 {
                     count++;
                 }
@@ -210,13 +215,13 @@ public class LevelBuilder : MonoBehaviour
 			{
 				int neighbors = CountNeighbourTiles (oldLevel, x, y);
 				// If a cell is alive but has too few neighbours, kill it.
-				if (oldLevel [x, y] == 1)
+				if (oldLevel [x, y] == Tiles.GROUND_TILE)
 				{
 					if (neighbors < cleanUpLimit) {
-						newLevel [x, y] = 0;
+						newLevel [x, y] = Tiles.EMPTY_TILE;
 					}
 					else {
-						newLevel [x, y] = 1;
+						newLevel [x, y] = Tiles.GROUND_TILE;
 					}
 				}
 				else
@@ -271,7 +276,7 @@ public class LevelBuilder : MonoBehaviour
 
 				for (int j = 0; j < randLen; j++)
 				{
-					map[randY + j, randX] = 1;
+					map[randY + j, randX] = Tiles.GROUND_TILE;
 				}
 			}
 			else
@@ -292,7 +297,7 @@ public class LevelBuilder : MonoBehaviour
 
 				for (int j = 0; j < randLen; j++)
 				{
-					map[randY, randX + j] = 1;
+					map[randY, randX + j] = Tiles.GROUND_TILE;
 				}
 			}
 
