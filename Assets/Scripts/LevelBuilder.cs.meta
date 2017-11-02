@@ -1,10 +1,13 @@
 fileFormatVersion: 2
 guid: bea22257ebc9b144cb82beebce17be25
-timeCreated: 1506979147
+timeCreated: 1509638411
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - GTile: {fileID: 1634512257843218, guid: f6e48d2c0a8ffa044a6055a218d2e791, type: 2}
+  - Player: {fileID: 1561701070860114, guid: 21dfc8a618e903348aa4b65458cc11fd, type: 2}
+  - Hazard: {fileID: 1953205402004844, guid: 49e2bd1c9d50ff3438f3de77c3baf464, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

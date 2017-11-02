@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Scripts/Generic.cs.meta
 guid: 087ded1408a0f4324aaffe5ff97ed97c
 timeCreated: 1509635052
+=======
+guid: 773adc5fd55224d6692be6934f98a9f0
+timeCreated: 1506010374
+>>>>>>> waf045:Assets/Scripts/PlayerController.cs.meta
 licenseType: Free
 MonoImporter:
   serializedVersion: 2

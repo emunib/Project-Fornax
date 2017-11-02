@@ -23,4 +23,3 @@ public class Trig {
 		return Math.Sqrt ((Math.Pow (x, 2) + Math.Pow (y, 2)));
 	}
 }
-

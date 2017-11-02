@@ -1,4 +1,5 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 <<<<<<< HEAD:Assets/Scripts/MainCameraController.cs.meta
 guid: 7a7d35f91883a3c4cbf5e20d17c0300a
 timeCreated: 1507308490
@@ -6,6 +7,10 @@ timeCreated: 1507308490
 guid: c05a4bde00d0b334c83ddf5604e42df8
 timeCreated: 1506978627
 >>>>>>> ehm011:Assets/Scripts/PlayerController.cs.meta
+=======
+guid: 7a7d35f91883a3c4cbf5e20d17c0300a
+timeCreated: 1507308490
+>>>>>>> waf045
 licenseType: Free
 MonoImporter:
   serializedVersion: 2

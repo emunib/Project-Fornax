@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 guid: bd019a6c344c34ede8fb8acc7bf5ba5d
 timeCreated: 1507327793
+=======
+guid: d714618e0be1c2946942aee789240afc
+timeCreated: 1509119955
+>>>>>>> waf045
 licenseType: Free
 NativeFormatImporter:
   mainObjectFileID: 100100000
