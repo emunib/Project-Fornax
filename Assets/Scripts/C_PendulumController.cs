@@ -41,10 +41,10 @@ public class Pivot {
 
 public class C_PendulumController {
 	List<Pivot> Pivots;
-	C_Player Player;
+	C_PlayerController Player;
 	Rigidbody2D Pendulum;
 	public float Radius;
-	public C_PendulumController(Vector2 origin, C_Player player, Rigidbody2D body, List<Pivot> pivots){
+	public C_PendulumController(Vector2 origin, C_PlayerController player, Rigidbody2D body, List<Pivot> pivots){
 		Pivots = pivots;
 		Pendulum = body;
 		Player = player;
@@ -71,7 +71,7 @@ public class C_PendulumController {
 		Vector2 line2pend = Pendulum.position - pivot.Position;
 		double angle = Trig.GetAngle (line2pend.x, line2pend.y);
 		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
-		if (Manager.ObjectLog [collidee.collider.gameObject].Object != Player) {
+		if (Manager.ObjectLog [collidee.collider.gameObject] != Player) {
 			Vector2 line2collision = collidee.point - pivot.Position;
 			float angle2collision = (float)Trig.GetAngle (line2collision.x, line2collision.y);
 			double tangentialV = -1 * (Pendulum.velocity.x * Math.Sin (angle)) + (Pendulum.velocity.y * Math.Cos (angle));
