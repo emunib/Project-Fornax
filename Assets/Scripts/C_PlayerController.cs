@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -12,7 +12,7 @@ public class C_PlayerController : C_WorldObjectController {
 	Dictionary<E_PlayerInputState, InputUpdate> InputUpdates;
 	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
 	Dictionary<E_GrapplingState, InputUpdate> GraplingUpdates;
-	Rigidbody2D body;
+	public Rigidbody2D body;
 	public Transform GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
 	C_PendulumController PendulumController;
@@ -100,7 +100,9 @@ public class C_PlayerController : C_WorldObjectController {
 
         bool found = false;
 		foreach (RaycastHit2D obj in lineGround) {
-			if (Manager.ObjectLog [obj.collider.gameObject].GetType() == typeof(TileController)) {
+			if (!Manager.ObjectLog.ContainsKey(obj.collider.gameObject)) {
+				print ("Object not found");
+			} else if (Manager.ObjectLog [obj.collider.gameObject].GetType() == typeof(TileController)) {
 				if (found == false) {
 					nearestTile = obj;
 					found = true;
