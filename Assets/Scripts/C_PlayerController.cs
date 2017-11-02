@@ -13,7 +13,7 @@ public class C_PlayerController : C_WorldObjectController {
 	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
 	Dictionary<E_GrapplingState, InputUpdate> GraplingUpdates;
 	public Rigidbody2D body;
-	public Transform GrapplingHookBase;
+	public GameObject GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
 	C_PendulumController PendulumController;
     LineRenderer RopeLine;

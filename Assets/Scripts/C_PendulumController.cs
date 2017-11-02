@@ -126,9 +126,11 @@ public class C_PendulumController {
 		}
 		tension.x = 0;
 		tension.y = 0;
+		Vector2 perpenline = new Vector2 (Mathf.Abs(line2pend.x), -Mathf.Sign(line2pend.x)*(line2pend.y));
+		perpenline.Normalize ();
 		if (angle > Math.PI) {
-			tension.y += Player.AngularAccel * Math.Cos ((Math.PI * 2) - angle);
-			tension.x += Player.AngularAccel * Math.Sin ((Math.PI * 2) - angle);
+			tension.y += Player.AngularAccel * perpenline.y * 10;//Math.Cos ((Math.PI * 2) - angle);
+			tension.x += Player.AngularAccel * perpenline.x * 10; //Math.Sin ((Math.PI * 2) - angle);
 		}
 
 		tension.y += centrifugal * -Math.Sin (angle);

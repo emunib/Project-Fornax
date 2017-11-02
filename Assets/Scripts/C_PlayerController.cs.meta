@@ -1,10 +1,12 @@
 fileFormatVersion: 2
 guid: 469c56e16a61249d6b365a941814eac6
-timeCreated: 1507335113
+timeCreated: 1509649356
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - body: {instanceID: 0}
+  - GrapplingHookBase: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
