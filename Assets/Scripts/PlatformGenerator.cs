@@ -8,19 +8,54 @@ public class PlatformGenerator {
     {
         int[,] platform = new int[height, width];
         platform = PerlinNoiseIsland(platform);
+        platform = AddRamps(platform);
+        return platform;
+    }
 
+    int[,] AddRamps(int[,] platform)
+    {
+        float platformWidth = platform.GetLength(1);
+        float platformHeight = platform.GetLength(0);
+
+        for (int i = 0; i < platformWidth; i++)
+        {
+            for (int j = 0; j < platformHeight - 1; j++)
+            {
+                if (platform[j, i] == Tiles.EMPTY_TILE)
+                {
+                    // if bottom adjacent tile and right adjacent tile are ground tiles AND top and left tiles are empty tiles.  Also array edge checks.
+                    if ((platform[j + 1, i] == Tiles.GROUND_TILE)
+                        && (i + 1 < platformWidth && platform[j, i + 1] == Tiles.GROUND_TILE)
+                        && (j - 1 < 0 || platform[j - 1, i] == Tiles.EMPTY_TILE)
+                        && (i - 1 <= 0 || platform[j, i - 1] == Tiles.EMPTY_TILE))
+                    {
+                        // Add a Ramp Left tile here
+                        platform[j, i] = Tiles.RAMP_LEFT;
+                    }
+                    // if bottom adjacent tile and left adjacent tile are ground tiles AND top and right tiles are empty tiles.
+                    if ((platform[j + 1, i] == Tiles.GROUND_TILE)
+                        && (i + 1 >= platformWidth || platform[j, i + 1] == Tiles.EMPTY_TILE)
+                        && (j - 1 < 0 || platform[j - 1, i] == Tiles.EMPTY_TILE)
+                        && (i - 1 >= 0 && platform[j, i - 1] == Tiles.GROUND_TILE))
+                    {
+                        // Add a Ramp Left tile here
+                        platform[j, i] = Tiles.RAMP_RIGHT;
+                    }
+                }
+            }
+        }
         return platform;
     }
 
     int[,] PerlinNoiseIsland(int[,] platform)
     {
-        int platformWidth = platform.GetLength(1);
-        int platformHeight = platform.GetLength(0);
+        float platformWidth = platform.GetLength(1);
+        float platformHeight = platform.GetLength(0);
 
         float islandHeight = platformHeight / 10;
-        float elevationFrequency = Random.Range(2f, 4f);
+        float elevationFrequency = Random.Range(3f, 6f);
         float depressionFrequency = Random.Range(1f, 3f); // x coordinate;
-        float yCoordinate = Random.Range(0f, 100f);
+        float yCoordinate = Random.Range(0f, 1000f);
 
         int elevation;
         int depression;
@@ -29,21 +64,31 @@ public class PlatformGenerator {
             elevation = (int)(10 * Mathf.PerlinNoise(i/elevationFrequency * 0.1f, yCoordinate));
 
             if (elevation < platformHeight) {
-                platform[elevation, i] = 1;
+                platform[elevation, i] = Tiles.GROUND_TILE;
             }
 
-            // Increase divisor of islandHeight when closer to the edge of the island.
-            float heightScale = islandHeight;
-            /*
-            if (i < 6) {
-                heightScale = islandHeight / ((7 - i)/2);
+            // Increase multiplier of islandHeight when closer to the center of the island.
+            float heightScale;
+            float fractionDistToCenter;
+
+            if (i < platformWidth/2) {
+                fractionDistToCenter = i / (platformWidth / 2);
             }
-            else if (i > platformWidth - 6)
+            else
             {
-                heightScale = islandHeight / ((7 - (platformWidth - i))/2);
+                fractionDistToCenter = ((platformWidth / 2) - (i - (platformWidth / 2))) / (platformWidth / 2);
+
             }
-            */
-            depression = (int)(heightScale * 10 * Mathf.PerlinNoise(i / depressionFrequency * 0.1f, yCoordinate));
+            // Prevent log from returning a negative number.
+            if (fractionDistToCenter < 0.1f)
+            {
+                fractionDistToCenter = 0.1f;
+            }
+            // islandHeight is some constants
+            // Take the log of a fraction of distance to center converted to 1-10 (10 being at the center) with base 6 (higher base = less curve of depression at edges).
+            heightScale = islandHeight * Mathf.Log(fractionDistToCenter * 10, 6) * 10;
+            //Debug.Log(heightScale);
+            depression = (int)(heightScale * Mathf.PerlinNoise(i / depressionFrequency * 0.1f, yCoordinate));
 
             // Floor of platform will never be above ceiling.
             if (depression > elevation)
@@ -54,7 +99,7 @@ public class PlatformGenerator {
                 {
                     if (k < platformHeight)
                     {
-                        platform[k, i] = 1;
+                        platform[k, i] = Tiles.GROUND_TILE;
                     }
                 }
             }
