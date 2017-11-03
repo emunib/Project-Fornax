@@ -8,11 +8,44 @@ public class PlatformGenerator {
     {
         int[,] platform = new int[height, width];
         platform = PerlinNoiseIsland(platform);
-
+        platform = AddRamps(platform);
         return platform;
     }
 
+    int[,] AddRamps(int[,] platform)
+    {
+        float platformWidth = platform.GetLength(1);
+        float platformHeight = platform.GetLength(0);
 
+        for (int i = 0; i < platformWidth; i++)
+        {
+            for (int j = 0; j < platformHeight - 1; j++)
+            {
+                if (platform[j, i] == Tiles.EMPTY_TILE)
+                {
+                    // if bottom adjacent tile and right adjacent tile are ground tiles AND top and left tiles are empty tiles.  Also array edge checks.
+                    if ((platform[j + 1, i] == Tiles.GROUND_TILE)
+                        && (i + 1 < platformWidth && platform[j, i + 1] == Tiles.GROUND_TILE)
+                        && (j - 1 < 0 || platform[j - 1, i] == Tiles.EMPTY_TILE)
+                        && (i - 1 <= 0 || platform[j, i - 1] == Tiles.EMPTY_TILE))
+                    {
+                        // Add a Ramp Left tile here
+                        platform[j, i] = Tiles.RAMP_LEFT;
+                    }
+                    // if bottom adjacent tile and left adjacent tile are ground tiles AND top and right tiles are empty tiles.
+                    if ((platform[j + 1, i] == Tiles.GROUND_TILE)
+                        && (i + 1 >= platformWidth || platform[j, i + 1] == Tiles.EMPTY_TILE)
+                        && (j - 1 < 0 || platform[j - 1, i] == Tiles.EMPTY_TILE)
+                        && (i - 1 >= 0 && platform[j, i - 1] == Tiles.GROUND_TILE))
+                    {
+                        // Add a Ramp Left tile here
+                        platform[j, i] = Tiles.RAMP_RIGHT;
+                    }
+                }
+            }
+        }
+        return platform;
+    }
 
     int[,] PerlinNoiseIsland(int[,] platform)
     {
@@ -20,9 +53,9 @@ public class PlatformGenerator {
         float platformHeight = platform.GetLength(0);
 
         float islandHeight = platformHeight / 10;
-        float elevationFrequency = Random.Range(2f, 4f);
+        float elevationFrequency = Random.Range(3f, 6f);
         float depressionFrequency = Random.Range(1f, 3f); // x coordinate;
-        float yCoordinate = Random.Range(0f, 100f);
+        float yCoordinate = Random.Range(0f, 1000f);
 
         int elevation;
         int depression;

@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: bea22257ebc9b144cb82beebce17be25
-timeCreated: 1509659363
+timeCreated: 1509664844
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
@@ -8,7 +8,10 @@ MonoImporter:
   - GTile: {fileID: 1634512257843218, guid: f6e48d2c0a8ffa044a6055a218d2e791, type: 2}
   - Player: {fileID: 1561701070860114, guid: 21dfc8a618e903348aa4b65458cc11fd, type: 2}
   - Hazard: {fileID: 1953205402004844, guid: 49e2bd1c9d50ff3438f3de77c3baf464, type: 2}
-  - Ramp: {fileID: 1569384789843492, guid: 1d0d42d6eee4d6c40b75f38c5bf41e86, type: 2}
+  - Ramp_Left: {fileID: 1634512257843218, guid: f6e48d2c0a8ffa044a6055a218d2e791,
+      type: 2}
+  - Ramp_Right: {fileID: 1634512257843218, guid: f6e48d2c0a8ffa044a6055a218d2e791,
+      type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

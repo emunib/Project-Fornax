@@ -8,5 +8,6 @@ public static class Tiles {
     public const int GROUND_TILE = 1;
     public const int PLAYER = 2;
     public const int HAZARD = 3;
-    public const int RAMP = 4;
+    public const int RAMP_LEFT = 4;
+    public const int RAMP_RIGHT = 5;
 }

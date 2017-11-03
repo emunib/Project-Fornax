@@ -19,7 +19,7 @@ public class C_PlayerController : C_WorldObjectController {
     LineRenderer RopeLine;
 
 
-	public float Xaccel = 10;
+	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
 	public float MaxSpeed;
 	public float AngularAccel;
@@ -96,7 +96,7 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void FixedUpdate (){
-		RaycastHit2D[] lineGround = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
+        RaycastHit2D[] lineGround = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
 		RaycastHit2D nearestTile = lineGround[0];
 
         bool found = false;
@@ -142,6 +142,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 	void GroundFixedUpdate() {
+        // What if players could accelerate while in the air?
 		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Xaccel;
 		body.AddForce(direction);
 	}

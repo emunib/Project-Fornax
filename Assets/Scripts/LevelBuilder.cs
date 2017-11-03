@@ -10,8 +10,8 @@ public class LevelBuilder : MonoBehaviour
 	public GameObject GTile;
 	public GameObject Player;
 	public GameObject Hazard;
-    public GameObject Ramp;
-
+    public GameObject Ramp_Left;
+    public GameObject Ramp_Right;
 
     int[,] map = new int[height, width];
 	/*int[,] map = 
@@ -29,7 +29,7 @@ public class LevelBuilder : MonoBehaviour
     */
 
 	// Use this for initialization
-	void Awake()
+	void Start()
 	{
         //CellularAutomata();
 
@@ -59,8 +59,11 @@ public class LevelBuilder : MonoBehaviour
 					case Tiles.HAZARD:
 						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
 						break;
-                    case Tiles.RAMP:
-                        Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
+                    case Tiles.RAMP_LEFT:
+                        Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    case Tiles.RAMP_RIGHT:
+                        Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
                         break;
                 }
 			}
@@ -76,7 +79,10 @@ public class LevelBuilder : MonoBehaviour
             {
                 if (y + i < map.GetLength(0) && x + j < map.GetLength(1))
                 {
-                    map[y + i, x + j] = array[i, j];
+                    if (array[i, j] != Tiles.EMPTY_TILE)
+                    {
+                        map[y + i, x + j] = array[i, j];
+                    }
                 }
             }
         }
