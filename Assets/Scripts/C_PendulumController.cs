@@ -56,32 +56,44 @@ public class C_PendulumController {
 			nList.Add (temp);
 			Pivots.Remove (temp);
 		}
-		nList.Insert(0,new Pivot(Hook.Body.position));
+		Pivot pivot = new Pivot (Hook.Body.position);
+		nList.Insert(0, pivot);
 		Pivots = nList;
-
-		Pivot pivot = Pivots [Pivots.Count - 1];
 
 		AnchorObject = Hook;
 		PendulumObject = Player;
 		Pendulum = Player.body;
 		Anchor = Hook.Body;
-			
-
-		Vector2 line2pend = Pendulum.position - pivot.Position;
-		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
-
-		while (Manager.ObjectLog [collidee.collider.gameObject] != Player) {
-			Vector2 directionVec = (Pendulum.position - new Vector2 (collidee.collider.bounds.center.x, collidee.collider.bounds.center.y));
-			directionVec.Normalize ();
-			pivot.Position = pivot.Position + (0.2f * directionVec);
-			while (collidee.collider.bounds.Contains (pivot.Position)) {
-				pivot.Position += 0.2f * directionVec;
-			} 
-			line2pend = Pendulum.position - pivot.Position;
-			collidee = Physics2D.Raycast (pivot.Position, line2pend);
+		Vector2 secondaryAnchor;
+		if (Pivots.Count > 1) {
+			secondaryAnchor = Pivots [1].Position;
+		} else {
+			secondaryAnchor = Pendulum.position;
 		}
 
+		RaycastHit2D empty = new RaycastHit2D ();
+		RaycastHit2D result;
+
+		while ((result = GetHits(pivot.Position, secondaryAnchor, empty)) != empty) {
+			Vector2 directionVec = (secondaryAnchor - new Vector2 (result.collider.bounds.center.x, result.collider.bounds.center.y));
+			directionVec.Normalize ();
+			pivot.Position = pivot.Position + (0.2f * directionVec);
+			while (result.collider.bounds.Contains (pivot.Position)) {
+				pivot.Position += 0.2f * directionVec;
+			} 
+		}
+			
 		Radius = (pivot.Position - Pendulum.position).magnitude;
+	}
+
+	RaycastHit2D GetHits(Vector2 one, Vector2 two, RaycastHit2D empty){
+		RaycastHit2D[] hits = Physics2D.LinecastAll (one, two);
+		foreach (RaycastHit2D hit in hits) {
+			if (Manager.ObjectLog [hit.collider.gameObject] != Player) {
+				return hit;
+			} 
+		}
+		return empty;
 	}
 		
 
@@ -101,7 +113,9 @@ public class C_PendulumController {
 	}
 
 	public void Draw(){
-		Pivots [0].Position = Anchor.position;
+		if (Anchor.simulated == true) {
+			Pivots [0].Position = Anchor.position;
+		}
 		Hook.RopeLine.positionCount = Pivots.Count + 1;
 		Hook.RopeLine.SetPosition (0, new Vector3(Pendulum.position.x, Pendulum.position.y));
 		int i = Pivots.Count;

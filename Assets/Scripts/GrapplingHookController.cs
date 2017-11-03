@@ -52,7 +52,6 @@ public class GrapplingHookController : C_WorldObjectController {
 			Body.position = collisionPoint;
 			PlayerObject.PendulumController.Switch ();
 			PlayerObject.CreateAnchor ();
-			Body.simulated = false;
             //GameObject.Destroy (this.gameObject);
 		}
 	}

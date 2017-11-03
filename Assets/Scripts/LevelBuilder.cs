@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
 {
-	static int width = 200;
-	static int height = 100;
+	public static int width = 200;
+	public static int height = 100;
+
 	public GameObject GTile;
 	public GameObject Player;
 	public GameObject Hazard;
@@ -53,8 +54,10 @@ public class LevelBuilder : MonoBehaviour
 					case Tiles.GROUND_TILE:
 						Instantiate(GTile, new Vector3(x, y, 0), Quaternion.identity);
 						break;
-					case Tiles.PLAYER:
-						Instantiate(Player, new Vector3(x, y, 0), Quaternion.identity);
+				case Tiles.PLAYER:
+					GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity);
+					C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
+					controller.spawn = new Vector2 (x, y);
                         break;
 					case Tiles.HAZARD:
 						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
