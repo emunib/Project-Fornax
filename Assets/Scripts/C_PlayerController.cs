@@ -15,8 +15,9 @@ public class C_PlayerController : C_WorldObjectController {
 	public Rigidbody2D body;
 	public GameObject GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
-	C_PendulumController PendulumController;
+	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
+	public Vector2 spawn;
 
 
 	public float Xaccel = 25;
@@ -46,6 +47,7 @@ public class C_PlayerController : C_WorldObjectController {
         body = GetComponent<Rigidbody2D> ();
 		Manager.ObjectLog.Add (gameObject, this);
 		GrapplingState = E_GrapplingState.Detached;
+		InvokeRepeating ("MapCheck", 0f, 0.5f);
     }
 	
 	// Update is called once per frame
@@ -153,13 +155,21 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void SwingingFixedUpdate() {
-            PendulumController.FixedUpdate();
+    
 	}
 
-	public void CreateAnchor(float x, float y, LineRenderer rope){
-		PendulumController = new C_PendulumController (new Vector2 (x, y), this, body, ActiveGrapplingHook.GetComponent<GrapplingHookController>().Pivots);
+	public void CreateAnchor(){
         GrapplingState = E_GrapplingState.Attached;
         if (PlayerInputState == E_PlayerInputState.Free)
 			PlayerInputState = E_PlayerInputState.Swinging;
+	}
+
+	public void MapCheck(){
+		if ((body.position.x < - 50) || (body.position.x > LevelBuilder.width + 50) || (body.position.y < -50) || (body.position.y > LevelBuilder.height + 50)) {
+			GameObject.Destroy (ActiveGrapplingHook);
+			ActiveGrapplingHook = null;
+			body.position = spawn;
+			body.velocity = new Vector2 (0, 0); 
+		}
 	}
 }

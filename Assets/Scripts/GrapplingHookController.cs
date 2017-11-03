@@ -3,22 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GrapplingHookController : C_WorldObjectController {
-	LineRenderer RopeLine;
-	Rigidbody2D Body;
+	public LineRenderer RopeLine;
+	public Rigidbody2D Body;
 	public List<Pivot> Pivots;
 	public C_PlayerController PlayerObject;
 	public Rigidbody2D PlayerBody;
-	bool Active;
 	// Use this for initialization
 
 	void Start () {
 		RopeLine = gameObject.GetComponent<LineRenderer>();
 		Body = gameObject.GetComponent<Rigidbody2D> () ;
-		
+
 		Manager.ObjectLog.Add (gameObject, this);
 		Pivots = new List<Pivot>();
-		Pivots.Add (new Pivot (Body.position));
-		Active = true;
+		Pivots.Add (new Pivot (PlayerBody.position));
+		PlayerObject.PendulumController = new C_PendulumController (PlayerObject,this);
 	}
 
 	public void SetPendulum(C_PlayerController player){
@@ -30,21 +29,18 @@ public class GrapplingHookController : C_WorldObjectController {
 		Manager.ObjectLog.Remove (gameObject);
 	}
 
+	void FixedUpdate (){
+		PlayerObject.PendulumController.FixedUpdate ();
+	}
+
 	// Update is called once per frame
 	void Update () {
-		if (Active) {
-			Pivots [0].Position = Body.position;
-		} 
-		RopeLine.positionCount = Pivots.Count + 1;
-		RopeLine.SetPosition (0, new Vector3(PlayerBody.position.x, PlayerBody.position.y));
-		int i = Pivots.Count;
-		foreach (Pivot pivot in Pivots){
-			RopeLine.SetPosition (i--, new Vector3(pivot.Position.x, pivot.Position.y));
-		}
+		PlayerObject.PendulumController.Draw ();
 	}
 
 	void OnCollisionEnter2D(Collision2D collision){
 		if ( Manager.ObjectLog[collision.gameObject].GetType() == typeof(TileController)) {
+			Body.simulated = false;
 			Collider2D collidee = collision.collider;
 			Vector2 directionVec = (PlayerBody.position - new Vector2 (collidee.bounds.center.x, collidee.bounds.center.y));
 			directionVec.Normalize ();
@@ -53,10 +49,9 @@ public class GrapplingHookController : C_WorldObjectController {
 				collisionPoint += 0.1f * directionVec;
 			} 
 				
-			Pivots [0].Position = collisionPoint;
-			PlayerObject.CreateAnchor (Pivots [0].Position.x, Pivots [0].Position.y, RopeLine);
-			Body.simulated = false;
-			Active = false;
+			Body.position = collisionPoint;
+			PlayerObject.PendulumController.Switch ();
+			PlayerObject.CreateAnchor ();
             //GameObject.Destroy (this.gameObject);
 		}
 	}
