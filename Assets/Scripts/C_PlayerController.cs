@@ -15,7 +15,7 @@ public class C_PlayerController : C_WorldObjectController {
 	public Rigidbody2D body;
 	public GameObject GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
-	C_PendulumController PendulumController;
+	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
 
 
@@ -152,11 +152,10 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void SwingingFixedUpdate() {
-            PendulumController.FixedUpdate();
+    
 	}
 
-	public void CreateAnchor(float x, float y, LineRenderer rope){
-		PendulumController = new C_PendulumController (new Vector2 (x, y), this, body, ActiveGrapplingHook.GetComponent<GrapplingHookController>().Pivots);
+	public void CreateAnchor(){
         GrapplingState = E_GrapplingState.Attached;
         if (PlayerInputState == E_PlayerInputState.Free)
 			PlayerInputState = E_PlayerInputState.Swinging;

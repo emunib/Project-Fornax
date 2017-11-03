@@ -30,16 +30,42 @@ public class Pivot {
 public class C_PendulumController {
 	List<Pivot> Pivots;
 	C_PlayerController Player;
+	GrapplingHookController Hook;
 	Rigidbody2D Pendulum;
+	Rigidbody2D Anchor;
+	C_WorldObjectController AnchorObject;
+	C_WorldObjectController PendulumObject;
 	public float Radius;
-	public C_PendulumController(Vector2 origin, C_PlayerController player, Rigidbody2D body, List<Pivot> pivots){
-		Pivots = pivots;
-		Pendulum = body;
+
+	public C_PendulumController(C_PlayerController player, GrapplingHookController hook){
+		Hook = hook;
+		Pivots = hook.Pivots;
+		Pendulum = hook.Body;
 		Player = player;
-		Radius = (float)Trig.GetHyp (origin.x - body.position.x, origin.y - body.position.y);
+		Radius = 20;
+		AnchorObject = player;
+		PendulumObject = hook;
+		Anchor = Player.body;
+	}
+
+	public void Switch(){
+		Pivots.RemoveAt (0);
+		List < Pivot> nList = new List<Pivot> ();
+		while (Pivots.Count > 0) {
+			Pivot temp = Pivots [Pivots.Count - 1];
+			nList.Add (temp);
+			Pivots.Remove (temp);
+		}
+		nList.Insert(0,new Pivot(Hook.Body.position));
+		Pivots = nList;
 
 		Pivot pivot = Pivots [Pivots.Count - 1];
 
+		AnchorObject = Hook;
+		PendulumObject = Player;
+		Pendulum = Player.body;
+		Anchor = Hook.Body;
+			
 
 		Vector2 line2pend = Pendulum.position - pivot.Position;
 		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
@@ -54,7 +80,10 @@ public class C_PendulumController {
 			line2pend = Pendulum.position - pivot.Position;
 			collidee = Physics2D.Raycast (pivot.Position, line2pend);
 		}
+
+		Radius = (pivot.Position - Pendulum.position).magnitude;
 	}
+		
 
 	public void Update(){
 		float y = Input.GetAxis ("Vertical");
@@ -71,12 +100,35 @@ public class C_PendulumController {
 		Player.AngularAccel = x;
 	}
 
+	public void Draw(){
+		Pivots [0].Position = Anchor.position;
+		Hook.RopeLine.positionCount = Pivots.Count + 1;
+		Hook.RopeLine.SetPosition (0, new Vector3(Pendulum.position.x, Pendulum.position.y));
+		int i = Pivots.Count;
+		foreach (Pivot pivot in Pivots){
+			Hook.RopeLine.SetPosition (i--, new Vector3(pivot.Position.x, pivot.Position.y));
+		}
+	}
+
 	public void FixedUpdate() {
 		Pivot pivot = Pivots [Pivots.Count - 1];
 		Vector2 line2pend = Pendulum.position - pivot.Position;
 		double angle = Trig.GetAngle (line2pend);
-		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
-		if (Manager.ObjectLog [collidee.collider.gameObject] != Player) {	
+		RaycastHit2D[] collidees = Physics2D.RaycastAll (pivot.Position, line2pend);
+		RaycastHit2D collidee = new RaycastHit2D();
+		bool notfound = true;
+		foreach (RaycastHit2D hit in collidees){
+			if (Manager.ObjectLog [hit.collider.gameObject] != AnchorObject) {
+				if (notfound) {
+					collidee = hit;
+					notfound = false;
+				} else if (hit.distance < collidee.distance) {
+					collidee = hit;
+				}
+			}
+		}
+
+		if (Manager.ObjectLog [collidee.collider.gameObject] != PendulumObject) {	
 			if (collidee.collider.bounds.Contains (Pivots[Pivots.Count - 1].Position)) {
 				throw new Exception ("pivot inside of bounding box");
 			}

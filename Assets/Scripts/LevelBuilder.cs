@@ -29,7 +29,7 @@ public class LevelBuilder : MonoBehaviour
     */
 
 	// Use this for initialization
-	void Start()
+	void Awake()
 	{
         //CellularAutomata();
 
