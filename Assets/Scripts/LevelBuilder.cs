@@ -48,16 +48,16 @@ public class LevelBuilder : MonoBehaviour
 		{
 			for (int y = 0; y < height; y++)
 			{
-
+				GameObject clone = null;
 				switch (map[height - y - 1, x])
 				{
 					case Tiles.GROUND_TILE:
 						Instantiate(GTile, new Vector3(x, y, 0), Quaternion.identity);
 						break;
-				case Tiles.PLAYER:
-					GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity);
-					C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
-					controller.spawn = new Vector2 (x, y);
+					case Tiles.PLAYER:
+						GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity);
+						C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
+						controller.spawn = new Vector2 (x, y);
                         break;
 					case Tiles.HAZARD:
 						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
@@ -69,6 +69,9 @@ public class LevelBuilder : MonoBehaviour
                         Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
                         break;
                 }
+				if (clone != null) {
+					clone.transform.parent = GameObject.Find("Level").transform;
+				}
 			}
 		}
     }
