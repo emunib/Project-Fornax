@@ -13,7 +13,7 @@ public class MainCameraController : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        StartCoroutine(WaitForPlayer());
+        //StartCoroutine(WaitForPlayer());
         offset.z = -10;
     }
 
@@ -26,9 +26,19 @@ public class MainCameraController : MonoBehaviour {
         }
     }
 
+    /*
     IEnumerator WaitForPlayer()
     {
         yield return new WaitForSeconds(1);
+        playerSpawned = true;
+    }
+    */
+
+    // Later this MUST BE CHANGED so that the game manager sends this function a message when all players are spawned.
+    void PlayerSpawned(GameObject obj)
+    {
+        Debug.Log("Player spawned");
+        player = obj;
         playerSpawned = true;
     }
 

@@ -43,6 +43,8 @@ public class LevelBuilder : MonoBehaviour
         replaceArea(100, 5, pg.CreateIsland(30, 60));
         map[0, width / 2] = 2;
 
+        GameObject clone = new GameObject();
+
         for (int x = 0; x < width; x++)
 		{
 			for (int y = 0; y < height; y++)
@@ -51,21 +53,25 @@ public class LevelBuilder : MonoBehaviour
 				switch (map[height - y - 1, x])
 				{
 					case Tiles.GROUND_TILE:
-						Instantiate(GTile, new Vector3(x, y, 0), Quaternion.identity);
+                        clone = Instantiate(GTile, new Vector3(x, y, 0), Quaternion.identity);
 						break;
 					case Tiles.PLAYER:
-						Instantiate(Player, new Vector3(x, y, 0), Quaternion.identity);
+                        clone = Instantiate(Player, new Vector3(x, y, 0), Quaternion.identity);
                         break;
 					case Tiles.HAZARD:
-						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
+                        clone = Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
 						break;
                     case Tiles.RAMP_LEFT:
-                        Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
+                        clone = Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
                         break;
                     case Tiles.RAMP_RIGHT:
-                        Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
+                        clone = Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    default:
                         break;
                 }
+                // Puts objects under "Level" Hierarchy.
+                clone.transform.parent = GameObject.Find("Level").transform;
 			}
 		}
     }

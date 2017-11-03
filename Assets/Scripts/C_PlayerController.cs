@@ -41,8 +41,9 @@ public class C_PlayerController : C_WorldObjectController {
 	// Use this for initialization
 	void Start () {
 		MainCameraController controller = Camera.main.GetComponent<MainCameraController> ();
-		controller.player = this.gameObject;
-		body = GetComponent<Rigidbody2D> ();
+        controller.SendMessage("PlayerSpawned", this.gameObject);
+
+        body = GetComponent<Rigidbody2D> ();
 		Manager.ObjectLog.Add (gameObject, this);
 		GrapplingState = E_GrapplingState.Detached;
     }
@@ -65,7 +66,7 @@ public class C_PlayerController : C_WorldObjectController {
 			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
 			ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
 			ActiveGrapplingHook.SetActive (true);
-			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (30 * Mathf.Cos((float)vangle), 30 * Mathf.Sin((float)vangle));
+			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (50 * Mathf.Cos((float)vangle), 50 * Mathf.Sin((float)vangle));
 		}
 
 		if ((Input.GetMouseButtonDown(1)) && (ActiveGrapplingHook != null)) {
