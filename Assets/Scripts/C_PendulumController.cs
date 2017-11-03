@@ -13,26 +13,17 @@ class VectorD2 {
 }
 
 public class Pivot {
-	public enum Direction { Neg, Pos, UNDEF };
-	public bool isOrigin;
 	public Pivot Parent;
-	public float ParentAngle;
-	public float ParentLen;
 	public Vector2 Position;
 
 	public Pivot(Vector2 position){
 		Position = position;
-		isOrigin = true;
 		Parent = null;
-		ParentAngle = 0;
 	}
 
-	public Pivot(Vector2 position, Pivot parent, float angle,float parentLen){
+	public Pivot(Vector2 position, Pivot parent){
 		Position = position;
-		isOrigin = false;
 		Parent = parent;
-		ParentAngle = angle;
-		ParentLen = parentLen;
 	}
 }
 
@@ -46,6 +37,23 @@ public class C_PendulumController {
 		Pendulum = body;
 		Player = player;
 		Radius = (float)Trig.GetHyp (origin.x - body.position.x, origin.y - body.position.y);
+
+		Pivot pivot = Pivots [Pivots.Count - 1];
+
+
+		Vector2 line2pend = Pendulum.position - pivot.Position;
+		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
+
+		while (Manager.ObjectLog [collidee.collider.gameObject] != Player) {
+			Vector2 directionVec = (Pendulum.position - new Vector2 (collidee.collider.bounds.center.x, collidee.collider.bounds.center.y));
+			directionVec.Normalize ();
+			pivot.Position = pivot.Position + (0.2f * directionVec);
+			while (collidee.collider.bounds.Contains (pivot.Position)) {
+				pivot.Position += 0.2f * directionVec;
+			} 
+			line2pend = Pendulum.position - pivot.Position;
+			collidee = Physics2D.Raycast (pivot.Position, line2pend);
+		}
 	}
 
 	public void Update(){
@@ -68,33 +76,22 @@ public class C_PendulumController {
 		Vector2 line2pend = Pendulum.position - pivot.Position;
 		double angle = Trig.GetAngle (line2pend);
 		RaycastHit2D collidee = Physics2D.Raycast (pivot.Position, line2pend);
-		if (Manager.ObjectLog [collidee.collider.gameObject] != Player) {
-			Vector2 line2collision = collidee.point - pivot.Position;
-			float angle2collision = (float)Trig.GetAngle (line2collision);
-			double tangentialV = -1 * (Pendulum.velocity.x * Math.Sin (angle)) + (Pendulum.velocity.y * Math.Cos (angle));
-			double perpindicularAngle;
-			if (tangentialV < 0) {
-				perpindicularAngle = angle2collision + (Math.PI / 2);
-			} else {
-				perpindicularAngle = angle2collision - (Math.PI / 2);
+		if (Manager.ObjectLog [collidee.collider.gameObject] != Player) {	
+			if (collidee.collider.bounds.Contains (Pivots[Pivots.Count - 1].Position)) {
+				throw new Exception ("pivot inside of bounding box");
+			}
+			Vector2 directionVec = (collidee.point - new Vector2 (collidee.collider.bounds.center.x, collidee.collider.bounds.center.y));
+			directionVec.Normalize ();
+			Vector2 collisionPoint = collidee.point + (0.1f * directionVec);
+			while (collidee.collider.bounds.Contains (collisionPoint)) {
+				 collisionPoint += 0.1f * directionVec;
 			}
 
-			if (perpindicularAngle > (Math.PI * 2)) {
-				perpindicularAngle -= Math.PI * 2;
-			} else if (perpindicularAngle < 0) {
-				perpindicularAngle += Math.PI * 2;
+			Vector2 line2collision =  collisionPoint - pivot.Position;
+			Pivots.Add (new Pivot (collisionPoint, pivot));
+			if (collidee.collider.bounds.Contains (Pivots[Pivots.Count - 1].Position)) {
+				throw new Exception ("pivot inside of bounding box");
 			}
-			Vector2 collisionPoint = collidee.point;
-			collisionPoint.x += (float)(0.1 * Math.Cos (perpindicularAngle));
-			collisionPoint.y += (float)(0.1 * Math.Sin (perpindicularAngle));
-			line2collision =  collisionPoint - pivot.Position;
-			angle2collision = (float)Trig.GetAngle (line2collision);
-			if (line2collision.magnitude > Radius) {
-				collisionPoint.x = (float)(Radius * Math.Cos (angle2collision) + pivot.Position.x);
-				collisionPoint.y = (float)(Radius * Math.Sin (angle2collision) + pivot.Position.y);
-			}
-			line2collision =  collisionPoint - pivot.Position;
-			Pivots.Add (new Pivot (collisionPoint, pivot, (float)angle2collision, line2collision.magnitude));
 			Radius -= line2collision.magnitude;
 		} else {
 			if (Pivots.Count > 1) {

@@ -45,9 +45,15 @@ public class GrapplingHookController : C_WorldObjectController {
 
 	void OnCollisionEnter2D(Collision2D collision){
 		if ( Manager.ObjectLog[collision.gameObject].GetType() == typeof(TileController)) {
-			Vector2 direction = collision.contacts[0].point -  Body.position;
-			direction = -direction/direction.magnitude;
-			Pivots [0].Position = collision.contacts[0].point + (direction * 0.1f);
+			Collider2D collidee = collision.collider;
+			Vector2 directionVec = (PlayerBody.position - new Vector2 (collidee.bounds.center.x, collidee.bounds.center.y));
+			directionVec.Normalize ();
+			Vector2 collisionPoint = collision.contacts[0].point + (0.1f * directionVec);
+			while (collidee.bounds.Contains (collisionPoint)) {
+				collisionPoint += 0.1f * directionVec;
+			} 
+				
+			Pivots [0].Position = collisionPoint;
 			PlayerObject.CreateAnchor (Pivots [0].Position.x, Pivots [0].Position.y, RopeLine);
 			Body.simulated = false;
 			Active = false;
