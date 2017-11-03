@@ -83,7 +83,7 @@ public class C_PendulumController {
 			} 
 		}
 			
-		Radius = (pivot.Position - Pendulum.position).magnitude;
+		Radius = (Pivots[Pivots.Count -1].Position - Pendulum.position).magnitude;
 	}
 
 	RaycastHit2D GetHits(Vector2 one, Vector2 two, RaycastHit2D empty){
@@ -163,7 +163,7 @@ public class C_PendulumController {
 			if (Pivots.Count > 1) {
 				RaycastHit2D[] hits = Physics2D.LinecastAll (Pendulum.position, Pivots [Pivots.Count - 2].Position);
 				if (hits.Length == 1) {
-					Radius = (Pivots [Pivots.Count - 2].Position - Pendulum.position).magnitude;
+					Radius += (Pivots [Pivots.Count - 2].Position - (Pivots [Pivots.Count - 1].Position)).magnitude;
 					Pivots.Remove (pivot);
 				}
 			}
