@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public delegate void InputUpdate();
 public delegate void FixedUpdate();
@@ -18,6 +20,7 @@ public class C_PlayerController : C_WorldObjectController {
 	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
 	public Vector2 spawn;
+	private bool onSlope;
 
 
 	public float Xaccel = 25;
@@ -98,7 +101,11 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void FixedUpdate (){
-        RaycastHit2D[] lineGround = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
+        RaycastHit2D[] lineGroundDown = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
+        var lineGroundRight = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), new Vector2(1, -1));
+        var lineGroundLeft = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), new Vector2(-1, -1));
+		var lineGround = lineGroundDown.Concat(lineGroundRight).Concat(lineGroundLeft).ToList();
+		lineGround.Sort((x, y) => x.distance.CompareTo(y.distance));
 		RaycastHit2D nearestTile = lineGround[0];
 
         bool found = false;
@@ -144,12 +151,21 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 	void GroundFixedUpdate() {
-        // What if players could accelerate while in the air?
+		if (onSlope)
+		{
+			Debug.Log("yup");
+			body.AddForce(-Physics2D.gravity * Math.Abs(Input.GetAxis("Horizontal")) * Xaccel);
+		}
+
+		// What if players could accelerate while in the air?
 		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Xaccel;
 		body.AddForce(direction);
 	}
 
 	void FreeFixedUpdate() {
+		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Xaccel/3;
+		body.AddForce(direction);
+
 
 	}
 
@@ -169,6 +185,22 @@ public class C_PlayerController : C_WorldObjectController {
 			ActiveGrapplingHook = null;
 			body.position = spawn;
 			body.velocity = new Vector2 (0, 0); 
+		}
+	}
+
+	private void OnCollisionEnter2D(Collision2D other)
+	{
+		if (other.gameObject.CompareTag("Slope"))
+		{
+			onSlope = true;
+		}
+	}
+
+	private void OnCollisionExit2D(Collision2D other)
+	{
+		if (other.gameObject.CompareTag("Slope"))
+		{
+			onSlope = false;
 		}
 	}
 }
