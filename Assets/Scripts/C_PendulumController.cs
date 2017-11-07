@@ -67,38 +67,49 @@ public class C_PendulumController {
 		Vector2 secondaryAnchor;
 		if (Pivots.Count > 1) {
 			secondaryAnchor = Pivots [1].Position;
+			if ((secondaryAnchor - pivot.Position).magnitude < 0.75) {
+				Pivots.Remove (Pivots [1]);
+				secondaryAnchor = Pendulum.position;
+			}
 		} else {
 			secondaryAnchor = Pendulum.position;
 		}
 
 		RaycastHit2D empty = new RaycastHit2D ();
-		RaycastHit2D result;
+		RaycastHit2D result = new RaycastHit2D ();
+		Loop.WhileOrFor (() => ((result = GetHits (pivot.Position, secondaryAnchor, empty)) != empty),
+			() => {
+				Vector2 directionVec = (secondaryAnchor - new Vector2 (result.collider.bounds.center.x, result.collider.bounds.center.y));
 
-		while ((result = GetHits(pivot.Position, secondaryAnchor, empty)) != empty) {
-			Vector2 directionVec = (secondaryAnchor - new Vector2 (result.collider.bounds.center.x, result.collider.bounds.center.y));
-			directionVec.Normalize ();
-			pivot.Position = pivot.Position + (0.2f * directionVec);
-			while (result.collider.bounds.Contains (pivot.Position)) {
-				pivot.Position += 0.2f * directionVec;
-			} 
-		}
-			
+				directionVec.Normalize ();
+				pivot.Position = pivot.Position + (0.2f * directionVec);
+				while (result.collider.bounds.Contains (pivot.Position)) {
+					pivot.Position += 0.2f * directionVec;
+				}
+			}, 100);
+				
+		Hook.transform.position = pivot.Position;
 		Radius = (Pivots[Pivots.Count -1].Position - Pendulum.position).magnitude;
 	}
 
 	RaycastHit2D GetHits(Vector2 one, Vector2 two, RaycastHit2D empty){
 		RaycastHit2D[] hits = Physics2D.LinecastAll (one, two);
+		RaycastHit2D temp = empty;
 		foreach (RaycastHit2D hit in hits) {
 			if (Manager.ObjectLog [hit.collider.gameObject] != Player) {
-				return hit;
+				if (temp == empty) {
+					temp = hit;
+				} else if (hit.distance < temp.distance) {
+					temp = hit;
+				}
 			} 
 		}
-		return empty;
+		return temp;
 	}
 		
 
 	public void Update(){
-		float y = Input.GetAxis ("Vertical");
+		float y = Player.PlayerInput.GetAxis ("Vertical");
 		if (y > 0) {
 			if (Radius - y > 0.1) {
 				Radius -= y;
@@ -108,7 +119,7 @@ public class C_PendulumController {
 		} else {
 			Radius -= y;
 		}
-		float x = Input.GetAxis ("Horizontal");
+		float x = Player.PlayerInput.GetAxis ("Horizontal");
 		Player.AngularAccel = x;
 	}
 

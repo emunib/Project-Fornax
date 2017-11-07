@@ -33,7 +33,6 @@ public class LevelBuilder : MonoBehaviour
 	void Awake()
 	{
         //CellularAutomata();
-
         //BuildMap();
         PlatformGenerator pg = new PlatformGenerator();
         replaceArea(5, 0, pg.CreateIsland(40, 40));

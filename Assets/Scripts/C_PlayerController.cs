@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.Reflection;
 
 public delegate void InputUpdate();
 public delegate void FixedUpdate();
@@ -18,7 +19,7 @@ public class C_PlayerController : C_WorldObjectController {
 	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
 	public Vector2 spawn;
-
+	public C_Controller PlayerInput;
 
 	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -47,12 +48,14 @@ public class C_PlayerController : C_WorldObjectController {
 		Manager.ObjectLog.Add (gameObject, this);
 		GrapplingState = E_GrapplingState.Detached;
 		InvokeRepeating ("MapCheck", 0f, 0.5f);
+
+		PlayerInput = new C_Controller (PlayerManager.AddPlayer (this));
     }
 	
 	// Update is called once per frame
 	void Update () {
 		InputUpdates [PlayerInputState] ();
-		if (Input.GetMouseButtonDown(0)) {
+		if (PlayerInput.GetButtonDown("Fire1")) {
 			if (ActiveGrapplingHook != null) {
 				GrapplingState = E_GrapplingState.Detached;
 				if (PlayerInputState == E_PlayerInputState.Swinging) {
@@ -70,7 +73,7 @@ public class C_PlayerController : C_WorldObjectController {
 			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (30 * Mathf.Cos((float)vangle), 30 * Mathf.Sin((float)vangle));
 		}
 
-		if ((Input.GetMouseButtonDown(1)) && (ActiveGrapplingHook != null)) {
+		if ((PlayerInput.GetButtonDown("Fire2")) && (ActiveGrapplingHook != null)) {
 			GrapplingState = E_GrapplingState.Detached;
 			GameObject.Destroy (ActiveGrapplingHook);
 			ActiveGrapplingHook = null;
@@ -82,7 +85,7 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void GroundUpdate(){
-		if (Input.GetAxis("Vertical") > 0)
+		if (PlayerInput.GetAxis("Vertical") > 0)
 			body.AddForce (Vector2.up * -Physics.gravity.y, ForceMode2D.Impulse);
 	}
 
@@ -145,7 +148,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void GroundFixedUpdate() {
         // What if players could accelerate while in the air?
-		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Xaccel;
+		Vector3 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
 		body.AddForce(direction);
 	}
 

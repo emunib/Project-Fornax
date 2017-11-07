@@ -20,3 +20,19 @@ public class Trig {
 		return Math.Sqrt ((Math.Pow (x, 2) + Math.Pow (y, 2)));
 	}
 }
+
+
+
+
+public class Loop {
+	public delegate bool rbool();
+	public delegate void rvoid();
+	public static void WhileOrFor(rbool condition, rvoid body, int count){
+		while (condition ()) {
+			if (count-- < 0) {
+				throw new Exception ("Max iteration reached");
+			}
+			body ();
+		}
+	}
+}
