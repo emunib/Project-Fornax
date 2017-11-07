@@ -21,6 +21,7 @@ public class C_PlayerController : C_WorldObjectController {
     LineRenderer RopeLine;
 	public Vector2 spawn;
 	public C_Controller PlayerInput;
+	bool onSlope;
 
 	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -159,12 +160,12 @@ public class C_PlayerController : C_WorldObjectController {
 		}
 
 		// What if players could accelerate while in the air?
-		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Xaccel;
+		Vector3 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
 		body.AddForce(direction);
 	}
 
 	void FreeFixedUpdate() {
-		Vector3 direction = new Vector2 (Input.GetAxis ("Horizontal"), 0) * Xaccel/3;
+		Vector3 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel/3;
 		body.AddForce(direction);
 
 
@@ -191,17 +192,21 @@ public class C_PlayerController : C_WorldObjectController {
 
 	private void OnCollisionEnter2D(Collision2D other)
 	{
+		/*
 		if (other.gameObject.CompareTag("Slope"))
 		{
 			onSlope = true;
 		}
+		*/
 	}
 
 	private void OnCollisionExit2D(Collision2D other)
 	{
+		/*
 		if (other.gameObject.CompareTag("Slope"))
 		{
 			onSlope = false;
 		}
+		*/
 	}
 }
