@@ -7,11 +7,13 @@ public class MainCameraController : MonoBehaviour {
 
 
     private Vector3 offset;         //Private variable to store the offset distance between the player and camera
+	int ticker;
 
     // Use this for initialization
     void Start()
     {
         offset.z = -10;
+		ticker = 0;
     }
 
     // LateUpdate is called after Update each frame
@@ -20,52 +22,67 @@ public class MainCameraController : MonoBehaviour {
 
 		Vector3 min = Camera.main.ScreenToWorldPoint (Camera.main.pixelRect.min);
 		Vector3 max = Camera.main.ScreenToWorldPoint (Camera.main.pixelRect.max); 
+		float screenWidth = max.x - min.x;
+		float screenHeight = max.y - min.y;
+
 		Vector2 position = new Vector2(0,0);
 		bool shouldIncrease = false;
 		bool shouldDecrease = false;
+
 		Vector2 playermin = new Vector2 (float.MaxValue, float.MaxValue);
 		Vector2 playermax = new Vector2(float.MinValue , float.MinValue);
+
 		foreach (C_PlayerController player in PlayerManager.PlayerLog) {
 			float x = player.body.position.x;
 			float y = player.body.position.y;
+
 			position += player.body.position;
+
 			playermin.x = Mathf.Min (playermin.x, x);
 			playermin.y = Mathf.Min (playermin.y, y);
 			playermax.x = Mathf.Max (playermax.x, x);
 			playermax.y = Mathf.Max (playermax.y, y);
 		}
 
-		if ((playermin.x < (min.x * 1.1f))) {
+		const float increaseBounds = 0.1f;
+		const float decreaseBounds = 0.4f;
+		if (playermin.x < (min.x + (increaseBounds * screenWidth))) {
 			shouldIncrease = true;
-		} else if ((playermin.x - min.x) > 0.4 * (max.x - min.x)) {
+		} else if ((playermin.x - min.x) > (decreaseBounds * screenWidth)) {
 			shouldDecrease = true;
 		}
 
-		if (playermin.y < (min.y * 1.1f)) {
+		if (playermin.y < (min.y + (increaseBounds * screenHeight))) {
 				shouldIncrease = true;
-		} else if ((playermin.y - min.y) > 0.4 * (max.y - min.y)) {
+		} else if ((playermin.y - min.y) > (decreaseBounds * screenHeight)) {
 				shouldDecrease = true;
 		}
 
-		if ((playermax.x > (max.x * 0.9f)) ) {
+		if ((playermax.x > (max.x - (increaseBounds * screenWidth))) ) {
 			shouldIncrease = true;
-		} else if ((max.x - playermax.x) > 0.4 * (max.x - min.x)) {
+		} else if ((max.x - playermax.x) > (decreaseBounds * screenWidth)) {
 			shouldDecrease = true;
 		}
 
-		if (playermax.y > (max.y * 0.9f)) {
+		if (playermax.y > (max.y - (increaseBounds * screenHeight))) {
 			shouldIncrease = true;
-		} else if ((max.y - playermax.y) > 0.4 * (max.y - min.y)) {
+		} else if ((max.y - playermax.y) > (decreaseBounds * screenHeight)) {
 			shouldDecrease = true;
 		}
-	
-
-		if (shouldIncrease) {
-			Camera.main.orthographicSize *= 1.02f;
-		} else if (shouldDecrease) {
+	 
+		if ((shouldIncrease) && (ticker >= 0)) {
+			Camera.main.orthographicSize *= 1.01f;
+			ticker = 100;
+		} else if ((shouldDecrease) && (ticker <= 0)) {
 			if (Camera.main.orthographicSize > 10) {
 				Camera.main.orthographicSize *= 0.99f;
 			}
+			ticker = -50;
+		} else {
+			if (ticker > 0)
+				ticker--;
+			else if (ticker < 0)
+				ticker++; 
 		}
 
 		position = position / PlayerManager.PlayerLog.Count;
