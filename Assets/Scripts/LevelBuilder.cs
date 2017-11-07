@@ -42,6 +42,7 @@ public class LevelBuilder : MonoBehaviour
         replaceArea(145, 55, pg.CreateIsland(30, 60));
         replaceArea(100, 5, pg.CreateIsland(30, 60));
         map[0, width / 2] = 2;
+		map[0, width / 3] = 2;
 
         for (int x = 0; x < width; x++)
 		{

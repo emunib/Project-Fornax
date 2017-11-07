@@ -9,7 +9,9 @@ public class C_Controller {
 		"Vertical",
 		"Horizontal",
 		"Fire1",
-		"Fire2"
+		"Fire2",
+		"Horizontal_r",
+		"Vertical_r",
 	};
 	public C_Controller(int id) {
 		foreach (string str in Axes) {

@@ -21,7 +21,7 @@ public class C_PlayerController : C_WorldObjectController {
     LineRenderer RopeLine;
 	public Vector2 spawn;
 	public C_Controller PlayerInput;
-	bool onSlope;
+	bool onSlope = false;
 
 	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -44,8 +44,6 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 	// Use this for initialization
 	void Start () {
-		MainCameraController controller = Camera.main.GetComponent<MainCameraController> ();
-		controller.player = this.gameObject;
 		body = GetComponent<Rigidbody2D> ();
 		Manager.ObjectLog.Add (gameObject, this);
 		GrapplingState = E_GrapplingState.Detached;
@@ -65,14 +63,13 @@ public class C_PlayerController : C_WorldObjectController {
 				}
 				GameObject.Destroy (ActiveGrapplingHook);
             }
-            Vector3 v3 = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-			float vx = v3.x - body.position.x;
-			float vy = v3.y - body.position.y;
-			double vangle = Trig.GetAngle (new Vector2(vx,vy));
+			Vector2 dirVec = new Vector2 (PlayerInput.GetAxis ("Horizontal_r"), (PlayerInput.GetAxis ("Vertical_r")));
+			dirVec.Normalize ();
+			double vangle = Trig.GetAngle (dirVec);
 			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
 			ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
 			ActiveGrapplingHook.SetActive (true);
-			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (30 * Mathf.Cos((float)vangle), 30 * Mathf.Sin((float)vangle));
+			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (30 * dirVec.x, 30 * dirVec.y);
 		}
 
 		if ((PlayerInput.GetButtonDown("Fire2")) && (ActiveGrapplingHook != null)) {
@@ -156,16 +153,16 @@ public class C_PlayerController : C_WorldObjectController {
 		if (onSlope)
 		{
 			Debug.Log("yup");
-			body.AddForce(-Physics2D.gravity * Math.Abs(Input.GetAxis("Horizontal")) * Xaccel);
+			body.AddForce(-Physics2D.gravity * Math.Abs(PlayerInput.GetAxis("Horizontal")) * Xaccel);
 		}
 
 		// What if players could accelerate while in the air?
-		Vector3 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
+		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
 		body.AddForce(direction);
 	}
 
 	void FreeFixedUpdate() {
-		Vector3 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel/3;
+		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel/3;
 		body.AddForce(direction);
 
 
