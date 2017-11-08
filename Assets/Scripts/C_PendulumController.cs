@@ -81,7 +81,7 @@ public class C_PendulumController {
 				//Too avoid this delete the offending pivot and set the secondary anchor to the next pivot inline
 				Pivots.Remove (Pivots [1]);
 				if (Pivots.Count > 1) {
-					secondaryAnchor = Pivots [1];
+					secondaryAnchor = Pivots [1].Position;
 				} else {
 					secondaryAnchor = Pendulum.position;
 				}

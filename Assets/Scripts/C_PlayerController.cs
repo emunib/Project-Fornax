@@ -22,6 +22,7 @@ public class C_PlayerController : C_WorldObjectController {
 	public Vector2 spawn;
 	public C_Controller PlayerInput;
 	bool onSlope = false;
+	public Animator anim;
 
 	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -49,11 +50,15 @@ public class C_PlayerController : C_WorldObjectController {
 		GrapplingState = E_GrapplingState.Detached;
 		InvokeRepeating ("MapCheck", 0f, 0.5f);
 
+		anim = GetComponent<Animator> ();
 		PlayerInput = new C_Controller (PlayerManager.AddPlayer (this));
     }
-	
+
 	// Update is called once per frame
 	void Update () {
+
+
+		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 		InputUpdates [PlayerInputState] ();
 		if (PlayerInput.GetButtonDown("Fire1")) {
 			if (ActiveGrapplingHook != null) {
