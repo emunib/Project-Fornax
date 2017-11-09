@@ -44,7 +44,7 @@ public class C_PendulumController {
 		Pivots = hook.Pivots;
 		Pendulum = hook.Body;
 		Player = player;
-		Radius = 20;
+		Radius = 30;
 		AnchorObject = player;
 		PendulumObject = hook;
 		Anchor = Player.body;

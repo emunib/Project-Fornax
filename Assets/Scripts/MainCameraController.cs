@@ -46,6 +46,7 @@ public class MainCameraController : MonoBehaviour {
 
 		const float increaseBounds = 0.1f;
 		const float decreaseBounds = 0.4f;
+
 		if (playermin.x < (min.x + (increaseBounds * screenWidth))) {
 			shouldIncrease = true;
 		} else if ((playermin.x - min.x) > (decreaseBounds * screenWidth)) {
@@ -71,13 +72,13 @@ public class MainCameraController : MonoBehaviour {
 		}
 	 
 		if ((shouldIncrease) && (ticker >= 0)) {
-			Camera.main.orthographicSize *= 1.01f;
+			Camera.main.orthographicSize *= 1.02f;
 			ticker = 100;
 		} else if ((shouldDecrease) && (ticker <= 0)) {
 			if (Camera.main.orthographicSize > 10) {
 				Camera.main.orthographicSize *= 0.99f;
 			}
-			ticker = -50;
+			ticker = -20;
 		} else {
 			if (ticker > 0)
 				ticker--;

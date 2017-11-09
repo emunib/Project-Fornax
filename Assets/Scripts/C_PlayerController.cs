@@ -56,8 +56,6 @@ public class C_PlayerController : C_WorldObjectController {
 
 	// Update is called once per frame
 	void Update () {
-
-
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 		InputUpdates [PlayerInputState] ();
 		if (PlayerInput.GetButtonDown("Fire1")) {
@@ -74,7 +72,7 @@ public class C_PlayerController : C_WorldObjectController {
 			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
 			ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
 			ActiveGrapplingHook.SetActive (true);
-			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (30 * dirVec.x, 30 * dirVec.y);
+			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (100 * dirVec.x, 100 * dirVec.y);
 		}
 
 		if ((PlayerInput.GetButtonDown("Fire2")) && (ActiveGrapplingHook != null)) {
@@ -90,7 +88,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void GroundUpdate(){
 		if (PlayerInput.GetAxis("Vertical") > 0)
-			body.AddForce (Vector2.up * -Physics.gravity.y, ForceMode2D.Impulse);
+			body.AddForce ((Vector2.up * -Physics.gravity.y) / gameObject.transform.localScale.y, ForceMode2D.Impulse);
 	}
 
 	public void SwingingUpdate(){
@@ -128,9 +126,9 @@ public class C_PlayerController : C_WorldObjectController {
 			}
 		}
 		if (found) {
-			if ((nearestTile.distance > 0.6) && (PlayerInputState == E_PlayerInputState.Ground)) {
+			if ((nearestTile.distance > gameObject.transform.localScale.y * 0.6) && (PlayerInputState == E_PlayerInputState.Ground)) {
 				LeftGround ();
-			} else if ((nearestTile.distance <= 0.6) && (PlayerInputState != E_PlayerInputState.Ground)) {
+			} else if ((nearestTile.distance <= gameObject.transform.localScale.y * 0.6) && (PlayerInputState != E_PlayerInputState.Ground)) {
 				Debug.Log ("Hit Ground");
 				PlayerInputState = E_PlayerInputState.Ground;
 			}
@@ -163,6 +161,15 @@ public class C_PlayerController : C_WorldObjectController {
 
 		// What if players could accelerate while in the air?
 		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
+		if (PlayerInput.GetAxis ("Horizontal") > 0) {
+			if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
+				gameObject.GetComponent<SpriteRenderer> ().flipX = true;
+			} 
+		} else {
+			if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
+				gameObject.GetComponent<SpriteRenderer> ().flipX = false;
+			} 
+		}
 		body.AddForce(direction);
 	}
 
