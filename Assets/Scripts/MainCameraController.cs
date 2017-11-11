@@ -24,7 +24,7 @@ public class MainCameraController : MonoBehaviour
 			playermax.y = Mathf.Max(playermax.y, y);
 		}
 		// you can change playermin.y to the y coordinate of the lowest platform and the camera
-		// will keep it view, the camera will zoom 'upwards' with the bottom fixed to the platform
+		// will keep it view, the camera will zoom out 'upwards' with the bottom edge fixed to the platform
 
 		// differnce between the two positions
 		var diff = playermax - playermin;
@@ -32,11 +32,26 @@ public class MainCameraController : MonoBehaviour
 		// the center between the two positions
 		var pos = (playermax + playermin) / 2;
 
-		// resize camera to fit all players with a bit to spare
-		Camera.main.orthographicSize = Mathf.Max(diff.x/Camera.main.aspect, diff.y)/2 + 6;
+		// the distance the camera is off center of the two positions
+		var offset = new Vector2(transform.position.x, transform.position.y) - pos;
+		offset = new Vector2(Math.Abs(offset.y), Math.Abs(offset.y));
 		
-		// reposition the camera in the center of players
-		transform.position = new Vector3(pos.x, pos.y, -10);
+		// resize camera to fit all players with a bit to spare
+		// offset is taken into account since players may cut off if the camera if off center
+		// this if compensated for by zooming out more if required
+		var targetValue = Mathf.Max(diff.x/Camera.main.aspect, diff.y)/2 + Mathf.Max(offset.x/Camera.main.aspect, offset.y + 15);
+		var zoomSpeed = 0f;
+		
+		// zoom out quick, zoom in a bit more slowly
+		var smoothTime = targetValue > Camera.main.orthographicSize ? .08f : .25f;
+		
+		// gradaully resize camera
+		Camera.main.orthographicSize = Mathf.SmoothDamp (Camera.main.orthographicSize, targetValue, ref zoomSpeed, smoothTime);
+
+		// gradually move camera to the center of players
+		Vector3 speed = Vector3.zero;
+		Vector3 newPos = Vector3.SmoothDamp (transform.position, new Vector3(pos.x, pos.y, -10), ref speed, 0.1f);
+		transform.position = newPos;
 	}
 }
 	
