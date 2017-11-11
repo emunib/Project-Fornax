@@ -104,8 +104,8 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void FixedUpdate (){
         RaycastHit2D[] lineGroundDown = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), Vector2.down);
-        var lineGroundRight = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), new Vector2(1, -1));
-        var lineGroundLeft = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), new Vector2(-1, -1));
+        var lineGroundRight = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), new Vector2(1, -3));
+        var lineGroundLeft = Physics2D.RaycastAll (new Vector2 (body.position.x, body.position.y), new Vector2(-1, -3));
 		var lineGround = lineGroundDown.Concat(lineGroundRight).Concat(lineGroundLeft).ToList();
 		lineGround.Sort((x, y) => x.distance.CompareTo(y.distance));
 		RaycastHit2D nearestTile = lineGround[0];
@@ -125,6 +125,7 @@ public class C_PlayerController : C_WorldObjectController {
 				}
 			}
 		}
+		
 		if (found) {
 			if ((nearestTile.distance > gameObject.transform.localScale.y * 0.6) && (PlayerInputState == E_PlayerInputState.Ground)) {
 				LeftGround ();
@@ -155,7 +156,6 @@ public class C_PlayerController : C_WorldObjectController {
 	void GroundFixedUpdate() {
 		if (onSlope)
 		{
-			Debug.Log("yup");
 			body.AddForce(-Physics2D.gravity * Math.Abs(PlayerInput.GetAxis("Horizontal")) * Xaccel);
 		}
 
@@ -201,21 +201,21 @@ public class C_PlayerController : C_WorldObjectController {
 
 	private void OnCollisionEnter2D(Collision2D other)
 	{
-		/*
+		
 		if (other.gameObject.CompareTag("Slope"))
 		{
 			onSlope = true;
 		}
-		*/
+		
 	}
 
 	private void OnCollisionExit2D(Collision2D other)
 	{
-		/*
+		
 		if (other.gameObject.CompareTag("Slope"))
 		{
 			onSlope = false;
 		}
-		*/
+		
 	}
 }
