@@ -14,6 +14,12 @@ public class LevelBuilder : MonoBehaviour
 	public GameObject Hazard;
     public GameObject Ramp_Left;
     public GameObject Ramp_Right;
+    public GameObject Surface;
+    public GameObject Lower_Ramp_Right;
+    public GameObject Lower_Ramp_Left;
+    public GameObject Right_Corner;
+    public GameObject Left_Corner;
+	private List<Vector2> spawnLocations = new List<Vector2>();
 
     int[,] map = new int[height, width];
 	/*int[,] map = 
@@ -36,6 +42,12 @@ public class LevelBuilder : MonoBehaviour
         //CellularAutomata();
         //BuildMap();
 		RandomPlatforms();
+		var r = Random.Range(0, spawnLocations.Count);
+		map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
+		spawnLocations.RemoveAt(r);
+		r = Random.Range(0, spawnLocations.Count);
+		map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
+		spawnLocations.RemoveAt(r);
 //        PlatformGenerator pg = new PlatformGenerator();
 //		
 //        replaceArea(5, 0, pg.CreateIsland(40, 40));
@@ -44,8 +56,6 @@ public class LevelBuilder : MonoBehaviour
 //        replaceArea(60, 40, pg.CreateIsland(20, 30));
 //        replaceArea(145, 55, pg.CreateIsland(30, 60));
 //        replaceArea(100, 5, pg.CreateIsland(30, 60));
-//        map[0, width / 2] = 2;
-//		map[0, width / 3] = 2;
 
         for (int x = 0; x < width; x++)
 		{
@@ -70,6 +80,21 @@ public class LevelBuilder : MonoBehaviour
                         break;
                     case Tiles.RAMP_RIGHT:
                         Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    case Tiles.LOWER_RAMP_LEFT:
+                        Instantiate(Lower_Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    case Tiles.LOWER_RAMP_RIGHT:
+                        Instantiate(Lower_Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    case Tiles.SURFACE_TILE:
+                        Instantiate(Surface, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    case Tiles.LEFT_CORNER:
+                        Instantiate(Left_Corner, new Vector3(x, y, 0), Quaternion.identity);
+                        break;
+                    case Tiles.RIGHT_CORNER:
+                        Instantiate(Right_Corner, new Vector3(x, y, 0), Quaternion.identity);
                         break;
                 }
 				if (clone != null) {
@@ -149,6 +174,7 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
 		replaceArea(px, py, pg.CreateIsland(ph, pw));
+		spawnLocations.Add(new Vector2(x + w - pw/2, y));
 	}
 
 	bool CheckRow(int x, int y, int w)
@@ -167,7 +193,6 @@ public class LevelBuilder : MonoBehaviour
 		}
 		return true;
 	}
-
 
     /*
      * Test of cellular automata to generate islands as platforms.

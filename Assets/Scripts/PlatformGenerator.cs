@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.WSA;
 
 public class PlatformGenerator {
 
@@ -9,6 +10,25 @@ public class PlatformGenerator {
         int[,] platform = new int[height, width];
         platform = PerlinNoiseIsland(platform);
         platform = AddRamps(platform);
+        platform = AddSurface(platform);
+        return platform;
+    }
+
+    private int[,] AddSurface(int[,] platform)
+    {
+        float platformWidth = platform.GetLength(1);
+        float platformHeight = platform.GetLength(0);
+
+        for (int i = 0; i < platformWidth; i++)
+        {
+            for (int j = 0; j < platformHeight; j++)
+            {
+                if (platform[j, i] == Tiles.GROUND_TILE && j-1 >= 0 && platform[j - 1, i] == Tiles.EMPTY_TILE)
+                {
+                    platform[j, i] = Tiles.SURFACE_TILE;
+                }
+            }
+        }
         return platform;
     }
 
@@ -31,6 +51,7 @@ public class PlatformGenerator {
                     {
                         // Add a Ramp Left tile here
                         platform[j, i] = Tiles.RAMP_LEFT;
+                        platform[j + 1, i] = Tiles.LEFT_CORNER;
                     }
                     // if bottom adjacent tile and left adjacent tile are ground tiles AND top and right tiles are empty tiles.
                     if ((platform[j + 1, i] == Tiles.GROUND_TILE)
@@ -40,6 +61,7 @@ public class PlatformGenerator {
                     {
                         // Add a Ramp Left tile here
                         platform[j, i] = Tiles.RAMP_RIGHT;
+                        platform[j + 1, i] = Tiles.RIGHT_CORNER;
                     }
                 }
             }
