@@ -12,6 +12,13 @@ public class MainCameraController : MonoBehaviour
 		Vector2 playermin = new Vector2(float.MaxValue, float.MaxValue);
 		Vector2 playermax = new Vector2(float.MinValue, float.MinValue);
 
+		// if there are no players fit camera to the platforms
+		if (PlayerManager.PlayerLog.Count == 0)
+		{
+			playermin = Vector2.zero;
+			playermax = new Vector2(LevelBuilder.width, LevelBuilder.height);
+		}
+		
 		// find the greatest and lowest player x and y coordinates
 		foreach (C_PlayerController player in PlayerManager.PlayerLog)
 		{

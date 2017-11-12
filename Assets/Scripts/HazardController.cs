@@ -18,7 +18,7 @@ public class HazardController : MonoBehaviour {
 	{
 		if (other.gameObject.CompareTag("Player"))
 		{
-			Destroy(other.gameObject);
+			other.rigidbody.AddForce((other.contacts[0].point-new Vector2(transform.position.x, transform.position.y)).normalized * 50, ForceMode2D.Impulse);
 			Destroy(gameObject);
 		}
 	}

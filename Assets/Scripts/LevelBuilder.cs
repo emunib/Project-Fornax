@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
 {
-	public static int width = 200;
-	public static int height = 100;
+	public static int width = 230;
+	public static int height = 120;
 
 	public GameObject GTile;
 	public GameObject Player;
@@ -27,22 +28,24 @@ public class LevelBuilder : MonoBehaviour
 		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
 		{1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}
 	};
-    */
+    */   
 
 	// Use this for initialization
 	void Awake()
 	{
         //CellularAutomata();
         //BuildMap();
-        PlatformGenerator pg = new PlatformGenerator();
-        replaceArea(5, 0, pg.CreateIsland(40, 40));
-        replaceArea(10, 50, pg.CreateIsland(20, 40));
-        replaceArea(80, 70, pg.CreateIsland(30, 50));
-        replaceArea(60, 40, pg.CreateIsland(20, 30));
-        replaceArea(145, 55, pg.CreateIsland(30, 60));
-        replaceArea(100, 5, pg.CreateIsland(30, 60));
-        map[0, width / 2] = 2;
-		map[0, width / 3] = 2;
+		RandomPlatforms();
+//        PlatformGenerator pg = new PlatformGenerator();
+//		
+//        replaceArea(5, 0, pg.CreateIsland(40, 40));
+//        replaceArea(10, 50, pg.CreateIsland(20, 40));
+//        replaceArea(80, 70, pg.CreateIsland(30, 50));
+//        replaceArea(60, 40, pg.CreateIsland(20, 30));
+//        replaceArea(145, 55, pg.CreateIsland(30, 60));
+//        replaceArea(100, 5, pg.CreateIsland(30, 60));
+//        map[0, width / 2] = 2;
+//		map[0, width / 3] = 2;
 
         for (int x = 0; x < width; x++)
 		{
@@ -76,6 +79,7 @@ public class LevelBuilder : MonoBehaviour
 		}
     }
 
+
     // Replaces elements of map with elements of array at location x,y
     void replaceArea(int x, int y, int[,] array)
     {
@@ -93,7 +97,76 @@ public class LevelBuilder : MonoBehaviour
             }
         }
     }
-    
+
+
+	void RandomPlatforms()
+	{
+		var x = 0;
+		var y = 0;
+		int w, h, hs, vs;
+		var flag = true;
+
+		while (flag)
+		{
+			flag = false;
+			while (true)
+			{
+				w = Random.Range(10, 80);
+				h = Random.Range(15, 50);
+				hs = Random.Range(10, 30);
+				vs = Random.Range(5, 20);
+
+				if (x + hs + w >= width)
+				{
+					break;
+				}
+
+				if (CheckRow(x, y+h+hs, w+hs))
+				{
+					AddBlock(x, y, hs + w, vs + h, x + hs, y + vs, w, h);
+					flag = true;
+				}
+				x += hs + w;
+			}
+			x = 0;
+		}
+	}
+
+	void AddBlock(int x, int y, int w, int h, int px, int py, int pw, int ph)
+	{
+		while (CheckRow(x, y+h, w))
+		{
+			y++;
+			py++;
+		}
+		PlatformGenerator pg = new PlatformGenerator();
+
+		for (int i = 0; i < w; i++)
+		{
+			for (int j = 0; j < h; j++)
+			{
+				map[y + j, x + i] = Tiles.SPACING;
+			}
+		}
+		replaceArea(px, py, pg.CreateIsland(ph, pw));
+	}
+
+	bool CheckRow(int x, int y, int w)
+	{
+		if (y >= height || x+w >= width)
+		{
+			return false;
+		}
+		
+		for (int i = 0; i < w; i++)
+		{
+			if (map[y, x+i] != Tiles.EMPTY_TILE)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 
 
     /*

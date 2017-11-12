@@ -4,6 +4,7 @@ using UnityEngine;
 
 public static class Tiles {
 
+    public const int SPACING = -1;
     public const int EMPTY_TILE = 0;
     public const int GROUND_TILE = 1;
     public const int PLAYER = 2;
