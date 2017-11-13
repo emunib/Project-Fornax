@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 
 public class LevelBuilder : MonoBehaviour
@@ -9,7 +7,8 @@ public class LevelBuilder : MonoBehaviour
 	public static int width = 230;
 	public static int height = 120;
 
-	public GameObject GTile;
+	public GameObject Ground;
+	public GameObject InnerGround;
 	public GameObject Player;
 	public GameObject Hazard;
     public GameObject Ramp_Left;
@@ -39,33 +38,19 @@ public class LevelBuilder : MonoBehaviour
 	// Use this for initialization
 	void Awake()
 	{
-        //CellularAutomata();
-        //BuildMap();
-		RandomPlatforms();
-		var r = Random.Range(0, spawnLocations.Count);
-		map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
-		spawnLocations.RemoveAt(r);
-		r = Random.Range(0, spawnLocations.Count);
-		map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
-		spawnLocations.RemoveAt(r);
-//        PlatformGenerator pg = new PlatformGenerator();
-//		
-//        replaceArea(5, 0, pg.CreateIsland(40, 40));
-//        replaceArea(10, 50, pg.CreateIsland(20, 40));
-//        replaceArea(80, 70, pg.CreateIsland(30, 50));
-//        replaceArea(60, 40, pg.CreateIsland(20, 30));
-//        replaceArea(145, 55, pg.CreateIsland(30, 60));
-//        replaceArea(100, 5, pg.CreateIsland(30, 60));
+		RandomizePlatforms();
+		SpawnPlayers(2);
+		OptimizeInnerTiles();
+		
 
         for (int x = 0; x < width; x++)
 		{
 			for (int y = 0; y < height; y++)
 			{
-				GameObject clone = null;
 				switch (map[height - y - 1, x])
 				{
 					case Tiles.GROUND_TILE:
-						Instantiate(GTile, new Vector3(x, y, 0), Quaternion.identity);
+						Instantiate(Ground, new Vector3(x, y, 0), Quaternion.identity);
 						break;
 					case Tiles.PLAYER:
 						GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity);
@@ -97,15 +82,22 @@ public class LevelBuilder : MonoBehaviour
                         Instantiate(Right_Corner, new Vector3(x, y, 0), Quaternion.identity);
                         break;
                 }
-				if (clone != null) {
-					clone.transform.parent = GameObject.Find("Level").transform;
-				}
 			}
 		}
     }
 
+	private void SpawnPlayers(int n)
+	{
+		for (int i = 0; i < n; i++)
+		{
+			var r = Random.Range(0, spawnLocations.Count);
+			map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
+			spawnLocations.RemoveAt(r);
+		}
+	}
 
-    // Replaces elements of map with elements of array at location x,y
+
+	// Replaces elements of map with elements of array at location x,y
     void replaceArea(int x, int y, int[,] array)
     {
         for (int i = 0; i < array.GetLength(0); i++)
@@ -124,7 +116,7 @@ public class LevelBuilder : MonoBehaviour
     }
 
 
-	void RandomPlatforms()
+	void RandomizePlatforms()
 	{
 		var x = 0;
 		var y = 0;
@@ -192,6 +184,55 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
 		return true;
+	}
+
+	void OptimizeInnerTiles()
+	{
+		List<Vector2> row = new List<Vector2>();
+		List<List<Vector2>> tileRows = new List<List<Vector2>>();
+		
+		for (int y = 1; y < height-1; y++)
+		{
+			for (int x = 1; x < width-1; x++)
+			{
+				while (x < width-1 && isInnerTile(x, y))
+				{
+					row.Add(new Vector2(x, y));
+					x++;
+				}
+				if (row.Count > 0)
+				{
+					tileRows.Add(row);
+					row = new List<Vector2>();
+				}
+			}
+		}
+
+		foreach (var item in tileRows)
+		{
+			for (int i = 0; i < item.Count; i++)
+			{
+				map[(int) item[i].y, (int) item[i].x] = Tiles.SPACING;
+			}
+			var tile = Instantiate(InnerGround, new Vector3(item[0].x + (item.Count-1)/2f, height-item[0].y-1, 0), Quaternion.identity);
+			tile.GetComponent<SpriteRenderer>().size = new Vector2(item.Count, 1);
+		}
+	}
+
+	bool isInnerTile(int x, int y)
+	{
+		var surrounded = true;
+		for (int k = -1; k < 2; k++)
+		{
+			for (int l = -1; l < 2; l++)
+			{
+				if (map[y+l, x+k] != Tiles.GROUND_TILE && map[y+l, x+k] != Tiles.SURFACE_TILE && map[y+l, x+k] != Tiles.LEFT_CORNER && map[y+l, x+k] != Tiles.RIGHT_CORNER)
+				{
+					surrounded = false;
+				}
+			}
+		}
+		return surrounded;
 	}
 
     /*

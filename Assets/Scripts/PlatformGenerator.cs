@@ -23,7 +23,7 @@ public class PlatformGenerator {
         {
             for (int j = 0; j < platformHeight; j++)
             {
-                if (platform[j, i] == Tiles.GROUND_TILE && j-1 >= 0 && platform[j - 1, i] == Tiles.EMPTY_TILE)
+                if (platform[j, i] == Tiles.GROUND_TILE && j-1 >= 0 && (platform[j - 1, i] == Tiles.EMPTY_TILE || platform[j-1, i] == Tiles.SPACING))
                 {
                     platform[j, i] = Tiles.SURFACE_TILE;
                 }
