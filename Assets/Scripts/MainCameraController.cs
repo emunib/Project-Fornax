@@ -13,7 +13,9 @@ public class MainCameraController : MonoBehaviour {
     void Start()
     {
         offset.z = -10;
-		ticker = 0;
+        ticker = 0;
+        string[] arr = { "" };
+        //Client.Main(arr);
     }
 
     // LateUpdate is called after Update each frame

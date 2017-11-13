@@ -5,7 +5,10 @@
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 /.vs/
-
+/Server/out
+/Server/.idea
+/Server/*.iml
+/Server/src/Online
 ExportedObj/
 *.DS_Store
 *.csproj

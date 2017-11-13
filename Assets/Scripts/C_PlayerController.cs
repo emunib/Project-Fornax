@@ -54,6 +54,7 @@ public class C_PlayerController : C_WorldObjectController {
 		PlayerInput = new C_Controller (PlayerManager.AddPlayer (this));
     }
 
+    
 	// Update is called once per frame
 	void Update () {
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
@@ -201,21 +202,21 @@ public class C_PlayerController : C_WorldObjectController {
 
 	private void OnCollisionEnter2D(Collision2D other)
 	{
-		/*
+
 		if (other.gameObject.CompareTag("Slope"))
 		{
 			onSlope = true;
 		}
-		*/
+
 	}
 
 	private void OnCollisionExit2D(Collision2D other)
 	{
-		/*
+		
 		if (other.gameObject.CompareTag("Slope"))
 		{
 			onSlope = false;
 		}
-		*/
+
 	}
 }
