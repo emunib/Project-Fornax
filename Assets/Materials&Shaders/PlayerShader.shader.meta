@@ -1,11 +1,12 @@
 fileFormatVersion: 2
 guid: 802da0a2f30f5e246b51212ea79de134
-timeCreated: 1510615617
-licenseType: Pro
+timeCreated: 1510633665
+licenseType: Free
 ShaderImporter:
   defaultTextures:
   - _MainTex: {instanceID: 0}
   - _ShirtTex: {fileID: 2800000, guid: 5d239bd9db0edc84cbc7b9329d0d30ef, type: 3}
+  - _ColourTex: {fileID: 2800000, guid: c80dbdfae7f52774489699ea4856c009, type: 3}
   userData: 
   assetBundleName: 
   assetBundleVariant: 
