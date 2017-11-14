@@ -51,7 +51,10 @@ public class C_PlayerController : C_WorldObjectController {
 		InvokeRepeating ("MapCheck", 0f, 0.5f);
 
 		anim = GetComponent<Animator> ();
-		PlayerInput = new C_Controller (PlayerManager.AddPlayer (this));
+
+        int playerID = PlayerManager.AddPlayer(this);
+        GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
+        PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
     }
 
 	// Update is called once per frame

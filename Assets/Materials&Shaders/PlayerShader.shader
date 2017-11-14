@@ -76,7 +76,7 @@
 			{
 				// sample the texture
 				// NOTE: tex2D returns a vector (0,0,0,0) with each value ranging from 0.0f - 1.0f
-				fixed4 colour1 = tex2D(_MainTex, i.uv);	// does nothing.
+				fixed4 colour1 = tex2D(_MainTex, i.uv);		// does nothing/not used.
 				fixed4 colour2 = tex2D(_ShirtTex, i.uv);	// Gets color of texture at coordinate.
 			
 				fixed4 colour3 = tex2D(_ColourTex, float2(0, 0));	// light red of shirt.
