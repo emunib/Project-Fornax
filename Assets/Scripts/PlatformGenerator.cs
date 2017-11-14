@@ -1,7 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.WSA;
+using Random = UnityEngine.Random;
 
 public class PlatformGenerator {
 
@@ -66,6 +69,52 @@ public class PlatformGenerator {
                 }
             }
         }
+
+        // for each tile
+        for (int x = 0; x < platformWidth; x++)
+        {
+            for (int y = 0; y < platformHeight; y++)
+            {
+                // if current tile is empty
+                if (platform[y, x] == Tiles.EMPTY_TILE)
+                {
+                    // if the tile above is some form of flat ground
+                    if (y - 1 >= 0 && (platform[y - 1, x] == Tiles.GROUND_TILE || platform[y - 1, x] == Tiles.SURFACE_TILE || platform[y - 1, x] == Tiles.LEFT_CORNER || platform[y - 1, x] == Tiles.RIGHT_CORNER))
+                    {
+                        
+                        // if the tile to the left is some form of flat ground
+                        if (x - 1 >= 0 && (platform[y, x - 1] == Tiles.GROUND_TILE ||
+                                           platform[y, x - 1] == Tiles.SURFACE_TILE ||
+                                           platform[y, x - 1] == Tiles.LEFT_CORNER ||
+                                           platform[y, x - 1] == Tiles.RIGHT_CORNER))
+                        {
+                            // make the current tile angled
+                            platform[y, x] = Tiles.LOWER_RAMP_LEFT;
+                        }
+                        
+                        // if the tile to the right is some form of flat ground
+                        if (x + 1 < platformWidth && (platform[y, x + 1] == Tiles.GROUND_TILE ||
+                                                      platform[y, x + 1] == Tiles.SURFACE_TILE ||
+                                                      platform[y, x + 1] == Tiles.LEFT_CORNER ||
+                                                      platform[y, x + 1] == Tiles.RIGHT_CORNER))
+                        {
+                            // if the tiles on both sides are flat ground then don't add a ramp
+                            if (platform[y, x] == Tiles.LOWER_RAMP_LEFT)
+                            {
+                                platform[y, x] = Tiles.EMPTY_TILE;
+                            }
+                            else
+                            {
+                                // make the current tile angled
+                                platform[y, x] = Tiles.LOWER_RAMP_RIGHT;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // return modified platform
         return platform;
     }
 

@@ -168,7 +168,7 @@ public class C_PlayerController : C_WorldObjectController {
 			if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
 				gameObject.GetComponent<SpriteRenderer> ().flipX = true;
 			} 
-		} else {
+		} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
 			if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
 				gameObject.GetComponent<SpriteRenderer> ().flipX = false;
 			} 
@@ -178,6 +178,15 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void FreeFixedUpdate() {
 		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel/3;
+		if (PlayerInput.GetAxis ("Horizontal") > 0) {
+			if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
+				gameObject.GetComponent<SpriteRenderer> ().flipX = true;
+			} 
+		} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
+			if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
+				gameObject.GetComponent<SpriteRenderer> ().flipX = false;
+			} 
+		}
 		body.AddForce(direction);
 
 
