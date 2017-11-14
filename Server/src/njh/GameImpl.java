@@ -10,13 +10,26 @@ import com.zeroc.Ice.*;
 
 public class GameImpl implements Game {
 	ObjectAdapter adapter;
-	HashMap<PlayerPrx, ClientPrx> PlayerList;
-
-	ServerPrx Host;
+	HashMap<Player, ClientPrx> PlayerList;
+	protected Player Host;
 	@Override
 	public PlayerStats[] GetPlayers(Current current) {
-		adapter.findByProxy();
+		PlayerStats[] result = new PlayerStats[PlayerList.size() + 1];
+		Counter i = new Counter();
+		PlayerList.forEach((player, clientPrx) -> {
+			result[i.IncUp()] = player.GetStats(null);
+		});
+		result[i.IncUp()] = Host.GetStats(null);
+		return result;
+	}
 
-		return new PlayerStats[0];
+	public boolean AddPlayer(PlayerImpl player, ClientPrx client){
+		PlayerList.put(player, client);
+		return true;
+	}
+
+	public boolean RemovePlayer(PlayerImpl player){
+		PlayerList.remove(player);
+		return true;
 	}
 }

@@ -49,6 +49,7 @@ module Online
     }
 
     sequence<Command> CommandList;
+
     interface Client {
        void GetInput();
        void Update(CommandList commandList);
@@ -68,30 +69,34 @@ module Online
             PlayerList GetPlayers();
      }
 
+   sequence<Game*> GameList;
+
+     interface GameHost extends Game {
+             void StartGame();
+     }
+
+       interface Server
+         {
+            void StartGame(ClientList clientList);
+         }
+
     interface Player {
         PlayerStats GetStats();
         void JoinGame(Client* client, Game* game);
+        GameHost* CreateGame(Server* server);
         void LeaveGame();
+        void LogOut();
     }
 
-    sequence<Game*> GameList;
-
-    interface GameHost extends Game {
-            void StartGame();
+    interface LobbyListener {
+        void Update(GameList list);
     }
 
-    interface Server
-    {
-       void StartGame(ClientList clientList);
-    }
 
     interface GameRegister
     {
-        GameList GetGames();
-        GameHost* CreateGame(Server* server);
-        Player* Login(string username, string password);
-        Player* CreateNew(string username, string password);
-        void LogOut();
+        Player* Login(string username, string password, LobbyListener* lstnr);
+        Player* CreateNew(string username, string password, LobbyListener* lstnr);
     }
 
 }
