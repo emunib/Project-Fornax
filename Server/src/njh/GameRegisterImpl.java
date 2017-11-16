@@ -1,16 +1,16 @@
 package njh;
 import Online.*;
-import com.zeroc.Ice.Current;
-import com.zeroc.Ice.ObjectAdapter;
-import com.zeroc.Ice.ObjectPrx;
+import com.zeroc.Ice.*;
 
 import java.util.*;
 
-public class GameRegisterImpl implements GameRegister, Runnable
+
+
+public class GameRegisterImpl implements GameRegister
 {
     HashMap<String, User> UserList;
     HashMap<User, LobbyListenerPrx> ActiveUsers;
-    private HashSet<GamePrx> GameList;
+    private HashMap<GameImpl, GamePrx> GameList;
     boolean clean;
     boolean waiting;
     ObjectAdapter adapter;
@@ -18,37 +18,74 @@ public class GameRegisterImpl implements GameRegister, Runnable
     public GameRegisterImpl(ObjectAdapter nadapter){
         UserList = new HashMap<>();
         ActiveUsers = new HashMap<>();
-        GameList = new HashSet<>();
+        GameList = new HashMap<>();
         clean = true;
         waiting = false;
         adapter = nadapter;
-       Thread updater = new Thread(this);
+       Thread updater = new Thread(new Updater());
+       Thread pinger = new Thread(new Pinger());
        updater.start();
+       pinger.start();
     }
 
-
-    public void run() {
-        while (true){
-            HashSet<GameImpl> GameListCopy;
-            synchronized (GameList){
-                GameListCopy = (HashSet) GameList.clone();
-                clean = true;
-            }
-            synchronized (ActiveUsers){
-                ActiveUsers.forEach((user, lobbyListenerPrx) -> {
-                    lobbyListenerPrx.Update((GamePrx[])GameListCopy.toArray());
-                });
-            }
-            try {
-                synchronized (GameList){
-                    if (clean){
-                        waiting = true;
-                        GameList.wait();
-                    }
+    class Updater implements Runnable {
+        public void run() {
+            while (true) {
+                HashMap<GameImpl, GamePrx> GameListCopy;
+                GamePrx[] activeGames;
+                synchronized (GameList) {
+                    GameListCopy = (HashMap) GameList.clone();
+                    clean = true;
                 }
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                activeGames = new GamePrx[GameListCopy.size()];
+                Counter counter = new Counter();
+                GameListCopy.forEach((game, prx) -> {
+                    activeGames[counter.IncUp()] = prx;
+                });
+                synchronized (ActiveUsers) {
+                    ActiveUsers.forEach((user, lobbyListenerPrx) -> {
+                        lobbyListenerPrx.Update(activeGames);
+                    });
+                }
+                try {
+                    synchronized (GameList) {
+                        if (clean) {
+                            waiting = true;
+                            GameList.wait();
+                        }
+                    }
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    class Pinger implements Runnable {
+        @Override
+        public void run() {
+            while (true){
+                HashSet<User> UnactiveUsers = new HashSet<>();
+                synchronized (ActiveUsers) {
+                    ActiveUsers.forEach((user, lobbyListenerPrx) -> {
+                        try {
+                            if (!lobbyListenerPrx.Ping()) {
+                                UnactiveUsers.add(user);
+                            }
+                        } catch (ObjectNotExistException | ConnectionRefusedException e){
+                            UnactiveUsers.add(user);
+                        }
+                    });
+                    UnactiveUsers.forEach(user -> {
+                        ActiveUsers.remove(user);
+                    });
+                }
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -60,7 +97,7 @@ public class GameRegisterImpl implements GameRegister, Runnable
             return null;
         } else if (ActiveUsers.get(user) != null) {
             return null;
-        }else if (user.Password != password){
+        }else if (!user.Password.equals(password)){
             return null;
         } else {
             PlayerImpl player = new PlayerImpl(user, adapter, this);
@@ -93,7 +130,7 @@ public class GameRegisterImpl implements GameRegister, Runnable
                 clean = false;
             }
             newproxy = GamePrx.checkedCast(adapter.addWithUUID(game));
-            GameList.add(newproxy);
+            GameList.put(game, newproxy);
             if (waiting){
                 GameList.notify();
                 waiting = false;
@@ -102,13 +139,13 @@ public class GameRegisterImpl implements GameRegister, Runnable
         return newproxy;
     }
 
-    public void RemoveGame(GamePrx prx){
+    public void RemoveGame(GameImpl game){
         synchronized (GameList) {
             if (clean == true){
                 clean = false;
             }
-            GameList.remove(prx);
-            adapter.remove(prx.ice_getIdentity());
+            GamePrx proxy = GameList.remove(game);
+            adapter.remove(proxy.ice_getIdentity());
             if (waiting){
                 GameList.notify();
                 waiting = false;

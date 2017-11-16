@@ -1110,6 +1110,9 @@ namespace Online
     public delegate void Callback_LobbyListener_Update();
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_LobbyListener_Ping(bool ret);
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public delegate void Callback_GameRegister_Login(Online.PlayerPrx ret);
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1284,6 +1287,18 @@ namespace Online
         Ice.AsyncResult begin_Update(Online.GamePrx[] list, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
         void end_Update(Ice.AsyncResult asyncResult);
+
+        bool Ping(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task<bool> PingAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_LobbyListener_Ping> begin_Ping(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_Ping(Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_Ping(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        bool end_Ping(Ice.AsyncResult asyncResult);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1375,6 +1390,9 @@ namespace Online
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
         void Update(Online.GamePrx[] list, Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        bool Ping(Ice.Current current = null);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -3353,6 +3371,18 @@ namespace Online
 
         #region Synchronous operations
 
+        public bool Ping(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                return _iceI_PingAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
         public void Update(Online.GamePrx[] list, Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
@@ -3368,6 +3398,38 @@ namespace Online
         #endregion
 
         #region Async Task operations
+
+        public _System.Threading.Tasks.Task<bool> PingAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_PingAsync(context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task<bool> _iceI_PingAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            iceCheckTwowayOnly(_Ping_name);
+            var completed = new IceInternal.OperationTaskCompletionCallback<bool>(progress, cancel);
+            _iceI_Ping(context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _Ping_name = "Ping";
+
+        private void _iceI_Ping(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<bool>(completed);
+            outAsync.invoke(
+                _Ping_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous,
+                read: (Ice.InputStream istr) =>
+                {
+                    bool ret;
+                    ret = istr.readBool();
+                    return ret;
+                });
+        }
 
         public _System.Threading.Tasks.Task UpdateAsync(Online.GamePrx[] list, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
@@ -3401,6 +3463,44 @@ namespace Online
         #endregion
 
         #region Asynchronous operations
+
+        public Ice.AsyncResult<Online.Callback_LobbyListener_Ping> begin_Ping(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_Ping(context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_Ping(Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_Ping(new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_Ping(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_Ping(context, callback, cookie, false);
+        }
+
+        public bool end_Ping(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _Ping_name);
+            var outgoing_ = (IceInternal.OutgoingAsyncT<bool>)resultI_.OutgoingAsync;
+            return outgoing_.getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_LobbyListener_Ping> begin_Ping(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            iceCheckAsyncTwowayOnly(_Ping_name);
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_LobbyListener_Ping, bool>(
+                (Online.Callback_LobbyListener_Ping cb, bool ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke(ret);
+                    }
+                },
+                this, _Ping_name, cookie, completedCallback);
+            _iceI_Ping(context, synchronous, completed);
+            return completed;
+        }
 
         public Ice.AsyncResult<Online.Callback_LobbyListener_Update> begin_Update(Online.GamePrx[] list, Ice.OptionalContext context = new Ice.OptionalContext())
         {
@@ -4577,6 +4677,8 @@ namespace Online
 
         public abstract void Update(Online.GamePrx[] list, Ice.Current current = null);
 
+        public abstract bool Ping(Ice.Current current = null);
+
         #endregion
 
         #region Slice type-related members
@@ -4624,8 +4726,22 @@ namespace Online
             return inS.setResult(inS.writeEmptyParams());
         }
 
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_Ping(LobbyListener obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            inS.readEmptyParams();
+            var ret = obj.Ping(current);
+            var ostr = inS.startWriteParams();
+            ostr.writeBool(ret);
+            inS.endWriteParams(ostr);
+            return inS.setResult(ostr);
+        }
+
         private static readonly string[] _all =
         {
+            "Ping",
             "Update",
             "ice_id",
             "ice_ids",
@@ -4646,21 +4762,25 @@ namespace Online
             {
                 case 0:
                 {
-                    return iceD_Update(this, inS, current);
+                    return iceD_Ping(this, inS, current);
                 }
                 case 1:
                 {
-                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                    return iceD_Update(this, inS, current);
                 }
                 case 2:
                 {
-                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                 }
                 case 3:
                 {
-                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
                 }
                 case 4:
+                {
+                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                }
+                case 5:
                 {
                     return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                 }

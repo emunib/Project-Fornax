@@ -8,10 +8,20 @@ import java.util.Objects;
 
 import com.zeroc.Ice.*;
 
-public class GameImpl implements Game {
+public class GameImpl implements Game, GameHost {
+	ServerPrx HostServer;
 	ObjectAdapter adapter;
-	HashMap<Player, ClientPrx> PlayerList;
-	protected Player Host;
+	HashMap<PlayerImpl, ClientPrx> PlayerList;
+	protected PlayerImpl Host;
+	GameRegisterImpl Register;
+
+
+	public GameImpl(ServerPrx server, PlayerImpl player, GameRegisterImpl register) {
+		HostServer = server;
+		Host = player;
+		Register = register;
+	}
+
 	@Override
 	public PlayerStats[] GetPlayers(Current current) {
 		PlayerStats[] result = new PlayerStats[PlayerList.size() + 1];
@@ -29,7 +39,21 @@ public class GameImpl implements Game {
 	}
 
 	public boolean RemovePlayer(PlayerImpl player){
-		PlayerList.remove(player);
+		if (player == Host){
+			if (PlayerList.isEmpty()){
+				Register.RemoveGame(this);
+			} else {
+				//TODO migrate host
+			}
+		} else {
+			PlayerList.remove(player);
+		}
 		return true;
+	}
+
+
+	@Override
+	public void StartGame(Current current) {
+
 	}
 }

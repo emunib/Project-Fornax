@@ -31,7 +31,7 @@ public class PlayerImpl implements Player {
 
 	@Override
 	public GameHostPrx CreateGame(ServerPrx server, Current current) {
-		GameHostImpl gameHost = new GameHostImpl(server, this);
+		GameImpl gameHost = new GameImpl(server, this, Register);
 		Game = gameHost;
 		Register.AddGame(gameHost);
 		return GameHostPrx.checkedCast(Adapter.addWithUUID(gameHost));
@@ -44,6 +44,13 @@ public class PlayerImpl implements Player {
 
 	@Override
 	public void LogOut(Current current) {
-
+		synchronized (Register.ActiveUsers){
+			Register.ActiveUsers.remove(_User);
+		}
+		if (Game != null){
+			Game.RemovePlayer(this);
+			Game = null;
+		}
+		Adapter.remove(current.id);
 	}
 }

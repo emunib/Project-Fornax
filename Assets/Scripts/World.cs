@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Threading;
 using System.Runtime.InteropServices;
 using Online;
+using Ice;
 
 public class PlayerManager {
 	public static HashSet<C_PlayerController> PlayerLog = new HashSet<C_PlayerController> ();
@@ -14,7 +15,7 @@ public class PlayerManager {
 		int result = -1;
 		myMutex.WaitOne ();
 		if (PlayerLog.Contains(player)){
-			throw new Exception("Player already in log");
+			throw new System.Exception("Player already in log");
 		} else {
 			result = PlayerLog.Count;
 			PlayerLog.Add(player);
@@ -24,6 +25,15 @@ public class PlayerManager {
        
 		return result;
 	}
+}
+
+public class OnlineManager
+{
+    public static PlayerPrx Player;
+    public static LobbyListenerImpl LobbyLstnrImpl;
+    public static LobbyListenerPrx LobbyLstnrProxy;
+    public static ObjectAdapter Adapater;
+    public static GameHostPrx GameHost;
 }
 
 public class Manager {

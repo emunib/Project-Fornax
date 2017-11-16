@@ -90,6 +90,7 @@ module Online
 
     interface LobbyListener {
         void Update(GameList list);
+        bool Ping();
     }
 
 
