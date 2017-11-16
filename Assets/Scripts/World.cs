@@ -34,6 +34,7 @@ public class OnlineManager
     public static LobbyListenerPrx LobbyLstnrProxy;
     public static ObjectAdapter Adapater;
     public static GameHostPrx GameHost;
+    public static GamePrx Game;
 }
 
 public class Manager {

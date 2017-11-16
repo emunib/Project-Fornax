@@ -4,19 +4,18 @@ import com.zeroc.Ice.*;
 
 import java.util.*;
 
-
-
 public class GameRegisterImpl implements GameRegister
 {
-    HashMap<String, User> UserList;
-    HashMap<User, LobbyListenerPrx> ActiveUsers;
-    private HashMap<GameImpl, GamePrx> GameList;
-    boolean clean;
-    boolean waiting;
+    final public HashMap<LobbyListenerPrx, PlayerPrx> ActiveUsers;
+    final private HashMap<GameImpl, GamePrx> GameList;
+    final private PlayerRegistry playerRegistry;
+    private boolean clean;
+    private boolean waiting;
     ObjectAdapter adapter;
 
+
     public GameRegisterImpl(ObjectAdapter nadapter){
-        UserList = new HashMap<>();
+        playerRegistry = new PlayerRegistry(this, nadapter);
         ActiveUsers = new HashMap<>();
         GameList = new HashMap<>();
         clean = true;
@@ -26,6 +25,22 @@ public class GameRegisterImpl implements GameRegister
        Thread pinger = new Thread(new Pinger());
        updater.start();
        pinger.start();
+    }
+
+    @Override
+    public PlayerRegisterPrx Connect(LobbyListenerPrx listener, Current current) {
+        PlayerRegisterImpl playerRegister = new PlayerRegisterImpl(listener, this, playerRegistry);
+        PlayerRegisterPrx playerRegisterPrx = PlayerRegisterPrx.checkedCast(adapter.addWithUUID(playerRegister));
+        synchronized (GameList){
+            if (waiting){
+                GameList.notify();
+                waiting = false;
+            }
+        }
+        synchronized (ActiveUsers){
+            ActiveUsers.put(listener, null);
+        }
+        return playerRegisterPrx;
     }
 
     class Updater implements Runnable {
@@ -42,10 +57,16 @@ public class GameRegisterImpl implements GameRegister
                 GameListCopy.forEach((game, prx) -> {
                     activeGames[counter.IncUp()] = prx;
                 });
+                HashSet<LobbyListenerPrx> UnactiveUsers = new HashSet<>();
                 synchronized (ActiveUsers) {
-                    ActiveUsers.forEach((user, lobbyListenerPrx) -> {
-                        lobbyListenerPrx.Update(activeGames);
+                    ActiveUsers.forEach((lobbyListenerPrx, player) -> {
+                        try {
+                            lobbyListenerPrx.Update(activeGames);
+                        } catch (ObjectNotExistException e){
+                            UnactiveUsers.add(lobbyListenerPrx);
+                        }
                     });
+                    flushInactiveUser(UnactiveUsers);
                 }
                 try {
                     synchronized (GameList) {
@@ -66,20 +87,18 @@ public class GameRegisterImpl implements GameRegister
         @Override
         public void run() {
             while (true){
-                HashSet<User> UnactiveUsers = new HashSet<>();
+                HashSet<LobbyListenerPrx> UnactiveUsers = new HashSet<>();
                 synchronized (ActiveUsers) {
-                    ActiveUsers.forEach((user, lobbyListenerPrx) -> {
+                    ActiveUsers.forEach((lobbyListenerPrx, player) -> {
                         try {
                             if (!lobbyListenerPrx.Ping()) {
-                                UnactiveUsers.add(user);
+                                UnactiveUsers.add(lobbyListenerPrx);
                             }
                         } catch (ObjectNotExistException | ConnectionRefusedException e){
-                            UnactiveUsers.add(user);
+                            UnactiveUsers.add(lobbyListenerPrx);
                         }
                     });
-                    UnactiveUsers.forEach(user -> {
-                        ActiveUsers.remove(user);
-                    });
+                    flushInactiveUser(UnactiveUsers);
                 }
                 try {
                     Thread.sleep(5000);
@@ -90,43 +109,11 @@ public class GameRegisterImpl implements GameRegister
         }
     }
 
-    @Override
-    public PlayerPrx Login(String username, String password, LobbyListenerPrx lstnr, Current current) {
-        User user = UserList.get(username);
-        if (user == null){
-            return null;
-        } else if (ActiveUsers.get(user) != null) {
-            return null;
-        }else if (!user.Password.equals(password)){
-            return null;
-        } else {
-            PlayerImpl player = new PlayerImpl(user, adapter, this);
-            PlayerPrx result = PlayerPrx.checkedCast(adapter.addWithUUID(player));
-            ActiveUsers.put(user, lstnr);
-            return result;
-        }
-    }
-
-    @Override
-    public PlayerPrx CreateNew(String username, String password, LobbyListenerPrx lstnr, Current current) {
-        User temp = UserList.get(username);
-        if (temp == null){
-            User newuser = new User();
-            newuser.Password = password;
-            newuser.Username = username;
-            UserList.put(username, newuser);
-            ActiveUsers.put(newuser, lstnr);
-            PlayerImpl player = new PlayerImpl(newuser, adapter, this);
-            return PlayerPrx.checkedCast(adapter.addWithUUID(player));
-        } else {
-            return null;
-        }
-    }
 
     public GamePrx AddGame(GameImpl game){
         GamePrx newproxy;
         synchronized (GameList){
-            if (clean == true){
+            if (clean){
                 clean = false;
             }
             newproxy = GamePrx.checkedCast(adapter.addWithUUID(game));
@@ -141,7 +128,7 @@ public class GameRegisterImpl implements GameRegister
 
     public void RemoveGame(GameImpl game){
         synchronized (GameList) {
-            if (clean == true){
+            if (clean){
                 clean = false;
             }
             GamePrx proxy = GameList.remove(game);
@@ -153,5 +140,16 @@ public class GameRegisterImpl implements GameRegister
         }
     }
 
-
+    private void flushInactiveUser(HashSet<LobbyListenerPrx> UnactiveUsers){
+        UnactiveUsers.forEach(lobbyListenerPrx -> {
+            PlayerPrx player = ActiveUsers.get(lobbyListenerPrx);
+            if (player != null) {
+                PlayerImpl temp = (PlayerImpl) adapter.findByProxy(player);
+                if (temp != null) {
+                    player.LogOut(null);
+                }
+            }
+            ActiveUsers.remove(lobbyListenerPrx);
+        });
+    }
 }

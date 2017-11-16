@@ -7,6 +7,7 @@ public class PlayerImpl implements Player {
 	User _User;
 	ObjectAdapter Adapter;
 	GameRegisterImpl Register;
+
 	GameImpl Game;
 
 	public PlayerImpl(User user, ObjectAdapter adapter, GameRegisterImpl register){
@@ -40,13 +41,12 @@ public class PlayerImpl implements Player {
 	@Override
 	public void LeaveGame(Current current) {
 		Game.RemovePlayer(this);
+		Game = null;
 	}
 
 	@Override
 	public void LogOut(Current current) {
-		synchronized (Register.ActiveUsers){
-			Register.ActiveUsers.remove(_User);
-		}
+		_User.Instance = null;
 		if (Game != null){
 			Game.RemovePlayer(this);
 			Game = null;

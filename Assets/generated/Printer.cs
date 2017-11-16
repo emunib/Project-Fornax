@@ -1066,6 +1066,21 @@ namespace Online
     [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
     [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
     [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
+    public partial interface PlayerRegister : Ice.Object, PlayerRegisterOperations_
+    {
+    }
+
+    [_System.Runtime.InteropServices.ComVisible(false)]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
     public partial interface GameRegister : Ice.Object, GameRegisterOperations_
     {
     }
@@ -1113,10 +1128,13 @@ namespace Online
     public delegate void Callback_LobbyListener_Ping(bool ret);
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public delegate void Callback_GameRegister_Login(Online.PlayerPrx ret);
+    public delegate void Callback_PlayerRegister_Login(Online.PlayerPrx ret);
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public delegate void Callback_GameRegister_CreateNew(Online.PlayerPrx ret);
+    public delegate void Callback_PlayerRegister_CreateNew(Online.PlayerPrx ret);
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_GameRegister_Connect(Online.PlayerRegisterPrx ret);
 }
 
 namespace Online
@@ -1302,31 +1320,47 @@ namespace Online
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public interface GameRegisterPrx : Ice.ObjectPrx
+    public interface PlayerRegisterPrx : Ice.ObjectPrx
     {
-        Online.PlayerPrx Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext());
+        Online.PlayerPrx Login(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext());
 
-        _System.Threading.Tasks.Task<Online.PlayerPrx> LoginAsync(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+        _System.Threading.Tasks.Task<Online.PlayerPrx> LoginAsync(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-        Ice.AsyncResult<Online.Callback_GameRegister_Login> begin_Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext());
+        Ice.AsyncResult<Online.Callback_PlayerRegister_Login> begin_Login(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext());
 
-        Ice.AsyncResult begin_Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_Login(string username, string password, Ice.AsyncCallback callback, object cookie);
 
-        Ice.AsyncResult begin_Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_Login(string username, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
         Online.PlayerPrx end_Login(Ice.AsyncResult asyncResult);
 
-        Online.PlayerPrx CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext());
+        Online.PlayerPrx CreateNew(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext());
 
-        _System.Threading.Tasks.Task<Online.PlayerPrx> CreateNewAsync(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+        _System.Threading.Tasks.Task<Online.PlayerPrx> CreateNewAsync(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-        Ice.AsyncResult<Online.Callback_GameRegister_CreateNew> begin_CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext());
+        Ice.AsyncResult<Online.Callback_PlayerRegister_CreateNew> begin_CreateNew(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext());
 
-        Ice.AsyncResult begin_CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_CreateNew(string username, string password, Ice.AsyncCallback callback, object cookie);
 
-        Ice.AsyncResult begin_CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_CreateNew(string username, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
         Online.PlayerPrx end_CreateNew(Ice.AsyncResult asyncResult);
+    }
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public interface GameRegisterPrx : Ice.ObjectPrx
+    {
+        Online.PlayerRegisterPrx Connect(Online.LobbyListenerPrx listener, Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task<Online.PlayerRegisterPrx> ConnectAsync(Online.LobbyListenerPrx listener, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_GameRegister_Connect> begin_Connect(Online.LobbyListenerPrx listener, Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_Connect(Online.LobbyListenerPrx listener, Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_Connect(Online.LobbyListenerPrx listener, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        Online.PlayerRegisterPrx end_Connect(Ice.AsyncResult asyncResult);
     }
 }
 
@@ -1396,13 +1430,20 @@ namespace Online
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public interface PlayerRegisterOperations_
+    {
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        Online.PlayerPrx Login(string username, string password, Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        Online.PlayerPrx CreateNew(string username, string password, Ice.Current current = null);
+    }
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public interface GameRegisterOperations_
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        Online.PlayerPrx Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.Current current = null);
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        Online.PlayerPrx CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.Current current = null);
+        Online.PlayerRegisterPrx Connect(Online.LobbyListenerPrx listener, Ice.Current current = null);
     }
 }
 
@@ -3684,23 +3725,23 @@ namespace Online
     [_System.Runtime.InteropServices.ComVisible(false)]
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     [_System.Serializable]
-    public sealed class GameRegisterPrxHelper : Ice.ObjectPrxHelperBase, GameRegisterPrx
+    public sealed class PlayerRegisterPrxHelper : Ice.ObjectPrxHelperBase, PlayerRegisterPrx
     {
-        public GameRegisterPrxHelper()
+        public PlayerRegisterPrxHelper()
         {
         }
 
-        public GameRegisterPrxHelper(_System.Runtime.Serialization.SerializationInfo info, _System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        public PlayerRegisterPrxHelper(_System.Runtime.Serialization.SerializationInfo info, _System.Runtime.Serialization.StreamingContext context) : base(info, context)
         {
         }
 
         #region Synchronous operations
 
-        public Online.PlayerPrx CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext())
+        public Online.PlayerPrx CreateNew(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
-                return _iceI_CreateNewAsync(username, password, lstnr, context, null, _System.Threading.CancellationToken.None, true).Result;
+                return _iceI_CreateNewAsync(username, password, context, null, _System.Threading.CancellationToken.None, true).Result;
             }
             catch(_System.AggregateException ex_)
             {
@@ -3708,11 +3749,11 @@ namespace Online
             }
         }
 
-        public Online.PlayerPrx Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext())
+        public Online.PlayerPrx Login(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
-                return _iceI_LoginAsync(username, password, lstnr, context, null, _System.Threading.CancellationToken.None, true).Result;
+                return _iceI_LoginAsync(username, password, context, null, _System.Threading.CancellationToken.None, true).Result;
             }
             catch(_System.AggregateException ex_)
             {
@@ -3724,22 +3765,22 @@ namespace Online
 
         #region Async Task operations
 
-        public _System.Threading.Tasks.Task<Online.PlayerPrx> CreateNewAsync(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        public _System.Threading.Tasks.Task<Online.PlayerPrx> CreateNewAsync(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
-            return _iceI_CreateNewAsync(username, password, lstnr, context, progress, cancel, false);
+            return _iceI_CreateNewAsync(username, password, context, progress, cancel, false);
         }
 
-        private _System.Threading.Tasks.Task<Online.PlayerPrx> _iceI_CreateNewAsync(string iceP_username, string iceP_password, Online.LobbyListenerPrx iceP_lstnr, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        private _System.Threading.Tasks.Task<Online.PlayerPrx> _iceI_CreateNewAsync(string iceP_username, string iceP_password, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
         {
             iceCheckTwowayOnly(_CreateNew_name);
             var completed = new IceInternal.OperationTaskCompletionCallback<Online.PlayerPrx>(progress, cancel);
-            _iceI_CreateNew(iceP_username, iceP_password, iceP_lstnr, context, synchronous, completed);
+            _iceI_CreateNew(iceP_username, iceP_password, context, synchronous, completed);
             return completed.Task;
         }
 
         private const string _CreateNew_name = "CreateNew";
 
-        private void _iceI_CreateNew(string iceP_username, string iceP_password, Online.LobbyListenerPrx iceP_lstnr, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        private void _iceI_CreateNew(string iceP_username, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
         {
             var outAsync = getOutgoingAsync<Online.PlayerPrx>(completed);
             outAsync.invoke(
@@ -3752,7 +3793,6 @@ namespace Online
                 {
                     ostr.writeString(iceP_username);
                     ostr.writeString(iceP_password);
-                    Online.LobbyListenerPrxHelper.write(ostr, iceP_lstnr);
                 },
                 read: (Ice.InputStream istr) =>
                 {
@@ -3762,22 +3802,22 @@ namespace Online
                 });
         }
 
-        public _System.Threading.Tasks.Task<Online.PlayerPrx> LoginAsync(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        public _System.Threading.Tasks.Task<Online.PlayerPrx> LoginAsync(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
-            return _iceI_LoginAsync(username, password, lstnr, context, progress, cancel, false);
+            return _iceI_LoginAsync(username, password, context, progress, cancel, false);
         }
 
-        private _System.Threading.Tasks.Task<Online.PlayerPrx> _iceI_LoginAsync(string iceP_username, string iceP_password, Online.LobbyListenerPrx iceP_lstnr, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        private _System.Threading.Tasks.Task<Online.PlayerPrx> _iceI_LoginAsync(string iceP_username, string iceP_password, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
         {
             iceCheckTwowayOnly(_Login_name);
             var completed = new IceInternal.OperationTaskCompletionCallback<Online.PlayerPrx>(progress, cancel);
-            _iceI_Login(iceP_username, iceP_password, iceP_lstnr, context, synchronous, completed);
+            _iceI_Login(iceP_username, iceP_password, context, synchronous, completed);
             return completed.Task;
         }
 
         private const string _Login_name = "Login";
 
-        private void _iceI_Login(string iceP_username, string iceP_password, Online.LobbyListenerPrx iceP_lstnr, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        private void _iceI_Login(string iceP_username, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
         {
             var outAsync = getOutgoingAsync<Online.PlayerPrx>(completed);
             outAsync.invoke(
@@ -3790,7 +3830,6 @@ namespace Online
                 {
                     ostr.writeString(iceP_username);
                     ostr.writeString(iceP_password);
-                    Online.LobbyListenerPrxHelper.write(ostr, iceP_lstnr);
                 },
                 read: (Ice.InputStream istr) =>
                 {
@@ -3804,19 +3843,19 @@ namespace Online
 
         #region Asynchronous operations
 
-        public Ice.AsyncResult<Online.Callback_GameRegister_CreateNew> begin_CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext())
+        public Ice.AsyncResult<Online.Callback_PlayerRegister_CreateNew> begin_CreateNew(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext())
         {
-            return begin_CreateNew(username, password, lstnr, context, null, null, false);
+            return begin_CreateNew(username, password, context, null, null, false);
         }
 
-        public Ice.AsyncResult begin_CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_CreateNew(string username, string password, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_CreateNew(username, password, lstnr, new Ice.OptionalContext(), callback, cookie, false);
+            return begin_CreateNew(username, password, new Ice.OptionalContext(), callback, cookie, false);
         }
 
-        public Ice.AsyncResult begin_CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_CreateNew(string username, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_CreateNew(username, password, lstnr, context, callback, cookie, false);
+            return begin_CreateNew(username, password, context, callback, cookie, false);
         }
 
         public Online.PlayerPrx end_CreateNew(Ice.AsyncResult asyncResult)
@@ -3826,11 +3865,11 @@ namespace Online
             return outgoing_.getResult(resultI_.wait());
         }
 
-        private Ice.AsyncResult<Online.Callback_GameRegister_CreateNew> begin_CreateNew(string iceP_username, string iceP_password, Online.LobbyListenerPrx iceP_lstnr, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        private Ice.AsyncResult<Online.Callback_PlayerRegister_CreateNew> begin_CreateNew(string iceP_username, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
         {
             iceCheckAsyncTwowayOnly(_CreateNew_name);
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameRegister_CreateNew, Online.PlayerPrx>(
-                (Online.Callback_GameRegister_CreateNew cb, Online.PlayerPrx ret) =>
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_PlayerRegister_CreateNew, Online.PlayerPrx>(
+                (Online.Callback_PlayerRegister_CreateNew cb, Online.PlayerPrx ret) =>
                 {
                     if(cb != null)
                     {
@@ -3838,23 +3877,23 @@ namespace Online
                     }
                 },
                 this, _CreateNew_name, cookie, completedCallback);
-            _iceI_CreateNew(iceP_username, iceP_password, iceP_lstnr, context, synchronous, completed);
+            _iceI_CreateNew(iceP_username, iceP_password, context, synchronous, completed);
             return completed;
         }
 
-        public Ice.AsyncResult<Online.Callback_GameRegister_Login> begin_Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context = new Ice.OptionalContext())
+        public Ice.AsyncResult<Online.Callback_PlayerRegister_Login> begin_Login(string username, string password, Ice.OptionalContext context = new Ice.OptionalContext())
         {
-            return begin_Login(username, password, lstnr, context, null, null, false);
+            return begin_Login(username, password, context, null, null, false);
         }
 
-        public Ice.AsyncResult begin_Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_Login(string username, string password, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_Login(username, password, lstnr, new Ice.OptionalContext(), callback, cookie, false);
+            return begin_Login(username, password, new Ice.OptionalContext(), callback, cookie, false);
         }
 
-        public Ice.AsyncResult begin_Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_Login(string username, string password, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_Login(username, password, lstnr, context, callback, cookie, false);
+            return begin_Login(username, password, context, callback, cookie, false);
         }
 
         public Online.PlayerPrx end_Login(Ice.AsyncResult asyncResult)
@@ -3864,11 +3903,11 @@ namespace Online
             return outgoing_.getResult(resultI_.wait());
         }
 
-        private Ice.AsyncResult<Online.Callback_GameRegister_Login> begin_Login(string iceP_username, string iceP_password, Online.LobbyListenerPrx iceP_lstnr, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        private Ice.AsyncResult<Online.Callback_PlayerRegister_Login> begin_Login(string iceP_username, string iceP_password, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
         {
             iceCheckAsyncTwowayOnly(_Login_name);
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameRegister_Login, Online.PlayerPrx>(
-                (Online.Callback_GameRegister_Login cb, Online.PlayerPrx ret) =>
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_PlayerRegister_Login, Online.PlayerPrx>(
+                (Online.Callback_PlayerRegister_Login cb, Online.PlayerPrx ret) =>
                 {
                     if(cb != null)
                     {
@@ -3876,7 +3915,259 @@ namespace Online
                     }
                 },
                 this, _Login_name, cookie, completedCallback);
-            _iceI_Login(iceP_username, iceP_password, iceP_lstnr, context, synchronous, completed);
+            _iceI_Login(iceP_username, iceP_password, context, synchronous, completed);
+            return completed;
+        }
+
+        #endregion
+
+        #region Checked and unchecked cast operations
+
+        public static PlayerRegisterPrx checkedCast(Ice.ObjectPrx b)
+        {
+            if(b == null)
+            {
+                return null;
+            }
+            PlayerRegisterPrx r = b as PlayerRegisterPrx;
+            if((r == null) && b.ice_isA(ice_staticId()))
+            {
+                PlayerRegisterPrxHelper h = new PlayerRegisterPrxHelper();
+                h.iceCopyFrom(b);
+                r = h;
+            }
+            return r;
+        }
+
+        public static PlayerRegisterPrx checkedCast(Ice.ObjectPrx b, _System.Collections.Generic.Dictionary<string, string> ctx)
+        {
+            if(b == null)
+            {
+                return null;
+            }
+            PlayerRegisterPrx r = b as PlayerRegisterPrx;
+            if((r == null) && b.ice_isA(ice_staticId(), ctx))
+            {
+                PlayerRegisterPrxHelper h = new PlayerRegisterPrxHelper();
+                h.iceCopyFrom(b);
+                r = h;
+            }
+            return r;
+        }
+
+        public static PlayerRegisterPrx checkedCast(Ice.ObjectPrx b, string f)
+        {
+            if(b == null)
+            {
+                return null;
+            }
+            Ice.ObjectPrx bb = b.ice_facet(f);
+            try
+            {
+                if(bb.ice_isA(ice_staticId()))
+                {
+                    PlayerRegisterPrxHelper h = new PlayerRegisterPrxHelper();
+                    h.iceCopyFrom(bb);
+                    return h;
+                }
+            }
+            catch(Ice.FacetNotExistException)
+            {
+            }
+            return null;
+        }
+
+        public static PlayerRegisterPrx checkedCast(Ice.ObjectPrx b, string f, _System.Collections.Generic.Dictionary<string, string> ctx)
+        {
+            if(b == null)
+            {
+                return null;
+            }
+            Ice.ObjectPrx bb = b.ice_facet(f);
+            try
+            {
+                if(bb.ice_isA(ice_staticId(), ctx))
+                {
+                    PlayerRegisterPrxHelper h = new PlayerRegisterPrxHelper();
+                    h.iceCopyFrom(bb);
+                    return h;
+                }
+            }
+            catch(Ice.FacetNotExistException)
+            {
+            }
+            return null;
+        }
+
+        public static PlayerRegisterPrx uncheckedCast(Ice.ObjectPrx b)
+        {
+            if(b == null)
+            {
+                return null;
+            }
+            PlayerRegisterPrx r = b as PlayerRegisterPrx;
+            if(r == null)
+            {
+                PlayerRegisterPrxHelper h = new PlayerRegisterPrxHelper();
+                h.iceCopyFrom(b);
+                r = h;
+            }
+            return r;
+        }
+
+        public static PlayerRegisterPrx uncheckedCast(Ice.ObjectPrx b, string f)
+        {
+            if(b == null)
+            {
+                return null;
+            }
+            Ice.ObjectPrx bb = b.ice_facet(f);
+            PlayerRegisterPrxHelper h = new PlayerRegisterPrxHelper();
+            h.iceCopyFrom(bb);
+            return h;
+        }
+
+        private static readonly string[] _ids =
+        {
+            "::Ice::Object",
+            "::Online::PlayerRegister"
+        };
+
+        public static string ice_staticId()
+        {
+            return _ids[1];
+        }
+
+        #endregion
+
+        #region Marshaling support
+
+        public static void write(Ice.OutputStream ostr, PlayerRegisterPrx v)
+        {
+            ostr.writeProxy(v);
+        }
+
+        public static PlayerRegisterPrx read(Ice.InputStream istr)
+        {
+            Ice.ObjectPrx proxy = istr.readProxy();
+            if(proxy != null)
+            {
+                PlayerRegisterPrxHelper result = new PlayerRegisterPrxHelper();
+                result.iceCopyFrom(proxy);
+                return result;
+            }
+            return null;
+        }
+
+        #endregion
+    }
+
+    [_System.Runtime.InteropServices.ComVisible(false)]
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    [_System.Serializable]
+    public sealed class GameRegisterPrxHelper : Ice.ObjectPrxHelperBase, GameRegisterPrx
+    {
+        public GameRegisterPrxHelper()
+        {
+        }
+
+        public GameRegisterPrxHelper(_System.Runtime.Serialization.SerializationInfo info, _System.Runtime.Serialization.StreamingContext context) : base(info, context)
+        {
+        }
+
+        #region Synchronous operations
+
+        public Online.PlayerRegisterPrx Connect(Online.LobbyListenerPrx listener, Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                return _iceI_ConnectAsync(listener, context, null, _System.Threading.CancellationToken.None, true).Result;
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
+        #endregion
+
+        #region Async Task operations
+
+        public _System.Threading.Tasks.Task<Online.PlayerRegisterPrx> ConnectAsync(Online.LobbyListenerPrx listener, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_ConnectAsync(listener, context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task<Online.PlayerRegisterPrx> _iceI_ConnectAsync(Online.LobbyListenerPrx iceP_listener, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            iceCheckTwowayOnly(_Connect_name);
+            var completed = new IceInternal.OperationTaskCompletionCallback<Online.PlayerRegisterPrx>(progress, cancel);
+            _iceI_Connect(iceP_listener, context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _Connect_name = "Connect";
+
+        private void _iceI_Connect(Online.LobbyListenerPrx iceP_listener, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<Online.PlayerRegisterPrx>(completed);
+            outAsync.invoke(
+                _Connect_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous,
+                write: (Ice.OutputStream ostr) =>
+                {
+                    Online.LobbyListenerPrxHelper.write(ostr, iceP_listener);
+                },
+                read: (Ice.InputStream istr) =>
+                {
+                    Online.PlayerRegisterPrx ret;
+                    ret = Online.PlayerRegisterPrxHelper.read(istr);
+                    return ret;
+                });
+        }
+
+        #endregion
+
+        #region Asynchronous operations
+
+        public Ice.AsyncResult<Online.Callback_GameRegister_Connect> begin_Connect(Online.LobbyListenerPrx listener, Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_Connect(listener, context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_Connect(Online.LobbyListenerPrx listener, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_Connect(listener, new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_Connect(Online.LobbyListenerPrx listener, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_Connect(listener, context, callback, cookie, false);
+        }
+
+        public Online.PlayerRegisterPrx end_Connect(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _Connect_name);
+            var outgoing_ = (IceInternal.OutgoingAsyncT<Online.PlayerRegisterPrx>)resultI_.OutgoingAsync;
+            return outgoing_.getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_GameRegister_Connect> begin_Connect(Online.LobbyListenerPrx iceP_listener, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            iceCheckAsyncTwowayOnly(_Connect_name);
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameRegister_Connect, Online.PlayerRegisterPrx>(
+                (Online.Callback_GameRegister_Connect cb, Online.PlayerRegisterPrx ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke(ret);
+                    }
+                },
+                this, _Connect_name, cookie, completedCallback);
+            _iceI_Connect(iceP_listener, context, synchronous, completed);
             return completed;
         }
 
@@ -4795,13 +5086,13 @@ namespace Online
 
     [_System.Runtime.InteropServices.ComVisible(false)]
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public abstract class GameRegisterDisp_ : Ice.ObjectImpl, GameRegister
+    public abstract class PlayerRegisterDisp_ : Ice.ObjectImpl, PlayerRegister
     {
         #region Slice operations
 
-        public abstract Online.PlayerPrx Login(string username, string password, Online.LobbyListenerPrx lstnr, Ice.Current current = null);
+        public abstract Online.PlayerPrx Login(string username, string password, Ice.Current current = null);
 
-        public abstract Online.PlayerPrx CreateNew(string username, string password, Online.LobbyListenerPrx lstnr, Ice.Current current = null);
+        public abstract Online.PlayerPrx CreateNew(string username, string password, Ice.Current current = null);
 
         #endregion
 
@@ -4810,7 +5101,7 @@ namespace Online
         private static readonly string[] _ids =
         {
             "::Ice::Object",
-            "::Online::GameRegister"
+            "::Online::PlayerRegister"
         };
 
         public override bool ice_isA(string s, Ice.Current current = null)
@@ -4839,18 +5130,16 @@ namespace Online
 
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
         public static _System.Threading.Tasks.Task<Ice.OutputStream>
-        iceD_Login(GameRegister obj, IceInternal.Incoming inS, Ice.Current current)
+        iceD_Login(PlayerRegister obj, IceInternal.Incoming inS, Ice.Current current)
         {
             Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
             var istr = inS.startReadParams();
             string iceP_username;
             string iceP_password;
-            Online.LobbyListenerPrx iceP_lstnr;
             iceP_username = istr.readString();
             iceP_password = istr.readString();
-            iceP_lstnr = Online.LobbyListenerPrxHelper.read(istr);
             inS.endReadParams();
-            var ret = obj.Login(iceP_username, iceP_password, iceP_lstnr, current);
+            var ret = obj.Login(iceP_username, iceP_password, current);
             var ostr = inS.startWriteParams();
             Online.PlayerPrxHelper.write(ostr, ret);
             inS.endWriteParams(ostr);
@@ -4859,18 +5148,16 @@ namespace Online
 
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
         public static _System.Threading.Tasks.Task<Ice.OutputStream>
-        iceD_CreateNew(GameRegister obj, IceInternal.Incoming inS, Ice.Current current)
+        iceD_CreateNew(PlayerRegister obj, IceInternal.Incoming inS, Ice.Current current)
         {
             Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
             var istr = inS.startReadParams();
             string iceP_username;
             string iceP_password;
-            Online.LobbyListenerPrx iceP_lstnr;
             iceP_username = istr.readString();
             iceP_password = istr.readString();
-            iceP_lstnr = Online.LobbyListenerPrxHelper.read(istr);
             inS.endReadParams();
-            var ret = obj.CreateNew(iceP_username, iceP_password, iceP_lstnr, current);
+            var ret = obj.CreateNew(iceP_username, iceP_password, current);
             var ostr = inS.startWriteParams();
             Online.PlayerPrxHelper.write(ostr, ret);
             inS.endWriteParams(ostr);
@@ -4919,6 +5206,113 @@ namespace Online
                     return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
                 }
                 case 5:
+                {
+                    return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
+                }
+            }
+
+            _System.Diagnostics.Debug.Assert(false);
+            throw new Ice.OperationNotExistException(current.id, current.facet, current.operation);
+        }
+
+        #endregion
+    }
+
+    [_System.Runtime.InteropServices.ComVisible(false)]
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public abstract class GameRegisterDisp_ : Ice.ObjectImpl, GameRegister
+    {
+        #region Slice operations
+
+        public abstract Online.PlayerRegisterPrx Connect(Online.LobbyListenerPrx listener, Ice.Current current = null);
+
+        #endregion
+
+        #region Slice type-related members
+
+        private static readonly string[] _ids =
+        {
+            "::Ice::Object",
+            "::Online::GameRegister"
+        };
+
+        public override bool ice_isA(string s, Ice.Current current = null)
+        {
+            return _System.Array.BinarySearch(_ids, s, IceUtilInternal.StringUtil.OrdinalStringComparer) >= 0;
+        }
+
+        public override string[] ice_ids(Ice.Current current = null)
+        {
+            return _ids;
+        }
+
+        public override string ice_id(Ice.Current current = null)
+        {
+            return _ids[1];
+        }
+
+        public static new string ice_staticId()
+        {
+            return _ids[1];
+        }
+
+        #endregion
+
+        #region Operation dispatch
+
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_Connect(GameRegister obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            var istr = inS.startReadParams();
+            Online.LobbyListenerPrx iceP_listener;
+            iceP_listener = Online.LobbyListenerPrxHelper.read(istr);
+            inS.endReadParams();
+            var ret = obj.Connect(iceP_listener, current);
+            var ostr = inS.startWriteParams();
+            Online.PlayerRegisterPrxHelper.write(ostr, ret);
+            inS.endWriteParams(ostr);
+            return inS.setResult(ostr);
+        }
+
+        private static readonly string[] _all =
+        {
+            "Connect",
+            "ice_id",
+            "ice_ids",
+            "ice_isA",
+            "ice_ping"
+        };
+
+        public override _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceDispatch(IceInternal.Incoming inS, Ice.Current current)
+        {
+            int pos = _System.Array.BinarySearch(_all, current.operation, IceUtilInternal.StringUtil.OrdinalStringComparer);
+            if(pos < 0)
+            {
+                throw new Ice.OperationNotExistException(current.id, current.facet, current.operation);
+            }
+
+            switch(pos)
+            {
+                case 0:
+                {
+                    return iceD_Connect(this, inS, current);
+                }
+                case 1:
+                {
+                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                }
+                case 2:
+                {
+                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                }
+                case 3:
+                {
+                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                }
+                case 4:
                 {
                     return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                 }

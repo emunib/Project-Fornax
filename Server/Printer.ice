@@ -93,11 +93,14 @@ module Online
         bool Ping();
     }
 
+    interface PlayerRegister {
+        Player* Login(string username, string password);
+        Player* CreateNew(string username, string password);
+    }
 
     interface GameRegister
     {
-        Player* Login(string username, string password, LobbyListener* lstnr);
-        Player* CreateNew(string username, string password, LobbyListener* lstnr);
+        PlayerRegister* Connect(LobbyListener* listener);
     }
 
 }

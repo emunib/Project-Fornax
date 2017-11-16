@@ -5,7 +5,8 @@ using UnityEngine;
 using Online;
 using Ice;
 using System;
-
+using System.Net;
+using System.Net.Sockets;
 
 public class OnlineController : MonoBehaviour {
     public UnityEngine.UI.InputField LoginUsername;
@@ -22,6 +23,7 @@ public class OnlineController : MonoBehaviour {
     public GameObject Login;
 
     private GameRegisterPrx gameRegister;
+    private PlayerRegisterPrx playerRegister;
     private LobbyListenerImpl lobbyListener;
     private string[] args = new string[0];
 	// Use this for initialization
@@ -39,8 +41,9 @@ public class OnlineController : MonoBehaviour {
         try
         {
             Ice.Communicator communicator = Ice.Util.initialize(ref args);
-            OnlineManager.Adapater = communicator.createObjectAdapterWithEndpoints("Test", "tcp -h 127.0.0.1 -p 10001");
-            Ice.ObjectPrx obj = communicator.stringToProxy("SimplePrinter:tcp -h 127.0.0.1 -p 10000");
+            Debug.Log(IPAddress.Any.ToString());
+            OnlineManager.Adapater = communicator.createObjectAdapterWithEndpoints("Test", "tcp -h " + IPAddress.Any.ToString() + " -p 10001");
+            Ice.ObjectPrx obj = communicator.stringToProxy("SimplePrinter:tcp -h 192.168.1.18  -p 10000");
             gameRegister = GameRegisterPrxHelper.checkedCast(obj);
             if (gameRegister == null)
             {
@@ -49,6 +52,7 @@ public class OnlineController : MonoBehaviour {
             OnlineManager.LobbyLstnrImpl = lobbyListener;
             OnlineManager.LobbyLstnrProxy = LobbyListenerPrxHelper.checkedCast(OnlineManager.Adapater.addWithUUID(lobbyListener));
             OnlineManager.Adapater.activate();
+            playerRegister = gameRegister.Connect(OnlineManager.LobbyLstnrProxy);
         }
         catch (System.Exception e)
         {
@@ -64,9 +68,8 @@ public class OnlineController : MonoBehaviour {
 
     public void LoginClick() {
         Debug.Log(LoginUsername.text + " " + LoginPassword.text);
-        OnlineManager.Player = gameRegister.Login(LoginUsername.text,
+        OnlineManager.Player = playerRegister.Login(LoginUsername.text,
                                     LoginPassword.text,
-                                                  OnlineManager.LobbyLstnrProxy,
                                     null);
         if (OnlineManager.Player == null){
             LoginUsername.text = "Login failed";
@@ -81,8 +84,7 @@ public class OnlineController : MonoBehaviour {
     {
         if (CreateNewPassword.text == CreateNewConfirmPassword.text)
         {
-            OnlineManager.Player = gameRegister.CreateNew(CreateNewUsername.text, CreateNewPassword.text,
-                                                          OnlineManager.LobbyLstnrProxy,
+            OnlineManager.Player = playerRegister.CreateNew(CreateNewUsername.text, CreateNewPassword.text,
                                null);
             if (OnlineManager.Player == null)
             {

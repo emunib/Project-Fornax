@@ -12,7 +12,7 @@ public class GameImpl implements Game, GameHost {
 	ServerPrx HostServer;
 	ObjectAdapter adapter;
 	HashMap<PlayerImpl, ClientPrx> PlayerList;
-	protected PlayerImpl Host;
+	PlayerImpl Host;
 	GameRegisterImpl Register;
 
 
@@ -20,6 +20,7 @@ public class GameImpl implements Game, GameHost {
 		HostServer = server;
 		Host = player;
 		Register = register;
+		PlayerList = new HashMap<>();
 	}
 
 	@Override

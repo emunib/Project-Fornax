@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using Online;
 public class GameRegistryController : MonoBehaviour
 {
-    public Dictionary<GamePrx,Text> Gameset;
+    public Dictionary<GamePrx,GameObject> Gameset;
     public Text Username;
     public Button LogoutButton;
     public Button CreateButton;
@@ -16,7 +16,7 @@ public class GameRegistryController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        text = Resources.Load("Text") as GameObject;
+        text = Resources.Load("GamePanel") as GameObject;
         if (text == null){
             throw new System.Exception();
         }
@@ -31,6 +31,7 @@ public class GameRegistryController : MonoBehaviour
 
         Username.text = OnlineManager.Player.GetStats().Username;
         InvokeRepeating("UpdateList", 0f, 1f);
+        Gameset = new Dictionary<GamePrx, GameObject>();
     }
 
     void LogoutClick(){
@@ -50,27 +51,39 @@ public class GameRegistryController : MonoBehaviour
 
     void UpdateList(){
         UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameRegistry/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
-        Dictionary<GamePrx, Text> NewGameSet = new Dictionary<GamePrx, Text>();
+        Dictionary<GamePrx, GameObject> NewGameSet = new Dictionary<GamePrx, GameObject>();
         OnlineManager.LobbyLstnrImpl.mutex.WaitOne();
         foreach(GamePrx game in OnlineManager.LobbyLstnrImpl.AvailableGames){
             if (Gameset.ContainsKey(game)){
                 NewGameSet.Add(game, Gameset[game]);
+                Gameset.Remove(game);
             } else {
-                Text newText = Instantiate(text, new UnityEngine.Vector3(0,0,0), Quaternion.identity).GetComponent<Text>();
+                GameObject newText = Instantiate(text, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity);
+                Text childText = newText.transform.Find("Text").GetComponent<Text>();
+                RectTransform rectTransform = newText.GetComponent<RectTransform>();
+                Button childButton = newText.transform.Find("Button").GetComponent<Button>();
                 newText.transform.SetParent(parent);
-                newText.rectTransform.anchorMax = new Vector2(0.5f, 1);
-                newText.rectTransform.anchorMin = new Vector2(0.5f, 1);
-                newText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                newText.rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-                newText.text = game.ice_getIdentity().name;
+                rectTransform.anchorMax = new Vector2(0.5f, 1);
+                rectTransform.anchorMin = new Vector2(0.5f, 1);
+                rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
+                childText.text = game.ice_getIdentity().name;
+                childButton.onClick.AddListener(() => {
+                    Debug.Log("clicked: " + childText.text);
+                });
                 NewGameSet.Add(game, newText);
             }
         }
         OnlineManager.LobbyLstnrImpl.mutex.ReleaseMutex();
+        foreach (KeyValuePair<GamePrx, GameObject> pair in Gameset){
+            Destroy(pair.Value.gameObject);
+        }
         Gameset = NewGameSet;
-        Dictionary<GamePrx, Text>.Enumerator enumerator =  Gameset.GetEnumerator();
         int i = 0;
-        foreach (KeyValuePair<GamePrx,Text>  pair in Gameset){
+        foreach (KeyValuePair<GamePrx,GameObject>  pair in Gameset){
+            if (!pair.Value.activeSelf){
+                pair.Value.SetActive(true);
+            }
             UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
             pos.y = (i++ * -30f) - 15f;
             pair.Value.transform.localPosition = pos;
