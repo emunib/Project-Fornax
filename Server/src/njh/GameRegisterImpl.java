@@ -60,11 +60,14 @@ public class GameRegisterImpl implements GameRegister
                 HashSet<LobbyListenerPrx> UnactiveUsers = new HashSet<>();
                 synchronized (ActiveUsers) {
                     ActiveUsers.forEach((lobbyListenerPrx, player) -> {
-                        try {
-                            lobbyListenerPrx.Update(activeGames);
-                        } catch (ObjectNotExistException e){
-                            UnactiveUsers.add(lobbyListenerPrx);
-                        }
+                            try {
+                                lobbyListenerPrx.Update(activeGames);
+                            } catch (ObjectNotExistException | ConnectTimeoutException e) {
+                                UnactiveUsers.add(lobbyListenerPrx);
+                            } catch (ConnectFailedException e){
+                                e.printStackTrace();
+                            }
+
                     });
                     flushInactiveUser(UnactiveUsers);
                 }
@@ -94,8 +97,10 @@ public class GameRegisterImpl implements GameRegister
                             if (!lobbyListenerPrx.Ping()) {
                                 UnactiveUsers.add(lobbyListenerPrx);
                             }
-                        } catch (ObjectNotExistException | ConnectionRefusedException e){
+                        } catch (ObjectNotExistException | ConnectionRefusedException | ConnectTimeoutException e){
                             UnactiveUsers.add(lobbyListenerPrx);
+                        } catch (ConnectFailedException e){
+                            e.printStackTrace();
                         }
                     });
                     flushInactiveUser(UnactiveUsers);

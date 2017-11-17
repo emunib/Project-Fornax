@@ -50,10 +50,14 @@ module Online
 
     sequence<Command> CommandList;
 
+    interface Server;
+
     interface Client {
        void GetInput();
        void Update(CommandList commandList);
        void Notify();
+       void NotifyKicked();
+       Server* MakeHost();
     }
 
     sequence<Client*> ClientList;
@@ -64,25 +68,33 @@ module Online
 
     sequence<PlayerStats> PlayerList;
 
+    struct LobbyInfo {
+        PlayerStats Host;
+        PlayerList Players;
+    }
+
     interface Game
     {
-            PlayerList GetPlayers();
-     }
+        LobbyInfo GetLobbyInfo();
+    }
 
    sequence<Game*> GameList;
 
      interface GameHost extends Game {
              void StartGame();
+             void KickPlayer(string username);
+             void LockRoom();
+             void UnlockRoom();
      }
 
-       interface Server
-         {
+     interface Server
+     {
             void StartGame(ClientList clientList);
-         }
+     }
 
     interface Player {
         PlayerStats GetStats();
-        void JoinGame(Client* client, Game* game);
+        bool JoinGame(Client* client, Game* game);
         GameHost* CreateGame(Server* server);
         void LeaveGame();
         void LogOut();

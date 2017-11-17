@@ -69,7 +69,10 @@ public class GameRegistryController : MonoBehaviour
                 rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
                 childText.text = game.ice_getIdentity().name;
                 childButton.onClick.AddListener(() => {
-                    Debug.Log("clicked: " + childText.text);
+                    ClientPrx client = ClientPrxHelper.checkedCast(OnlineManager.Adapater.addWithUUID(new ClientImpl()));
+                    OnlineManager.Player.JoinGame(client, game);
+                    OnlineManager.Game = 
+                        
                 });
                 NewGameSet.Add(game, newText);
             }

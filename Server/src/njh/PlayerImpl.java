@@ -23,11 +23,13 @@ public class PlayerImpl implements Player {
 	}
 
 	@Override
-	public void JoinGame(ClientPrx client, GamePrx game, Current current) {
+	public boolean JoinGame(ClientPrx client, GamePrx game, Current current) {
 		GameImpl gameImpl = (GameImpl) Adapter.findByProxy(game);
 		if (gameImpl.AddPlayer(this, client)){
 			Game = gameImpl;
+			return true;
 		}
+		return false;
 	}
 
 	@Override
