@@ -22,10 +22,12 @@ class GameInfo {
 	public final ReadOnlyHashMap<PlayerImpl, ClientPrx> playerList = new ReadOnlyHashMap<>(PlayerList);
 	private final LobbyInfo CachedLobbyInfo;
 	private boolean Modified;
+	private boolean IsLocked;
 
 	public GameInfo(String id){
 		CachedLobbyInfo = new LobbyInfo();
 		CachedLobbyInfo.Id = id;
+		IsLocked = false;
 	}
 
 	public synchronized LobbyInfo GetLobbyInfo(){
@@ -37,6 +39,7 @@ class GameInfo {
 				CachedLobbyInfo.Players[i.IncUp()] = player.GetStats(null);
 			});
 			CachedLobbyInfo.Host = Host.Key.GetStats(null);
+			CachedLobbyInfo.IsLocked = IsLocked;
 		}
 		return CachedLobbyInfo;
 	}
@@ -57,12 +60,19 @@ class GameInfo {
 		Modified = true;
 		return PlayerList.remove(player);
 	}
+
+	public synchronized boolean SwitchLock(){
+		Modified = true;
+		IsLocked = !IsLocked;
+		return IsLocked;
+	}
 }
 
 public class GameImpl implements Game, GameHost {
 	private final GameInfo gameInfo;
 	private final GameRegisterImpl Register;
 	private final PlayerRegistry playerRegistry;
+	private boolean Locked;
 	private boolean Joinable;
 
 
@@ -72,6 +82,7 @@ public class GameImpl implements Game, GameHost {
 		Register = register;
 		Joinable = true;
 		playerRegistry = nPlayerRegistry;
+		Locked = false;
 	}
 
 	@Override
@@ -80,7 +91,7 @@ public class GameImpl implements Game, GameHost {
 	}
 
 	public synchronized boolean AddPlayer(PlayerImpl player, ClientPrx client){
-		if (Joinable){
+		if ((Joinable) && (!Locked)){
 			gameInfo.AddPlayer(player, client);
 			return true;
 		}
@@ -103,6 +114,7 @@ public class GameImpl implements Game, GameHost {
 
 	@Override
 	public synchronized void StartGame(Current current) {
+		Register.HideGame(this);
 		Joinable = false;
 	}
 
@@ -118,14 +130,12 @@ public class GameImpl implements Game, GameHost {
 	}
 
 	@Override
-	public synchronized void LockRoom(Current current) {
-		Joinable = false;
-		Register.RemoveGame(this);
-	}
+	public synchronized void SwitchLock(Current current) {
+		if ((Locked = gameInfo.SwitchLock())){
+			Register.HideGame(this);
+		} else {
+			Register.UnHideGame(this);
+		}
 
-	@Override
-	public synchronized void UnlockRoom(Current current) {
-		Joinable = true;
-		Register.AddGame(this);
 	}
 }

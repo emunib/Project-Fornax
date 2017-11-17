@@ -1004,6 +1004,9 @@ namespace Online
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
         public Online.PlayerStats[] Players;
 
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public bool IsLocked;
+
         #endregion
 
         #region Constructors
@@ -1016,11 +1019,12 @@ namespace Online
         }
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        public LobbyInfo(string Id, Online.PlayerStats Host, Online.PlayerStats[] Players)
+        public LobbyInfo(string Id, Online.PlayerStats Host, Online.PlayerStats[] Players, bool IsLocked)
         {
             this.Id = Id;
             this.Host = Host;
             this.Players = Players;
+            this.IsLocked = IsLocked;
         }
 
         #endregion
@@ -1045,6 +1049,7 @@ namespace Online
             IceInternal.HashUtil.hashAdd(ref h_, Id);
             IceInternal.HashUtil.hashAdd(ref h_, Host);
             IceInternal.HashUtil.hashAdd(ref h_, Players);
+            IceInternal.HashUtil.hashAdd(ref h_, IsLocked);
             return h_;
         }
 
@@ -1106,6 +1111,10 @@ namespace Online
                     return false;
                 }
             }
+            if(!this.IsLocked.Equals(o.IsLocked))
+            {
+                return false;
+            }
             return true;
         }
 
@@ -1135,6 +1144,7 @@ namespace Online
             ostr.writeString(this.Id);
             Online.PlayerStats.ice_write(ostr, this.Host);
             Online.PlayerListHelper.write(ostr, this.Players);
+            ostr.writeBool(this.IsLocked);
         }
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1143,6 +1153,7 @@ namespace Online
             this.Id = istr.readString();
             this.Host = Online.PlayerStats.ice_read(istr);
             this.Players = Online.PlayerListHelper.read(istr);
+            this.IsLocked = istr.readBool();
         }
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1304,10 +1315,7 @@ namespace Online
     public delegate void Callback_GameHost_KickPlayer();
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public delegate void Callback_GameHost_LockRoom();
-
-    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public delegate void Callback_GameHost_UnlockRoom();
+    public delegate void Callback_GameHost_SwitchLock();
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public delegate void Callback_Server_StartGame();
@@ -1452,29 +1460,17 @@ namespace Online
 
         void end_KickPlayer(Ice.AsyncResult asyncResult);
 
-        void LockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
+        void SwitchLock(Ice.OptionalContext context = new Ice.OptionalContext());
 
-        _System.Threading.Tasks.Task LockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+        _System.Threading.Tasks.Task SwitchLockAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-        Ice.AsyncResult<Online.Callback_GameHost_LockRoom> begin_LockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
+        Ice.AsyncResult<Online.Callback_GameHost_SwitchLock> begin_SwitchLock(Ice.OptionalContext context = new Ice.OptionalContext());
 
-        Ice.AsyncResult begin_LockRoom(Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_SwitchLock(Ice.AsyncCallback callback, object cookie);
 
-        Ice.AsyncResult begin_LockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_SwitchLock(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
-        void end_LockRoom(Ice.AsyncResult asyncResult);
-
-        void UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
-
-        _System.Threading.Tasks.Task UnlockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
-
-        Ice.AsyncResult<Online.Callback_GameHost_UnlockRoom> begin_UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
-
-        Ice.AsyncResult begin_UnlockRoom(Ice.AsyncCallback callback, object cookie);
-
-        Ice.AsyncResult begin_UnlockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
-
-        void end_UnlockRoom(Ice.AsyncResult asyncResult);
+        void end_SwitchLock(Ice.AsyncResult asyncResult);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1668,10 +1664,7 @@ namespace Online
         void KickPlayer(string username, Ice.Current current = null);
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        void LockRoom(Ice.Current current = null);
-
-        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        void UnlockRoom(Ice.Current current = null);
+        void SwitchLock(Ice.Current current = null);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -2749,18 +2742,6 @@ namespace Online
             }
         }
 
-        public void LockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
-        {
-            try
-            {
-                _iceI_LockRoomAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
-            }
-            catch(_System.AggregateException ex_)
-            {
-                throw ex_.InnerException;
-            }
-        }
-
         public void StartGame(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
@@ -2773,11 +2754,11 @@ namespace Online
             }
         }
 
-        public void UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
+        public void SwitchLock(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
-                _iceI_UnlockRoomAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
+                _iceI_SwitchLockAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
             }
             catch(_System.AggregateException ex_)
             {
@@ -2850,31 +2831,6 @@ namespace Online
                 });
         }
 
-        public _System.Threading.Tasks.Task LockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
-        {
-            return _iceI_LockRoomAsync(context, progress, cancel, false);
-        }
-
-        private _System.Threading.Tasks.Task _iceI_LockRoomAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
-        {
-            var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-            _iceI_LockRoom(context, synchronous, completed);
-            return completed.Task;
-        }
-
-        private const string _LockRoom_name = "LockRoom";
-
-        private void _iceI_LockRoom(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
-        {
-            var outAsync = getOutgoingAsync<object>(completed);
-            outAsync.invoke(
-                _LockRoom_name,
-                Ice.OperationMode.Normal,
-                Ice.FormatType.DefaultFormat,
-                context,
-                synchronous);
-        }
-
         public _System.Threading.Tasks.Task StartGameAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
             return _iceI_StartGameAsync(context, progress, cancel, false);
@@ -2900,25 +2856,25 @@ namespace Online
                 synchronous);
         }
 
-        public _System.Threading.Tasks.Task UnlockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        public _System.Threading.Tasks.Task SwitchLockAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
-            return _iceI_UnlockRoomAsync(context, progress, cancel, false);
+            return _iceI_SwitchLockAsync(context, progress, cancel, false);
         }
 
-        private _System.Threading.Tasks.Task _iceI_UnlockRoomAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        private _System.Threading.Tasks.Task _iceI_SwitchLockAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
         {
             var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
-            _iceI_UnlockRoom(context, synchronous, completed);
+            _iceI_SwitchLock(context, synchronous, completed);
             return completed.Task;
         }
 
-        private const string _UnlockRoom_name = "UnlockRoom";
+        private const string _SwitchLock_name = "SwitchLock";
 
-        private void _iceI_UnlockRoom(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        private void _iceI_SwitchLock(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
         {
             var outAsync = getOutgoingAsync<object>(completed);
             outAsync.invoke(
-                _UnlockRoom_name,
+                _SwitchLock_name,
                 Ice.OperationMode.Normal,
                 Ice.FormatType.DefaultFormat,
                 context,
@@ -3003,42 +2959,6 @@ namespace Online
             return completed;
         }
 
-        public Ice.AsyncResult<Online.Callback_GameHost_LockRoom> begin_LockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
-        {
-            return begin_LockRoom(context, null, null, false);
-        }
-
-        public Ice.AsyncResult begin_LockRoom(Ice.AsyncCallback callback, object cookie)
-        {
-            return begin_LockRoom(new Ice.OptionalContext(), callback, cookie, false);
-        }
-
-        public Ice.AsyncResult begin_LockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
-        {
-            return begin_LockRoom(context, callback, cookie, false);
-        }
-
-        public void end_LockRoom(Ice.AsyncResult asyncResult)
-        {
-            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _LockRoom_name);
-            ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
-        }
-
-        private Ice.AsyncResult<Online.Callback_GameHost_LockRoom> begin_LockRoom(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
-        {
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameHost_LockRoom, object>(
-                (Online.Callback_GameHost_LockRoom cb, object ret) =>
-                {
-                    if(cb != null)
-                    {
-                        cb.Invoke();
-                    }
-                },
-                this, _LockRoom_name, cookie, completedCallback);
-            _iceI_LockRoom(context, synchronous, completed);
-            return completed;
-        }
-
         public Ice.AsyncResult<Online.Callback_GameHost_StartGame> begin_StartGame(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             return begin_StartGame(context, null, null, false);
@@ -3075,39 +2995,39 @@ namespace Online
             return completed;
         }
 
-        public Ice.AsyncResult<Online.Callback_GameHost_UnlockRoom> begin_UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
+        public Ice.AsyncResult<Online.Callback_GameHost_SwitchLock> begin_SwitchLock(Ice.OptionalContext context = new Ice.OptionalContext())
         {
-            return begin_UnlockRoom(context, null, null, false);
+            return begin_SwitchLock(context, null, null, false);
         }
 
-        public Ice.AsyncResult begin_UnlockRoom(Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_SwitchLock(Ice.AsyncCallback callback, object cookie)
         {
-            return begin_UnlockRoom(new Ice.OptionalContext(), callback, cookie, false);
+            return begin_SwitchLock(new Ice.OptionalContext(), callback, cookie, false);
         }
 
-        public Ice.AsyncResult begin_UnlockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_SwitchLock(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_UnlockRoom(context, callback, cookie, false);
+            return begin_SwitchLock(context, callback, cookie, false);
         }
 
-        public void end_UnlockRoom(Ice.AsyncResult asyncResult)
+        public void end_SwitchLock(Ice.AsyncResult asyncResult)
         {
-            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _UnlockRoom_name);
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _SwitchLock_name);
             ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
         }
 
-        private Ice.AsyncResult<Online.Callback_GameHost_UnlockRoom> begin_UnlockRoom(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        private Ice.AsyncResult<Online.Callback_GameHost_SwitchLock> begin_SwitchLock(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
         {
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameHost_UnlockRoom, object>(
-                (Online.Callback_GameHost_UnlockRoom cb, object ret) =>
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameHost_SwitchLock, object>(
+                (Online.Callback_GameHost_SwitchLock cb, object ret) =>
                 {
                     if(cb != null)
                     {
                         cb.Invoke();
                     }
                 },
-                this, _UnlockRoom_name, cookie, completedCallback);
-            _iceI_UnlockRoom(context, synchronous, completed);
+                this, _SwitchLock_name, cookie, completedCallback);
+            _iceI_SwitchLock(context, synchronous, completed);
             return completed;
         }
 
@@ -5275,9 +5195,7 @@ namespace Online
 
         public abstract void KickPlayer(string username, Ice.Current current = null);
 
-        public abstract void LockRoom(Ice.Current current = null);
-
-        public abstract void UnlockRoom(Ice.Current current = null);
+        public abstract void SwitchLock(Ice.Current current = null);
 
         #endregion
 
@@ -5345,21 +5263,11 @@ namespace Online
 
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
         public static _System.Threading.Tasks.Task<Ice.OutputStream>
-        iceD_LockRoom(GameHost obj, IceInternal.Incoming inS, Ice.Current current)
+        iceD_SwitchLock(GameHost obj, IceInternal.Incoming inS, Ice.Current current)
         {
             Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
             inS.readEmptyParams();
-            obj.LockRoom(current);
-            return inS.setResult(inS.writeEmptyParams());
-        }
-
-        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
-        public static _System.Threading.Tasks.Task<Ice.OutputStream>
-        iceD_UnlockRoom(GameHost obj, IceInternal.Incoming inS, Ice.Current current)
-        {
-            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
-            inS.readEmptyParams();
-            obj.UnlockRoom(current);
+            obj.SwitchLock(current);
             return inS.setResult(inS.writeEmptyParams());
         }
 
@@ -5367,9 +5275,8 @@ namespace Online
         {
             "GetLobbyInfo",
             "KickPlayer",
-            "LockRoom",
             "StartGame",
-            "UnlockRoom",
+            "SwitchLock",
             "ice_id",
             "ice_ids",
             "ice_isA",
@@ -5397,29 +5304,25 @@ namespace Online
                 }
                 case 2:
                 {
-                    return iceD_LockRoom(this, inS, current);
+                    return iceD_StartGame(this, inS, current);
                 }
                 case 3:
                 {
-                    return iceD_StartGame(this, inS, current);
+                    return iceD_SwitchLock(this, inS, current);
                 }
                 case 4:
                 {
-                    return iceD_UnlockRoom(this, inS, current);
+                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                 }
                 case 5:
                 {
-                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
                 }
                 case 6:
                 {
-                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
-                }
-                case 7:
-                {
                     return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
                 }
-                case 8:
+                case 7:
                 {
                     return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                 }

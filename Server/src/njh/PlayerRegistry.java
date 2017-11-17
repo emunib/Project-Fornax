@@ -37,7 +37,7 @@ public class PlayerRegistry {
 	public PlayerPrx CreateNew(String username, String password, Current current) {
 		User temp = UserList.get(username);
 		if (temp == null){
-			User newuser = new User(password, username);
+			User newuser = new User(username, password);
 			UserList.put(username, newuser);
 			PlayerImpl player = new PlayerImpl(newuser, Adapter, Register, this);
 			newuser.Instance = player;

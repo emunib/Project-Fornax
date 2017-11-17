@@ -17,7 +17,7 @@ public class GameLobbyController : MonoBehaviour {
             throw new System.Exception();
         }
         Gameset = new Dictionary<Online.PlayerStats, Text>();
-        LeaveButton = GameObject.Find("Canvas/Online/GameHostLobby/LeaveGameButton").GetComponent<Button>();
+        LeaveButton = GameObject.Find("Canvas/Online/GameLobby/LeaveGameButton").GetComponent<Button>();
         LeaveButton.onClick.AddListener(LeaveClick);
         InvokeRepeating("UpdateList", 0.0f, 1f);
     }
@@ -32,11 +32,12 @@ public class GameLobbyController : MonoBehaviour {
     // Update is called once per frame
     void UpdateList()
     {
-        Online.LobbyInfo info = OnlineManager.GameHost.GetLobbyInfo();
-        UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameHostLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
+        Online.LobbyInfo info = OnlineManager.Game.GetLobbyInfo();
+        UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
         Dictionary<Online.PlayerStats, Text> NewGameSet = new Dictionary<Online.PlayerStats, Text>();
         if (Gameset.ContainsKey(info.Host)){
             NewGameSet.Add(info.Host, Gameset[info.Host]);
+            Gameset.Remove(info.Host);
         } else {
             Text newText = Instantiate(text, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity).GetComponent<Text>();
             newText.transform.SetParent(parent);
@@ -52,6 +53,7 @@ public class GameLobbyController : MonoBehaviour {
             if (Gameset.ContainsKey(stat))
             {
                 NewGameSet.Add(stat, Gameset[stat]);
+                Gameset.Remove(stat);
             }
             else
             {
@@ -64,6 +66,10 @@ public class GameLobbyController : MonoBehaviour {
                 newText.text = stat.Username;
                 NewGameSet.Add(stat, newText);
             }
+        }
+        foreach (KeyValuePair<Online.PlayerStats, Text> pair in Gameset)
+        {
+            Destroy(pair.Value.gameObject);
         }
         Gameset = NewGameSet;
         int i = 0;

@@ -67,7 +67,6 @@ public class OnlineController : MonoBehaviour {
 	}
 
     public void LoginClick() {
-        Debug.Log(LoginUsername.text + " " + LoginPassword.text);
         OnlineManager.Player = playerRegister.Login(LoginUsername.text,
                                     LoginPassword.text,
                                     null);

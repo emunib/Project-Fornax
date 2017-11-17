@@ -2,27 +2,35 @@ package njh;
 import Online.*;
 import com.zeroc.Ice.*;
 
+import java.lang.Exception;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class GameRegisterImpl implements GameRegister
 {
     final public HashMap<LobbyListenerPrx, PlayerPrx> ActiveUsers;
+
     final private HashMap<GameImpl, GamePrx> GameList;
+    final private HashMap<GameImpl, GamePrx> HiddenGameList;
+
     final private PlayerRegistry playerRegistry;
     private boolean clean;
     private boolean waiting;
     public final IdGenerator idGenerator;
+    Communicator communicator;
     ObjectAdapter adapter;
 
 
-    public GameRegisterImpl(ObjectAdapter nadapter){
+    public GameRegisterImpl(ObjectAdapter nadapter, Communicator nCommunicator){
         playerRegistry = new PlayerRegistry(this, nadapter);
         ActiveUsers = new HashMap<>();
         GameList = new HashMap<>();
+        HiddenGameList = new HashMap<>();
         clean = true;
         waiting = false;
         adapter = nadapter;
         idGenerator = new IdGenerator();
+        communicator = nCommunicator;
        Thread updater = new Thread(new Updater());
        Thread pinger = new Thread(new Pinger());
        updater.start();
@@ -61,16 +69,20 @@ public class GameRegisterImpl implements GameRegister
                 });
                 HashSet<LobbyListenerPrx> UnactiveUsers = new HashSet<>();
                 synchronized (ActiveUsers) {
+                    LinkedList<CompletableFuture<Void>> futureLinkedList = new LinkedList<>();
                     ActiveUsers.forEach((lobbyListenerPrx, player) -> {
-                            try {
-                                lobbyListenerPrx.Update(activeGames);
-                            } catch (ObjectNotExistException | ConnectTimeoutException e) {
-                                UnactiveUsers.add(lobbyListenerPrx);
-                            } catch (ConnectFailedException e){
-                                e.printStackTrace();
-                            }
-
+                            futureLinkedList.add(lobbyListenerPrx.UpdateAsync(activeGames).handleAsync((res, ex) -> {
+                                if (ex !=  null){
+                                    if ((ex.getClass() == ObjectNotExistException.class) || (ex.getClass() == ConnectTimeoutException.class)){
+                                        UnactiveUsers.add(lobbyListenerPrx);
+                                    } else {
+                                      ex.printStackTrace();
+                                    }
+                                }
+                                return null;
+                            }));
                     });
+                    futureLinkedList.forEach(CompletableFuture::join);
                     flushInactiveUser(UnactiveUsers);
                 }
                 try {
@@ -133,12 +145,53 @@ public class GameRegisterImpl implements GameRegister
         return newproxy;
     }
 
+    public void HideGame(GameImpl game){
+        synchronized (GameList){
+            try {
+                if (clean) {
+                    clean = false;
+                }
+                GamePrx gamePrx = GameList.remove(game);
+                if (gamePrx == null) throw new Exception();
+                HiddenGameList.put(game, gamePrx);
+                if (waiting) {
+                    GameList.notify();
+                    waiting = false;
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void UnHideGame(GameImpl game){
+        synchronized (GameList){
+            try {
+                if (clean) {
+                    clean = false;
+                }
+                GamePrx gamePrx = HiddenGameList.remove(game);
+                if (gamePrx == null) throw new Exception();
+                GameList.put(game, gamePrx);
+                if (waiting) {
+                    GameList.notify();
+                    waiting = false;
+                }
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
     public void RemoveGame(GameImpl game){
         synchronized (GameList) {
             if (clean){
                 clean = false;
             }
             GamePrx proxy = GameList.remove(game);
+            if (proxy == null){
+                proxy = HiddenGameList.remove(game);
+            }
             adapter.remove(proxy.ice_getIdentity());
             if (waiting){
                 GameList.notify();

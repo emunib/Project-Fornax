@@ -72,6 +72,7 @@ module Online
         string Id;
         PlayerStats Host;
         PlayerList Players;
+        bool IsLocked;
     }
 
     interface Game
@@ -84,8 +85,7 @@ module Online
      interface GameHost extends Game {
              void StartGame();
              void KickPlayer(string username);
-             void LockRoom();
-             void UnlockRoom();
+             void SwitchLock();
      }
 
      interface Server
