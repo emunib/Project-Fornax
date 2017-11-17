@@ -69,6 +69,7 @@ module Online
     sequence<PlayerStats> PlayerList;
 
     struct LobbyInfo {
+        string Id;
         PlayerStats Host;
         PlayerList Players;
     }

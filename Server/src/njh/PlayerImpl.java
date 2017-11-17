@@ -4,16 +4,17 @@ import com.zeroc.Ice.Current;
 import com.zeroc.Ice.ObjectAdapter;
 
 public class PlayerImpl implements Player {
-	User _User;
+	private final User _User;
 	ObjectAdapter Adapter;
-	GameRegisterImpl Register;
-
+	private final GameRegisterImpl Register;
+	private final PlayerRegistry playerRegistry;
 	GameImpl Game;
 
-	public PlayerImpl(User user, ObjectAdapter adapter, GameRegisterImpl register){
+	public PlayerImpl(User user, ObjectAdapter adapter, GameRegisterImpl register, PlayerRegistry nPlayerRegistry){
 		_User = user;
 		Adapter = adapter;
 		Register = register;
+		playerRegistry = nPlayerRegistry;
 	}
 	@Override
 	public PlayerStats GetStats(Current current) {
@@ -34,7 +35,7 @@ public class PlayerImpl implements Player {
 
 	@Override
 	public GameHostPrx CreateGame(ServerPrx server, Current current) {
-		GameImpl gameHost = new GameImpl(server, this, Register);
+		GameImpl gameHost = new GameImpl(server, this, Register, playerRegistry, Register.idGenerator.GetId());
 		Game = gameHost;
 		Register.AddGame(gameHost);
 		return GameHostPrx.checkedCast(Adapter.addWithUUID(gameHost));

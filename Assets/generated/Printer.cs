@@ -980,6 +980,197 @@ namespace Online
         #endregion
     }
 
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1709")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1711")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1715")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1722")]
+    [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1724")]
+    [_System.Serializable]
+    public partial class LobbyInfo : _System.ICloneable
+    {
+        #region Slice data members
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public string Id;
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public Online.PlayerStats Host;
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public Online.PlayerStats[] Players;
+
+        #endregion
+
+        #region Constructors
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public LobbyInfo()
+        {
+            this.Id = "";
+            this.Host = new Online.PlayerStats();
+        }
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public LobbyInfo(string Id, Online.PlayerStats Host, Online.PlayerStats[] Players)
+        {
+            this.Id = Id;
+            this.Host = Host;
+            this.Players = Players;
+        }
+
+        #endregion
+
+        #region ICloneable members
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
+
+        #endregion
+
+        #region Object members
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public override int GetHashCode()
+        {
+            int h_ = 5381;
+            IceInternal.HashUtil.hashAdd(ref h_, "::Online::LobbyInfo");
+            IceInternal.HashUtil.hashAdd(ref h_, Id);
+            IceInternal.HashUtil.hashAdd(ref h_, Host);
+            IceInternal.HashUtil.hashAdd(ref h_, Players);
+            return h_;
+        }
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public override bool Equals(object other)
+        {
+            if(object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+            if(other == null)
+            {
+                return false;
+            }
+            if(GetType() != other.GetType())
+            {
+                return false;
+            }
+            LobbyInfo o = (LobbyInfo)other;
+            if(this.Id == null)
+            {
+                if(o.Id != null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(!this.Id.Equals(o.Id))
+                {
+                    return false;
+                }
+            }
+            if(this.Host == null)
+            {
+                if(o.Host != null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(!this.Host.Equals(o.Host))
+                {
+                    return false;
+                }
+            }
+            if(this.Players == null)
+            {
+                if(o.Players != null)
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if(!IceUtilInternal.Arrays.Equals(this.Players, o.Players))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        #endregion
+
+        #region Comparison members
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public static bool operator==(LobbyInfo lhs, LobbyInfo rhs)
+        {
+            return Equals(lhs, rhs);
+        }
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public static bool operator!=(LobbyInfo lhs, LobbyInfo rhs)
+        {
+            return !Equals(lhs, rhs);
+        }
+
+        #endregion
+
+        #region Marshaling support
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public void ice_writeMembers(Ice.OutputStream ostr)
+        {
+            ostr.writeString(this.Id);
+            Online.PlayerStats.ice_write(ostr, this.Host);
+            Online.PlayerListHelper.write(ostr, this.Players);
+        }
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public void ice_readMembers(Ice.InputStream istr)
+        {
+            this.Id = istr.readString();
+            this.Host = Online.PlayerStats.ice_read(istr);
+            this.Players = Online.PlayerListHelper.read(istr);
+        }
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public static void ice_write(Ice.OutputStream ostr, LobbyInfo v)
+        {
+            if(v == null)
+            {
+                _nullMarshalValue.ice_writeMembers(ostr);
+            }
+            else
+            {
+                v.ice_writeMembers(ostr);
+            }
+        }
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        public static LobbyInfo ice_read(Ice.InputStream istr)
+        {
+            var v = new LobbyInfo();
+            v.ice_readMembers(istr);
+            return v;
+        }
+
+        private static readonly LobbyInfo _nullMarshalValue = new LobbyInfo();
+
+        #endregion
+    }
+
     [_System.Runtime.InteropServices.ComVisible(false)]
     [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704")]
     [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1707")]
@@ -1098,10 +1289,25 @@ namespace Online
     public delegate void Callback_Client_Notify();
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public delegate void Callback_Game_GetPlayers(Online.PlayerStats[] ret);
+    public delegate void Callback_Client_NotifyKicked();
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_Client_MakeHost(Online.ServerPrx ret);
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_Game_GetLobbyInfo(Online.LobbyInfo ret);
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public delegate void Callback_GameHost_StartGame();
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_GameHost_KickPlayer();
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_GameHost_LockRoom();
+
+    [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+    public delegate void Callback_GameHost_UnlockRoom();
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public delegate void Callback_Server_StartGame();
@@ -1110,7 +1316,7 @@ namespace Online
     public delegate void Callback_Player_GetStats(Online.PlayerStats ret);
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-    public delegate void Callback_Player_JoinGame();
+    public delegate void Callback_Player_JoinGame(bool ret);
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public delegate void Callback_Player_CreateGame(Online.GameHostPrx ret);
@@ -1177,22 +1383,46 @@ namespace Online
         Ice.AsyncResult begin_Notify(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
         void end_Notify(Ice.AsyncResult asyncResult);
+
+        void NotifyKicked(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task NotifyKickedAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_Client_NotifyKicked> begin_NotifyKicked(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_NotifyKicked(Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_NotifyKicked(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        void end_NotifyKicked(Ice.AsyncResult asyncResult);
+
+        Online.ServerPrx MakeHost(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task<Online.ServerPrx> MakeHostAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_Client_MakeHost> begin_MakeHost(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_MakeHost(Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_MakeHost(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        Online.ServerPrx end_MakeHost(Ice.AsyncResult asyncResult);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public interface GamePrx : Ice.ObjectPrx
     {
-        Online.PlayerStats[] GetPlayers(Ice.OptionalContext context = new Ice.OptionalContext());
+        Online.LobbyInfo GetLobbyInfo(Ice.OptionalContext context = new Ice.OptionalContext());
 
-        _System.Threading.Tasks.Task<Online.PlayerStats[]> GetPlayersAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+        _System.Threading.Tasks.Task<Online.LobbyInfo> GetLobbyInfoAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
-        Ice.AsyncResult<Online.Callback_Game_GetPlayers> begin_GetPlayers(Ice.OptionalContext context = new Ice.OptionalContext());
+        Ice.AsyncResult<Online.Callback_Game_GetLobbyInfo> begin_GetLobbyInfo(Ice.OptionalContext context = new Ice.OptionalContext());
 
-        Ice.AsyncResult begin_GetPlayers(Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_GetLobbyInfo(Ice.AsyncCallback callback, object cookie);
 
-        Ice.AsyncResult begin_GetPlayers(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+        Ice.AsyncResult begin_GetLobbyInfo(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
-        Online.PlayerStats[] end_GetPlayers(Ice.AsyncResult asyncResult);
+        Online.LobbyInfo end_GetLobbyInfo(Ice.AsyncResult asyncResult);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1209,6 +1439,42 @@ namespace Online
         Ice.AsyncResult begin_StartGame(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
         void end_StartGame(Ice.AsyncResult asyncResult);
+
+        void KickPlayer(string username, Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task KickPlayerAsync(string username, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_GameHost_KickPlayer> begin_KickPlayer(string username, Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_KickPlayer(string username, Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_KickPlayer(string username, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        void end_KickPlayer(Ice.AsyncResult asyncResult);
+
+        void LockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task LockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_GameHost_LockRoom> begin_LockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_LockRoom(Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_LockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        void end_LockRoom(Ice.AsyncResult asyncResult);
+
+        void UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        _System.Threading.Tasks.Task UnlockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+
+        Ice.AsyncResult<Online.Callback_GameHost_UnlockRoom> begin_UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext());
+
+        Ice.AsyncResult begin_UnlockRoom(Ice.AsyncCallback callback, object cookie);
+
+        Ice.AsyncResult begin_UnlockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
+
+        void end_UnlockRoom(Ice.AsyncResult asyncResult);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1242,9 +1508,9 @@ namespace Online
 
         Online.PlayerStats end_GetStats(Ice.AsyncResult asyncResult);
 
-        void JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext());
+        bool JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext());
 
-        _System.Threading.Tasks.Task JoinGameAsync(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
+        _System.Threading.Tasks.Task<bool> JoinGameAsync(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken());
 
         Ice.AsyncResult<Online.Callback_Player_JoinGame> begin_JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext());
 
@@ -1252,7 +1518,7 @@ namespace Online
 
         Ice.AsyncResult begin_JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie);
 
-        void end_JoinGame(Ice.AsyncResult asyncResult);
+        bool end_JoinGame(Ice.AsyncResult asyncResult);
 
         Online.GameHostPrx CreateGame(Online.ServerPrx server, Ice.OptionalContext context = new Ice.OptionalContext());
 
@@ -1377,13 +1643,19 @@ namespace Online
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
         void Notify(Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        void NotifyKicked(Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        Online.ServerPrx MakeHost(Ice.Current current = null);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
     public interface GameOperations_
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        Online.PlayerStats[] GetPlayers(Ice.Current current = null);
+        Online.LobbyInfo GetLobbyInfo(Ice.Current current = null);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1391,6 +1663,15 @@ namespace Online
     {
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
         void StartGame(Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        void KickPlayer(string username, Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        void LockRoom(Ice.Current current = null);
+
+        [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
+        void UnlockRoom(Ice.Current current = null);
     }
 
     [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
@@ -1407,7 +1688,7 @@ namespace Online
         Online.PlayerStats GetStats(Ice.Current current = null);
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
-        void JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.Current current = null);
+        bool JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.Current current = null);
 
         [_System.CodeDom.Compiler.GeneratedCodeAttribute("slice2cs", "3.7.0")]
         Online.GameHostPrx CreateGame(Online.ServerPrx server, Ice.Current current = null);
@@ -1560,11 +1841,35 @@ namespace Online
             }
         }
 
+        public Online.ServerPrx MakeHost(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                return _iceI_MakeHostAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
         public void Notify(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
                 _iceI_NotifyAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
+        public void NotifyKicked(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                _iceI_NotifyKickedAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
             }
             catch(_System.AggregateException ex_)
             {
@@ -1613,6 +1918,38 @@ namespace Online
                 synchronous);
         }
 
+        public _System.Threading.Tasks.Task<Online.ServerPrx> MakeHostAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_MakeHostAsync(context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task<Online.ServerPrx> _iceI_MakeHostAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            iceCheckTwowayOnly(_MakeHost_name);
+            var completed = new IceInternal.OperationTaskCompletionCallback<Online.ServerPrx>(progress, cancel);
+            _iceI_MakeHost(context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _MakeHost_name = "MakeHost";
+
+        private void _iceI_MakeHost(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<Online.ServerPrx>(completed);
+            outAsync.invoke(
+                _MakeHost_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous,
+                read: (Ice.InputStream istr) =>
+                {
+                    Online.ServerPrx ret;
+                    ret = Online.ServerPrxHelper.read(istr);
+                    return ret;
+                });
+        }
+
         public _System.Threading.Tasks.Task NotifyAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
             return _iceI_NotifyAsync(context, progress, cancel, false);
@@ -1632,6 +1969,31 @@ namespace Online
             var outAsync = getOutgoingAsync<object>(completed);
             outAsync.invoke(
                 _Notify_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous);
+        }
+
+        public _System.Threading.Tasks.Task NotifyKickedAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_NotifyKickedAsync(context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task _iceI_NotifyKickedAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+            _iceI_NotifyKicked(context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _NotifyKicked_name = "NotifyKicked";
+
+        private void _iceI_NotifyKicked(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<object>(completed);
+            outAsync.invoke(
+                _NotifyKicked_name,
                 Ice.OperationMode.Normal,
                 Ice.FormatType.DefaultFormat,
                 context,
@@ -1708,6 +2070,44 @@ namespace Online
             return completed;
         }
 
+        public Ice.AsyncResult<Online.Callback_Client_MakeHost> begin_MakeHost(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_MakeHost(context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_MakeHost(Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_MakeHost(new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_MakeHost(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_MakeHost(context, callback, cookie, false);
+        }
+
+        public Online.ServerPrx end_MakeHost(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _MakeHost_name);
+            var outgoing_ = (IceInternal.OutgoingAsyncT<Online.ServerPrx>)resultI_.OutgoingAsync;
+            return outgoing_.getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_Client_MakeHost> begin_MakeHost(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            iceCheckAsyncTwowayOnly(_MakeHost_name);
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Client_MakeHost, Online.ServerPrx>(
+                (Online.Callback_Client_MakeHost cb, Online.ServerPrx ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke(ret);
+                    }
+                },
+                this, _MakeHost_name, cookie, completedCallback);
+            _iceI_MakeHost(context, synchronous, completed);
+            return completed;
+        }
+
         public Ice.AsyncResult<Online.Callback_Client_Notify> begin_Notify(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             return begin_Notify(context, null, null, false);
@@ -1741,6 +2141,42 @@ namespace Online
                 },
                 this, _Notify_name, cookie, completedCallback);
             _iceI_Notify(context, synchronous, completed);
+            return completed;
+        }
+
+        public Ice.AsyncResult<Online.Callback_Client_NotifyKicked> begin_NotifyKicked(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_NotifyKicked(context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_NotifyKicked(Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_NotifyKicked(new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_NotifyKicked(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_NotifyKicked(context, callback, cookie, false);
+        }
+
+        public void end_NotifyKicked(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _NotifyKicked_name);
+            ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_Client_NotifyKicked> begin_NotifyKicked(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Client_NotifyKicked, object>(
+                (Online.Callback_Client_NotifyKicked cb, object ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke();
+                    }
+                },
+                this, _NotifyKicked_name, cookie, completedCallback);
+            _iceI_NotifyKicked(context, synchronous, completed);
             return completed;
         }
 
@@ -2007,11 +2443,11 @@ namespace Online
 
         #region Synchronous operations
 
-        public Online.PlayerStats[] GetPlayers(Ice.OptionalContext context = new Ice.OptionalContext())
+        public Online.LobbyInfo GetLobbyInfo(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
-                return _iceI_GetPlayersAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
+                return _iceI_GetLobbyInfoAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
             }
             catch(_System.AggregateException ex_)
             {
@@ -2023,34 +2459,34 @@ namespace Online
 
         #region Async Task operations
 
-        public _System.Threading.Tasks.Task<Online.PlayerStats[]> GetPlayersAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        public _System.Threading.Tasks.Task<Online.LobbyInfo> GetLobbyInfoAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
-            return _iceI_GetPlayersAsync(context, progress, cancel, false);
+            return _iceI_GetLobbyInfoAsync(context, progress, cancel, false);
         }
 
-        private _System.Threading.Tasks.Task<Online.PlayerStats[]> _iceI_GetPlayersAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        private _System.Threading.Tasks.Task<Online.LobbyInfo> _iceI_GetLobbyInfoAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
         {
-            iceCheckTwowayOnly(_GetPlayers_name);
-            var completed = new IceInternal.OperationTaskCompletionCallback<Online.PlayerStats[]>(progress, cancel);
-            _iceI_GetPlayers(context, synchronous, completed);
+            iceCheckTwowayOnly(_GetLobbyInfo_name);
+            var completed = new IceInternal.OperationTaskCompletionCallback<Online.LobbyInfo>(progress, cancel);
+            _iceI_GetLobbyInfo(context, synchronous, completed);
             return completed.Task;
         }
 
-        private const string _GetPlayers_name = "GetPlayers";
+        private const string _GetLobbyInfo_name = "GetLobbyInfo";
 
-        private void _iceI_GetPlayers(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        private void _iceI_GetLobbyInfo(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
         {
-            var outAsync = getOutgoingAsync<Online.PlayerStats[]>(completed);
+            var outAsync = getOutgoingAsync<Online.LobbyInfo>(completed);
             outAsync.invoke(
-                _GetPlayers_name,
+                _GetLobbyInfo_name,
                 Ice.OperationMode.Normal,
                 Ice.FormatType.DefaultFormat,
                 context,
                 synchronous,
                 read: (Ice.InputStream istr) =>
                 {
-                    Online.PlayerStats[] ret;
-                    ret = Online.PlayerListHelper.read(istr);
+                    Online.LobbyInfo ret = null;
+                    ret = Online.LobbyInfo.ice_read(istr);
                     return ret;
                 });
         }
@@ -2059,41 +2495,41 @@ namespace Online
 
         #region Asynchronous operations
 
-        public Ice.AsyncResult<Online.Callback_Game_GetPlayers> begin_GetPlayers(Ice.OptionalContext context = new Ice.OptionalContext())
+        public Ice.AsyncResult<Online.Callback_Game_GetLobbyInfo> begin_GetLobbyInfo(Ice.OptionalContext context = new Ice.OptionalContext())
         {
-            return begin_GetPlayers(context, null, null, false);
+            return begin_GetLobbyInfo(context, null, null, false);
         }
 
-        public Ice.AsyncResult begin_GetPlayers(Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_GetLobbyInfo(Ice.AsyncCallback callback, object cookie)
         {
-            return begin_GetPlayers(new Ice.OptionalContext(), callback, cookie, false);
+            return begin_GetLobbyInfo(new Ice.OptionalContext(), callback, cookie, false);
         }
 
-        public Ice.AsyncResult begin_GetPlayers(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_GetLobbyInfo(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_GetPlayers(context, callback, cookie, false);
+            return begin_GetLobbyInfo(context, callback, cookie, false);
         }
 
-        public Online.PlayerStats[] end_GetPlayers(Ice.AsyncResult asyncResult)
+        public Online.LobbyInfo end_GetLobbyInfo(Ice.AsyncResult asyncResult)
         {
-            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _GetPlayers_name);
-            var outgoing_ = (IceInternal.OutgoingAsyncT<Online.PlayerStats[]>)resultI_.OutgoingAsync;
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _GetLobbyInfo_name);
+            var outgoing_ = (IceInternal.OutgoingAsyncT<Online.LobbyInfo>)resultI_.OutgoingAsync;
             return outgoing_.getResult(resultI_.wait());
         }
 
-        private Ice.AsyncResult<Online.Callback_Game_GetPlayers> begin_GetPlayers(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        private Ice.AsyncResult<Online.Callback_Game_GetLobbyInfo> begin_GetLobbyInfo(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
         {
-            iceCheckAsyncTwowayOnly(_GetPlayers_name);
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Game_GetPlayers, Online.PlayerStats[]>(
-                (Online.Callback_Game_GetPlayers cb, Online.PlayerStats[] ret) =>
+            iceCheckAsyncTwowayOnly(_GetLobbyInfo_name);
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Game_GetLobbyInfo, Online.LobbyInfo>(
+                (Online.Callback_Game_GetLobbyInfo cb, Online.LobbyInfo ret) =>
                 {
                     if(cb != null)
                     {
                         cb.Invoke(ret);
                     }
                 },
-                this, _GetPlayers_name, cookie, completedCallback);
-            _iceI_GetPlayers(context, synchronous, completed);
+                this, _GetLobbyInfo_name, cookie, completedCallback);
+            _iceI_GetLobbyInfo(context, synchronous, completed);
             return completed;
         }
 
@@ -2289,11 +2725,35 @@ namespace Online
 
         #region Synchronous operations
 
-        public Online.PlayerStats[] GetPlayers(Ice.OptionalContext context = new Ice.OptionalContext())
+        public Online.LobbyInfo GetLobbyInfo(Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
-                return _iceI_GetPlayersAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
+                return _iceI_GetLobbyInfoAsync(context, null, _System.Threading.CancellationToken.None, true).Result;
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
+        public void KickPlayer(string username, Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                _iceI_KickPlayerAsync(username, context, null, _System.Threading.CancellationToken.None, true).Wait();
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
+        public void LockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                _iceI_LockRoomAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
             }
             catch(_System.AggregateException ex_)
             {
@@ -2313,40 +2773,106 @@ namespace Online
             }
         }
 
+        public void UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            try
+            {
+                _iceI_UnlockRoomAsync(context, null, _System.Threading.CancellationToken.None, true).Wait();
+            }
+            catch(_System.AggregateException ex_)
+            {
+                throw ex_.InnerException;
+            }
+        }
+
         #endregion
 
         #region Async Task operations
 
-        public _System.Threading.Tasks.Task<Online.PlayerStats[]> GetPlayersAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        public _System.Threading.Tasks.Task<Online.LobbyInfo> GetLobbyInfoAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
-            return _iceI_GetPlayersAsync(context, progress, cancel, false);
+            return _iceI_GetLobbyInfoAsync(context, progress, cancel, false);
         }
 
-        private _System.Threading.Tasks.Task<Online.PlayerStats[]> _iceI_GetPlayersAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        private _System.Threading.Tasks.Task<Online.LobbyInfo> _iceI_GetLobbyInfoAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
         {
-            iceCheckTwowayOnly(_GetPlayers_name);
-            var completed = new IceInternal.OperationTaskCompletionCallback<Online.PlayerStats[]>(progress, cancel);
-            _iceI_GetPlayers(context, synchronous, completed);
+            iceCheckTwowayOnly(_GetLobbyInfo_name);
+            var completed = new IceInternal.OperationTaskCompletionCallback<Online.LobbyInfo>(progress, cancel);
+            _iceI_GetLobbyInfo(context, synchronous, completed);
             return completed.Task;
         }
 
-        private const string _GetPlayers_name = "GetPlayers";
+        private const string _GetLobbyInfo_name = "GetLobbyInfo";
 
-        private void _iceI_GetPlayers(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        private void _iceI_GetLobbyInfo(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
         {
-            var outAsync = getOutgoingAsync<Online.PlayerStats[]>(completed);
+            var outAsync = getOutgoingAsync<Online.LobbyInfo>(completed);
             outAsync.invoke(
-                _GetPlayers_name,
+                _GetLobbyInfo_name,
                 Ice.OperationMode.Normal,
                 Ice.FormatType.DefaultFormat,
                 context,
                 synchronous,
                 read: (Ice.InputStream istr) =>
                 {
-                    Online.PlayerStats[] ret;
-                    ret = Online.PlayerListHelper.read(istr);
+                    Online.LobbyInfo ret = null;
+                    ret = Online.LobbyInfo.ice_read(istr);
                     return ret;
                 });
+        }
+
+        public _System.Threading.Tasks.Task KickPlayerAsync(string username, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_KickPlayerAsync(username, context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task _iceI_KickPlayerAsync(string iceP_username, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+            _iceI_KickPlayer(iceP_username, context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _KickPlayer_name = "KickPlayer";
+
+        private void _iceI_KickPlayer(string iceP_username, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<object>(completed);
+            outAsync.invoke(
+                _KickPlayer_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous,
+                write: (Ice.OutputStream ostr) =>
+                {
+                    ostr.writeString(iceP_username);
+                });
+        }
+
+        public _System.Threading.Tasks.Task LockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_LockRoomAsync(context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task _iceI_LockRoomAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+            _iceI_LockRoom(context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _LockRoom_name = "LockRoom";
+
+        private void _iceI_LockRoom(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<object>(completed);
+            outAsync.invoke(
+                _LockRoom_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous);
         }
 
         public _System.Threading.Tasks.Task StartGameAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
@@ -2374,45 +2900,142 @@ namespace Online
                 synchronous);
         }
 
+        public _System.Threading.Tasks.Task UnlockRoomAsync(Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        {
+            return _iceI_UnlockRoomAsync(context, progress, cancel, false);
+        }
+
+        private _System.Threading.Tasks.Task _iceI_UnlockRoomAsync(Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        {
+            var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+            _iceI_UnlockRoom(context, synchronous, completed);
+            return completed.Task;
+        }
+
+        private const string _UnlockRoom_name = "UnlockRoom";
+
+        private void _iceI_UnlockRoom(_System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
+        {
+            var outAsync = getOutgoingAsync<object>(completed);
+            outAsync.invoke(
+                _UnlockRoom_name,
+                Ice.OperationMode.Normal,
+                Ice.FormatType.DefaultFormat,
+                context,
+                synchronous);
+        }
+
         #endregion
 
         #region Asynchronous operations
 
-        public Ice.AsyncResult<Online.Callback_Game_GetPlayers> begin_GetPlayers(Ice.OptionalContext context = new Ice.OptionalContext())
+        public Ice.AsyncResult<Online.Callback_Game_GetLobbyInfo> begin_GetLobbyInfo(Ice.OptionalContext context = new Ice.OptionalContext())
         {
-            return begin_GetPlayers(context, null, null, false);
+            return begin_GetLobbyInfo(context, null, null, false);
         }
 
-        public Ice.AsyncResult begin_GetPlayers(Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_GetLobbyInfo(Ice.AsyncCallback callback, object cookie)
         {
-            return begin_GetPlayers(new Ice.OptionalContext(), callback, cookie, false);
+            return begin_GetLobbyInfo(new Ice.OptionalContext(), callback, cookie, false);
         }
 
-        public Ice.AsyncResult begin_GetPlayers(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        public Ice.AsyncResult begin_GetLobbyInfo(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
         {
-            return begin_GetPlayers(context, callback, cookie, false);
+            return begin_GetLobbyInfo(context, callback, cookie, false);
         }
 
-        public Online.PlayerStats[] end_GetPlayers(Ice.AsyncResult asyncResult)
+        public Online.LobbyInfo end_GetLobbyInfo(Ice.AsyncResult asyncResult)
         {
-            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _GetPlayers_name);
-            var outgoing_ = (IceInternal.OutgoingAsyncT<Online.PlayerStats[]>)resultI_.OutgoingAsync;
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _GetLobbyInfo_name);
+            var outgoing_ = (IceInternal.OutgoingAsyncT<Online.LobbyInfo>)resultI_.OutgoingAsync;
             return outgoing_.getResult(resultI_.wait());
         }
 
-        private Ice.AsyncResult<Online.Callback_Game_GetPlayers> begin_GetPlayers(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        private Ice.AsyncResult<Online.Callback_Game_GetLobbyInfo> begin_GetLobbyInfo(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
         {
-            iceCheckAsyncTwowayOnly(_GetPlayers_name);
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Game_GetPlayers, Online.PlayerStats[]>(
-                (Online.Callback_Game_GetPlayers cb, Online.PlayerStats[] ret) =>
+            iceCheckAsyncTwowayOnly(_GetLobbyInfo_name);
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Game_GetLobbyInfo, Online.LobbyInfo>(
+                (Online.Callback_Game_GetLobbyInfo cb, Online.LobbyInfo ret) =>
                 {
                     if(cb != null)
                     {
                         cb.Invoke(ret);
                     }
                 },
-                this, _GetPlayers_name, cookie, completedCallback);
-            _iceI_GetPlayers(context, synchronous, completed);
+                this, _GetLobbyInfo_name, cookie, completedCallback);
+            _iceI_GetLobbyInfo(context, synchronous, completed);
+            return completed;
+        }
+
+        public Ice.AsyncResult<Online.Callback_GameHost_KickPlayer> begin_KickPlayer(string username, Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_KickPlayer(username, context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_KickPlayer(string username, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_KickPlayer(username, new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_KickPlayer(string username, Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_KickPlayer(username, context, callback, cookie, false);
+        }
+
+        public void end_KickPlayer(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _KickPlayer_name);
+            ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_GameHost_KickPlayer> begin_KickPlayer(string iceP_username, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameHost_KickPlayer, object>(
+                (Online.Callback_GameHost_KickPlayer cb, object ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke();
+                    }
+                },
+                this, _KickPlayer_name, cookie, completedCallback);
+            _iceI_KickPlayer(iceP_username, context, synchronous, completed);
+            return completed;
+        }
+
+        public Ice.AsyncResult<Online.Callback_GameHost_LockRoom> begin_LockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_LockRoom(context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_LockRoom(Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_LockRoom(new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_LockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_LockRoom(context, callback, cookie, false);
+        }
+
+        public void end_LockRoom(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _LockRoom_name);
+            ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_GameHost_LockRoom> begin_LockRoom(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameHost_LockRoom, object>(
+                (Online.Callback_GameHost_LockRoom cb, object ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke();
+                    }
+                },
+                this, _LockRoom_name, cookie, completedCallback);
+            _iceI_LockRoom(context, synchronous, completed);
             return completed;
         }
 
@@ -2449,6 +3072,42 @@ namespace Online
                 },
                 this, _StartGame_name, cookie, completedCallback);
             _iceI_StartGame(context, synchronous, completed);
+            return completed;
+        }
+
+        public Ice.AsyncResult<Online.Callback_GameHost_UnlockRoom> begin_UnlockRoom(Ice.OptionalContext context = new Ice.OptionalContext())
+        {
+            return begin_UnlockRoom(context, null, null, false);
+        }
+
+        public Ice.AsyncResult begin_UnlockRoom(Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_UnlockRoom(new Ice.OptionalContext(), callback, cookie, false);
+        }
+
+        public Ice.AsyncResult begin_UnlockRoom(Ice.OptionalContext context, Ice.AsyncCallback callback, object cookie)
+        {
+            return begin_UnlockRoom(context, callback, cookie, false);
+        }
+
+        public void end_UnlockRoom(Ice.AsyncResult asyncResult)
+        {
+            var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _UnlockRoom_name);
+            ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+        }
+
+        private Ice.AsyncResult<Online.Callback_GameHost_UnlockRoom> begin_UnlockRoom(_System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
+        {
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_GameHost_UnlockRoom, object>(
+                (Online.Callback_GameHost_UnlockRoom cb, object ret) =>
+                {
+                    if(cb != null)
+                    {
+                        cb.Invoke();
+                    }
+                },
+                this, _UnlockRoom_name, cookie, completedCallback);
+            _iceI_UnlockRoom(context, synchronous, completed);
             return completed;
         }
 
@@ -2878,11 +3537,11 @@ namespace Online
             }
         }
 
-        public void JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext())
+        public bool JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext())
         {
             try
             {
-                _iceI_JoinGameAsync(client, game, context, null, _System.Threading.CancellationToken.None, true).Wait();
+                return _iceI_JoinGameAsync(client, game, context, null, _System.Threading.CancellationToken.None, true).Result;
             }
             catch(_System.AggregateException ex_)
             {
@@ -2986,14 +3645,15 @@ namespace Online
                 });
         }
 
-        public _System.Threading.Tasks.Task JoinGameAsync(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
+        public _System.Threading.Tasks.Task<bool> JoinGameAsync(Online.ClientPrx client, Online.GamePrx game, Ice.OptionalContext context = new Ice.OptionalContext(), _System.IProgress<bool> progress = null, _System.Threading.CancellationToken cancel = new _System.Threading.CancellationToken())
         {
             return _iceI_JoinGameAsync(client, game, context, progress, cancel, false);
         }
 
-        private _System.Threading.Tasks.Task _iceI_JoinGameAsync(Online.ClientPrx iceP_client, Online.GamePrx iceP_game, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
+        private _System.Threading.Tasks.Task<bool> _iceI_JoinGameAsync(Online.ClientPrx iceP_client, Online.GamePrx iceP_game, Ice.OptionalContext context, _System.IProgress<bool> progress, _System.Threading.CancellationToken cancel, bool synchronous)
         {
-            var completed = new IceInternal.OperationTaskCompletionCallback<object>(progress, cancel);
+            iceCheckTwowayOnly(_JoinGame_name);
+            var completed = new IceInternal.OperationTaskCompletionCallback<bool>(progress, cancel);
             _iceI_JoinGame(iceP_client, iceP_game, context, synchronous, completed);
             return completed.Task;
         }
@@ -3002,7 +3662,7 @@ namespace Online
 
         private void _iceI_JoinGame(Online.ClientPrx iceP_client, Online.GamePrx iceP_game, _System.Collections.Generic.Dictionary<string, string> context, bool synchronous, IceInternal.OutgoingAsyncCompletionCallback completed)
         {
-            var outAsync = getOutgoingAsync<object>(completed);
+            var outAsync = getOutgoingAsync<bool>(completed);
             outAsync.invoke(
                 _JoinGame_name,
                 Ice.OperationMode.Normal,
@@ -3013,6 +3673,12 @@ namespace Online
                 {
                     Online.ClientPrxHelper.write(ostr, iceP_client);
                     Online.GamePrxHelper.write(ostr, iceP_game);
+                },
+                read: (Ice.InputStream istr) =>
+                {
+                    bool ret;
+                    ret = istr.readBool();
+                    return ret;
                 });
         }
 
@@ -3161,20 +3827,22 @@ namespace Online
             return begin_JoinGame(client, game, context, callback, cookie, false);
         }
 
-        public void end_JoinGame(Ice.AsyncResult asyncResult)
+        public bool end_JoinGame(Ice.AsyncResult asyncResult)
         {
             var resultI_ = IceInternal.AsyncResultI.check(asyncResult, this, _JoinGame_name);
-            ((IceInternal.OutgoingAsyncT<object>)resultI_.OutgoingAsync).getResult(resultI_.wait());
+            var outgoing_ = (IceInternal.OutgoingAsyncT<bool>)resultI_.OutgoingAsync;
+            return outgoing_.getResult(resultI_.wait());
         }
 
         private Ice.AsyncResult<Online.Callback_Player_JoinGame> begin_JoinGame(Online.ClientPrx iceP_client, Online.GamePrx iceP_game, _System.Collections.Generic.Dictionary<string, string> context, Ice.AsyncCallback completedCallback, object cookie, bool synchronous)
         {
-            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Player_JoinGame, object>(
-                (Online.Callback_Player_JoinGame cb, object ret) =>
+            iceCheckAsyncTwowayOnly(_JoinGame_name);
+            var completed = new IceInternal.OperationAsyncResultCompletionCallback<Online.Callback_Player_JoinGame, bool>(
+                (Online.Callback_Player_JoinGame cb, bool ret) =>
                 {
                     if(cb != null)
                     {
-                        cb.Invoke();
+                        cb.Invoke(ret);
                     }
                 },
                 this, _JoinGame_name, cookie, completedCallback);
@@ -4329,6 +4997,10 @@ namespace Online
 
         public abstract void Notify(Ice.Current current = null);
 
+        public abstract void NotifyKicked(Ice.Current current = null);
+
+        public abstract Online.ServerPrx MakeHost(Ice.Current current = null);
+
         #endregion
 
         #region Slice type-related members
@@ -4397,10 +5069,35 @@ namespace Online
             return inS.setResult(inS.writeEmptyParams());
         }
 
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_NotifyKicked(Client obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            inS.readEmptyParams();
+            obj.NotifyKicked(current);
+            return inS.setResult(inS.writeEmptyParams());
+        }
+
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_MakeHost(Client obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            inS.readEmptyParams();
+            var ret = obj.MakeHost(current);
+            var ostr = inS.startWriteParams();
+            Online.ServerPrxHelper.write(ostr, ret);
+            inS.endWriteParams(ostr);
+            return inS.setResult(ostr);
+        }
+
         private static readonly string[] _all =
         {
             "GetInput",
+            "MakeHost",
             "Notify",
+            "NotifyKicked",
             "Update",
             "ice_id",
             "ice_ids",
@@ -4425,25 +5122,33 @@ namespace Online
                 }
                 case 1:
                 {
-                    return iceD_Notify(this, inS, current);
+                    return iceD_MakeHost(this, inS, current);
                 }
                 case 2:
                 {
-                    return iceD_Update(this, inS, current);
+                    return iceD_Notify(this, inS, current);
                 }
                 case 3:
                 {
-                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                    return iceD_NotifyKicked(this, inS, current);
                 }
                 case 4:
                 {
-                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                    return iceD_Update(this, inS, current);
                 }
                 case 5:
                 {
-                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
                 }
                 case 6:
+                {
+                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                }
+                case 7:
+                {
+                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                }
+                case 8:
                 {
                     return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                 }
@@ -4462,7 +5167,7 @@ namespace Online
     {
         #region Slice operations
 
-        public abstract Online.PlayerStats[] GetPlayers(Ice.Current current = null);
+        public abstract Online.LobbyInfo GetLobbyInfo(Ice.Current current = null);
 
         #endregion
 
@@ -4500,20 +5205,20 @@ namespace Online
 
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
         public static _System.Threading.Tasks.Task<Ice.OutputStream>
-        iceD_GetPlayers(Game obj, IceInternal.Incoming inS, Ice.Current current)
+        iceD_GetLobbyInfo(Game obj, IceInternal.Incoming inS, Ice.Current current)
         {
             Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
             inS.readEmptyParams();
-            var ret = obj.GetPlayers(current);
+            var ret = obj.GetLobbyInfo(current);
             var ostr = inS.startWriteParams();
-            Online.PlayerListHelper.write(ostr, ret);
+            Online.LobbyInfo.ice_write(ostr, ret);
             inS.endWriteParams(ostr);
             return inS.setResult(ostr);
         }
 
         private static readonly string[] _all =
         {
-            "GetPlayers",
+            "GetLobbyInfo",
             "ice_id",
             "ice_ids",
             "ice_isA",
@@ -4533,7 +5238,7 @@ namespace Online
             {
                 case 0:
                 {
-                    return iceD_GetPlayers(this, inS, current);
+                    return iceD_GetLobbyInfo(this, inS, current);
                 }
                 case 1:
                 {
@@ -4568,11 +5273,17 @@ namespace Online
 
         public abstract void StartGame(Ice.Current current = null);
 
+        public abstract void KickPlayer(string username, Ice.Current current = null);
+
+        public abstract void LockRoom(Ice.Current current = null);
+
+        public abstract void UnlockRoom(Ice.Current current = null);
+
         #endregion
 
         #region Inherited Slice operations
 
-        public abstract Online.PlayerStats[] GetPlayers(Ice.Current current = null);
+        public abstract Online.LobbyInfo GetLobbyInfo(Ice.Current current = null);
 
         #endregion
 
@@ -4619,10 +5330,46 @@ namespace Online
             return inS.setResult(inS.writeEmptyParams());
         }
 
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_KickPlayer(GameHost obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            var istr = inS.startReadParams();
+            string iceP_username;
+            iceP_username = istr.readString();
+            inS.endReadParams();
+            obj.KickPlayer(iceP_username, current);
+            return inS.setResult(inS.writeEmptyParams());
+        }
+
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_LockRoom(GameHost obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            inS.readEmptyParams();
+            obj.LockRoom(current);
+            return inS.setResult(inS.writeEmptyParams());
+        }
+
+        [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]
+        public static _System.Threading.Tasks.Task<Ice.OutputStream>
+        iceD_UnlockRoom(GameHost obj, IceInternal.Incoming inS, Ice.Current current)
+        {
+            Ice.ObjectImpl.iceCheckMode(Ice.OperationMode.Normal, current.mode);
+            inS.readEmptyParams();
+            obj.UnlockRoom(current);
+            return inS.setResult(inS.writeEmptyParams());
+        }
+
         private static readonly string[] _all =
         {
-            "GetPlayers",
+            "GetLobbyInfo",
+            "KickPlayer",
+            "LockRoom",
             "StartGame",
+            "UnlockRoom",
             "ice_id",
             "ice_ids",
             "ice_isA",
@@ -4642,25 +5389,37 @@ namespace Online
             {
                 case 0:
                 {
-                    return Online.GameDisp_.iceD_GetPlayers(this, inS, current);
+                    return Online.GameDisp_.iceD_GetLobbyInfo(this, inS, current);
                 }
                 case 1:
                 {
-                    return iceD_StartGame(this, inS, current);
+                    return iceD_KickPlayer(this, inS, current);
                 }
                 case 2:
                 {
-                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                    return iceD_LockRoom(this, inS, current);
                 }
                 case 3:
                 {
-                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                    return iceD_StartGame(this, inS, current);
                 }
                 case 4:
                 {
-                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                    return iceD_UnlockRoom(this, inS, current);
                 }
                 case 5:
+                {
+                    return Ice.ObjectImpl.iceD_ice_id(this, inS, current);
+                }
+                case 6:
+                {
+                    return Ice.ObjectImpl.iceD_ice_ids(this, inS, current);
+                }
+                case 7:
+                {
+                    return Ice.ObjectImpl.iceD_ice_isA(this, inS, current);
+                }
+                case 8:
                 {
                     return Ice.ObjectImpl.iceD_ice_ping(this, inS, current);
                 }
@@ -4785,7 +5544,7 @@ namespace Online
 
         public abstract Online.PlayerStats GetStats(Ice.Current current = null);
 
-        public abstract void JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.Current current = null);
+        public abstract bool JoinGame(Online.ClientPrx client, Online.GamePrx game, Ice.Current current = null);
 
         public abstract Online.GameHostPrx CreateGame(Online.ServerPrx server, Ice.Current current = null);
 
@@ -4851,8 +5610,11 @@ namespace Online
             iceP_client = Online.ClientPrxHelper.read(istr);
             iceP_game = Online.GamePrxHelper.read(istr);
             inS.endReadParams();
-            obj.JoinGame(iceP_client, iceP_game, current);
-            return inS.setResult(inS.writeEmptyParams());
+            var ret = obj.JoinGame(iceP_client, iceP_game, current);
+            var ostr = inS.startWriteParams();
+            ostr.writeBool(ret);
+            inS.endWriteParams(ostr);
+            return inS.setResult(ostr);
         }
 
         [_System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1011")]

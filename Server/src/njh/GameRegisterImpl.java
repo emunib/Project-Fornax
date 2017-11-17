@@ -11,6 +11,7 @@ public class GameRegisterImpl implements GameRegister
     final private PlayerRegistry playerRegistry;
     private boolean clean;
     private boolean waiting;
+    public final IdGenerator idGenerator;
     ObjectAdapter adapter;
 
 
@@ -21,6 +22,7 @@ public class GameRegisterImpl implements GameRegister
         clean = true;
         waiting = false;
         adapter = nadapter;
+        idGenerator = new IdGenerator();
        Thread updater = new Thread(new Updater());
        Thread pinger = new Thread(new Pinger());
        updater.start();

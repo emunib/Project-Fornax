@@ -70,9 +70,11 @@ public class GameRegistryController : MonoBehaviour
                 childText.text = game.ice_getIdentity().name;
                 childButton.onClick.AddListener(() => {
                     ClientPrx client = ClientPrxHelper.checkedCast(OnlineManager.Adapater.addWithUUID(new ClientImpl()));
-                    OnlineManager.Player.JoinGame(client, game);
-                    OnlineManager.Game = 
-                        
+                    if (OnlineManager.Player.JoinGame(client, game)){
+                        OnlineManager.Game = game;
+                        gameObject.SetActive(false);
+                        GameObject.Find("/Canvas/Online/GameLobby").SetActive(true);
+                    }
                 });
                 NewGameSet.Add(game, newText);
             }
@@ -84,6 +86,9 @@ public class GameRegistryController : MonoBehaviour
         Gameset = NewGameSet;
         int i = 0;
         foreach (KeyValuePair<GamePrx,GameObject>  pair in Gameset){
+            Text childText = pair.Value.transform.Find("Text").GetComponent<Text>();
+            LobbyInfo info = pair.Key.GetLobbyInfo();
+            childText.text = "Game Id: " + info.Id + " Host: " + info.Host.Username + " Players: " + info.Players.Length;
             if (!pair.Value.activeSelf){
                 pair.Value.SetActive(true);
             }

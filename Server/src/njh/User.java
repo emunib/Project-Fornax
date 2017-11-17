@@ -4,6 +4,11 @@ import java.util.HashSet;
 
 public class User {
 	public PlayerImpl Instance;
-	String Username;
-	String Password;
+	final String Username;
+	final String Password;
+
+	public User(String username, String password){
+		Username = username;
+		Password = password;
+	}
 }

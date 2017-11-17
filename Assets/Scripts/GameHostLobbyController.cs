@@ -30,10 +30,25 @@ public class GameHostLobbyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void UpdateList () {
-        Online.PlayerStats[] stats = OnlineManager.GameHost.GetPlayers();
+        Online.LobbyInfo lobbyInfo = OnlineManager.GameHost.GetLobbyInfo();
         UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameHostLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
         Dictionary<Online.PlayerStats, Text> NewGameSet = new Dictionary<Online.PlayerStats, Text>();
-        foreach (Online.PlayerStats stat in stats)
+        if (Gameset.ContainsKey(lobbyInfo.Host))
+        {
+            NewGameSet.Add(lobbyInfo.Host, Gameset[lobbyInfo.Host]);
+        }
+        else
+        {
+            Text newText = Instantiate(text, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity).GetComponent<Text>();
+            newText.transform.SetParent(parent);
+            newText.rectTransform.anchorMax = new Vector2(0.5f, 1);
+            newText.rectTransform.anchorMin = new Vector2(0.5f, 1);
+            newText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            newText.rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
+            newText.text = "Host: " + lobbyInfo.Host.Username;
+            NewGameSet.Add(lobbyInfo.Host, newText);
+        }
+        foreach (Online.PlayerStats stat in lobbyInfo.Players)
         {
             if (Gameset.ContainsKey(stat))
             {
