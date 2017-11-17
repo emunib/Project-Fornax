@@ -87,14 +87,21 @@ public class GameRegistryController : MonoBehaviour
         int i = 0;
         foreach (KeyValuePair<GamePrx,GameObject>  pair in Gameset){
             Text childText = pair.Value.transform.Find("Text").GetComponent<Text>();
-            LobbyInfo info = pair.Key.GetLobbyInfo();
-            childText.text = "Game Id: " + info.Id + " Host: " + info.Host.Username + " Players: " + info.Players.Length;
-            if (!pair.Value.activeSelf){
-                pair.Value.SetActive(true);
+            try
+            {
+                    LobbyInfo info = pair.Key.GetLobbyInfo();
+                childText.text = "Game Id: " + info.Id + " Host: " + info.Host.Username + " Players: " + (info.Players.Length + 1);
+                if (!pair.Value.activeSelf){
+                    pair.Value.SetActive(true);
+                }
+                UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
+                pos.y = (i++ * -30f) - 15f;
+                pair.Value.transform.localPosition = pos;
             }
-            UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
-            pos.y = (i++ * -30f) - 15f;
-            pair.Value.transform.localPosition = pos;
+            catch (Ice.ObjectNotExistException e)
+            {
+                
+            }
         }
     }
 

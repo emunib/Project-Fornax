@@ -1,0 +1,23 @@
+﻿<Properties StartupConfiguration="{3A708F68-4257-8419-9D56-0A3D9B89F90A}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/generated/Printer.cs">
+    <Files>
+      <File FileName="Assets/Scripts/OnlineController.cs" Line="69" Column="31" />
+      <File FileName="Assets/Scripts/GameRegistryController.cs" Line="59" Column="17" />
+      <File FileName="Assets/Scripts/World.cs" Line="37" Column="32" />
+      <File FileName="Assets/Scripts/Tiles.cs" Line="1" Column="1" />
+      <File FileName="Assets/Scripts/ServerImpl.cs" Line="11" Column="6" />
+      <File FileName="Assets/Scripts/LobbyListenerImpl.cs" Line="15" Column="52" />
+      <File FileName="Assets/Scripts/ClientImpl.cs" Line="6" Column="20" />
+      <File FileName="Assets/Scripts/GameLobbyController.cs" Line="40" Column="34" />
+      <File FileName="Assets/Scripts/GameHostLobbyController.cs" Line="24" Column="77" />
+      <File FileName="Assets/generated/Printer.cs" Line="2447" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.Fornax PreferredExecutionTarget="Unity.Editor" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

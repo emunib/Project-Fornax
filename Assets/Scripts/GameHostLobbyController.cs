@@ -51,7 +51,7 @@ public class GameHostLobbyController : MonoBehaviour {
         }
         else
         {
-            NewGameSet.Add(lobbyInfo.Host, SetupItem(parent, false, lobbyInfo.Host));
+            NewGameSet.Add(lobbyInfo.Host, SetupItem(parent, true, lobbyInfo.Host));
         }
         foreach (Online.PlayerStats stat in lobbyInfo.Players)
         {
@@ -116,6 +116,7 @@ public class GameHostLobbyController : MonoBehaviour {
             });
         }
 
+        newPanel.SetActive(true);
         return newPanel;
     }
 }
