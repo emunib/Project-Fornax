@@ -24,6 +24,8 @@ public class GameLobbyController : MonoBehaviour {
 
     void LeaveClick()
     {
+        OnlineManager.Game = null;
+        CancelInvoke();
         OnlineManager.Player.LeaveGame();
         gameObject.SetActive(false);
         GameObject.Find("Canvas/Online/GameRegistry").SetActive(true);

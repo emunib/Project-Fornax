@@ -111,10 +111,8 @@ public class GameRegisterImpl implements GameRegister
                             if (!lobbyListenerPrx.Ping()) {
                                 UnactiveUsers.add(lobbyListenerPrx);
                             }
-                        } catch (ObjectNotExistException | ConnectionRefusedException | ConnectTimeoutException e){
+                        } catch (ObjectNotExistException | ConnectTimeoutException | ConnectFailedException e){
                             UnactiveUsers.add(lobbyListenerPrx);
-                        } catch (ConnectFailedException e){
-                            e.printStackTrace();
                         }
                     });
                     flushInactiveUser(UnactiveUsers);
