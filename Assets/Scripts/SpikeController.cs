@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HazardController : MonoBehaviour {
+public class SpikeController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -18,8 +18,7 @@ public class HazardController : MonoBehaviour {
 	{
 		if (other.gameObject.CompareTag("Player"))
 		{
-			other.rigidbody.AddForce((other.contacts[0].point-new Vector2(transform.position.x, transform.position.y)).normalized * 50, ForceMode2D.Impulse);
-			Destroy(gameObject);
+			Destroy(other.gameObject);
 		}
 	}
 }

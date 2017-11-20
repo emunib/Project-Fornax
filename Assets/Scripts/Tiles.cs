@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class Tiles {
     public const int EMPTY_TILE = 0;
-    public const int HAZARD = 1;
+//    public const int HAZARD = 1;
     public const int PLAYER = 2;
     public const int SPACING = 3;
     public const int RAMP_LEFT = 4;
@@ -15,4 +15,6 @@ public static class Tiles {
     public const int SURFACE_TILE = 9;
     public const int LEFT_CORNER = 10;
     public const int RIGHT_CORNER = 11;
+    public const int SPIKES = 12;
+    public const int BOMB = 13;
 }

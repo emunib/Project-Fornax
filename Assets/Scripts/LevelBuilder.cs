@@ -10,7 +10,8 @@ public class LevelBuilder : MonoBehaviour
 	public GameObject Ground;
 	public GameObject InnerGround;
 	public GameObject Player;
-	public GameObject Hazard;
+	public GameObject Spikes;
+	public GameObject Bomb;
     public GameObject Ramp_Left;
     public GameObject Ramp_Right;
     public GameObject Surface;
@@ -41,6 +42,7 @@ public class LevelBuilder : MonoBehaviour
 		RandomizePlatforms();
 		SpawnPlayers(2);
 		OptimizeInnerTiles();
+		AddHazards(5);
 		
 
         for (int x = 0; x < width; x++)
@@ -57,8 +59,12 @@ public class LevelBuilder : MonoBehaviour
 						C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
 						controller.spawn = new Vector2 (x, y);
                         break;
-					case Tiles.HAZARD:
-						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
+					case Tiles.SPIKES:
+						temp = Instantiate(Spikes, new Vector3(x, y, 0), Quaternion.identity);
+						temp.GetComponent<Transform>().Rotate(Vector3.forward, 90);
+						break;
+					case Tiles.BOMB:
+						Instantiate(Bomb, new Vector3(x, y, 0), Quaternion.identity);
 						break;
                     case Tiles.RAMP_LEFT:
                         Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
@@ -85,6 +91,55 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
     }
+
+	private void AddHazards(int n)
+	{
+		List<Vector2> surface = new List<Vector2>();
+		List<Vector2> leftEdges = new List<Vector2>();
+		List<Vector2> rightEdges = new List<Vector2>();
+
+		for (int x = 0; x < width; x++)
+		{
+			for (int y = 1; y < height; y++)
+			{
+				if (map[y, x] == Tiles.SURFACE_TILE)
+				{
+					if (x - 1 >= 0 && (map[y, x - 1] == Tiles.EMPTY_TILE || map[y, x - 1] == Tiles.SPACING))
+					{
+						leftEdges.Add(new Vector2(x - 1, y));
+					}
+					else if (x + 1 >= 0 && (map[y, x + 1] == Tiles.EMPTY_TILE || map[y, x + 1] == Tiles.SPACING))
+					{
+						rightEdges.Add(new Vector2(x + 1, y));
+					}
+					else if (map[y - 1, x] == Tiles.EMPTY_TILE || map[y - 1, x] == Tiles.SPACING)
+					{
+						surface.Add(new Vector2(x, y - 1));
+					}
+				}
+			}
+		}
+		
+		for (int i = 0; i < n; i++)
+		{
+			if (surface.Count > 0)
+			{
+				var r = Random.Range(0, surface.Count);
+				map[(int)surface[r].y, (int)surface[r].x] = Tiles.BOMB;
+				surface.RemoveAt(r);
+			}
+		}
+		
+		for (int i = 0; i < n; i++)
+		{
+			if (leftEdges.Count > 0)
+			{
+				var r = Random.Range(0, leftEdges.Count);
+				map[(int)leftEdges[r].y, (int)leftEdges[r].x] = Tiles.SPIKES;
+				leftEdges.RemoveAt(r);
+			}
+		}
+	}
 
 	private void SpawnPlayers(int n)
 	{
@@ -166,7 +221,8 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
 		replaceArea(px, py, pg.CreateIsland(ph, pw));
-		spawnLocations.Add(new Vector2(x + w - pw/2, y));
+		spawnLocations.Add(new Vector2(x + w - 2*pw/3, y));
+		spawnLocations.Add(new Vector2(x + w - 1*pw/3, y));
 	}
 
 	bool CheckRow(int x, int y, int w)
