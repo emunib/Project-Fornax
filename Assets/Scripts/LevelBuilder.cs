@@ -19,30 +19,16 @@ public class LevelBuilder : MonoBehaviour
     public GameObject Lower_Ramp_Left;
     public GameObject Right_Corner;
     public GameObject Left_Corner;
-	private List<Vector2> spawnLocations = new List<Vector2>();
+	private List<Vector2> _spawnLocations = new List<Vector2>();
 
     int[,] map = new int[height, width];
-	/*int[,] map = 
-	{
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}
-	};
-    */   
 
 	// Use this for initialization
 	void Awake()
 	{
 		RandomizePlatforms();
-		SpawnPlayers(2);
 		OptimizeInnerTiles();
-		AddHazards(5);
+		//AddHazards(5);
 		
 
         for (int x = 0; x < width; x++)
@@ -54,13 +40,8 @@ public class LevelBuilder : MonoBehaviour
 					case Tiles.GROUND_TILE:
 						Instantiate(Ground, new Vector3(x, y, 0), Quaternion.identity);
 						break;
-					case Tiles.PLAYER:
-						GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity);
-						C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
-						controller.spawn = new Vector2 (x, y);
-                        break;
 					case Tiles.SPIKES:
-						temp = Instantiate(Spikes, new Vector3(x, y, 0), Quaternion.identity);
+						var temp = Instantiate(Spikes, new Vector3(x, y, 0), Quaternion.identity);
 						temp.GetComponent<Transform>().Rotate(Vector3.forward, 90);
 						break;
 					case Tiles.BOMB:
@@ -80,6 +61,7 @@ public class LevelBuilder : MonoBehaviour
                         break;
                     case Tiles.SURFACE_TILE:
                         Instantiate(Surface, new Vector3(x, y, 0), Quaternion.identity);
+	                    _spawnLocations.Add(new Vector2(x, y+1));
                         break;
                     case Tiles.LEFT_CORNER:
                         Instantiate(Left_Corner, new Vector3(x, y, 0), Quaternion.identity);
@@ -90,6 +72,7 @@ public class LevelBuilder : MonoBehaviour
                 }
 			}
 		}
+		SpawnPlayers(2);
     }
 
 	private void AddHazards(int n)
@@ -145,9 +128,15 @@ public class LevelBuilder : MonoBehaviour
 	{
 		for (int i = 0; i < n; i++)
 		{
-			var r = Random.Range(0, spawnLocations.Count);
-			map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
-			spawnLocations.RemoveAt(r);
+			var r = Random.Range(0, _spawnLocations.Count);
+
+			var pos = _spawnLocations[r];
+			pos.y += Player.GetComponent<SpriteRenderer>().bounds.extents.y;
+			GameObject temp = Instantiate (Player, new Vector3 (pos.x, pos.y, 0), Quaternion.identity);
+			C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
+			controller.spawn = pos;
+			
+			_spawnLocations.RemoveAt(r);
 		}
 	}
 
@@ -183,7 +172,7 @@ public class LevelBuilder : MonoBehaviour
 			flag = false;
 			while (true)
 			{
-				w = Random.Range(10, 80);
+				w = Random.Range(5, 30);
 				h = Random.Range(15, 50);
 				hs = Random.Range(10, 30);
 				vs = Random.Range(5, 20);
@@ -221,8 +210,6 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
 		replaceArea(px, py, pg.CreateIsland(ph, pw));
-		spawnLocations.Add(new Vector2(x + w - 2*pw/3, y));
-		spawnLocations.Add(new Vector2(x + w - 1*pw/3, y));
 	}
 
 	bool CheckRow(int x, int y, int w)

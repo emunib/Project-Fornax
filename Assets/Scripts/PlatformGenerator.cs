@@ -26,7 +26,7 @@ public class PlatformGenerator {
         {
             for (int j = 0; j < platformHeight; j++)
             {
-                if (platform[j, i] == Tiles.GROUND_TILE && j-1 >= 0 && (platform[j - 1, i] == Tiles.EMPTY_TILE || platform[j-1, i] == Tiles.SPACING))
+                if (platform[j, i] == Tiles.GROUND_TILE && (j - 1 < 0 || platform[j - 1, i] == Tiles.EMPTY_TILE || platform[j-1, i] == Tiles.SPACING))
                 {
                     platform[j, i] = Tiles.SURFACE_TILE;
                 }
@@ -134,7 +134,7 @@ public class PlatformGenerator {
         for (int i = 0; i < platformWidth; i++) {
             elevation = (int)(10 * Mathf.PerlinNoise(i/elevationFrequency * 0.1f, yCoordinate));
 
-            if (elevation < platformHeight) {
+            if (elevation >= 0 && elevation < platformHeight) {
                 platform[elevation, i] = Tiles.GROUND_TILE;
             }
 
