@@ -207,7 +207,7 @@ public class C_PlayerController : C_WorldObjectController {
 			GameObject.Destroy (ActiveGrapplingHook);
 			ActiveGrapplingHook = null;
 			body.position = spawn;
-			body.velocity = new Vector2 (0, 0); 
+			body.velocity = new Vector2 (0, 0);
 		}
 	}
 
