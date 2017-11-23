@@ -32,6 +32,12 @@ public class C_PlayerController : C_WorldObjectController {
 	public E_PlayerInputState PlayerInputState;
 	public E_GrapplingState GrapplingState;
 
+
+	//Need these to prevent infinite combos
+	public bool ableToAttack = true;
+	public bool ableToMove = true;
+
+
 	C_PlayerController() {
 		InputUpdates = new Dictionary<E_PlayerInputState, InputUpdate> ();
 		InputUpdates.Add (E_PlayerInputState.Swinging, SwingingUpdate);
@@ -57,9 +63,35 @@ public class C_PlayerController : C_WorldObjectController {
         PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
     }
 
+
+
 	// Update is called once per frame
 	void Update () {
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
+
+		if (PlayerInput.GetButtonDown ("LightAttack1")) {
+
+			if (ableToAttack == true) {
+
+				anim.Play ("Punch");
+				StartCoroutine(stopInput(0.5f));
+		
+			} 
+
+		}
+
+		if (PlayerInput.GetButtonDown ("LightAttack2")) {
+
+			if (ableToAttack == true) {
+
+				anim.Play ("Kick");
+				StartCoroutine (stopInput (0.767f));
+			}
+
+		}
+
+
+
 		InputUpdates [PlayerInputState] ();
 		if (PlayerInput.GetButtonDown("Fire1")) {
 			if (ActiveGrapplingHook != null) {
@@ -103,6 +135,15 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void FreeUpdate() {
 		
+	}
+
+	IEnumerator stopInput(float time){
+		ableToAttack = false;
+		ableToMove = false;
+		yield return new WaitForSeconds (time);
+
+		ableToAttack = true;
+		ableToMove = true;
 	}
 
 	void FixedUpdate (){
@@ -157,23 +198,28 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 	void GroundFixedUpdate() {
-		if (onSlope)
-		{
-			body.AddForce(-Physics2D.gravity * Math.Abs(PlayerInput.GetAxis("Horizontal")) * Xaccel);
-		}
 
-		// What if players could accelerate while in the air?
-		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
-		if (PlayerInput.GetAxis ("Horizontal") > 0) {
-			if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
-				gameObject.GetComponent<SpriteRenderer> ().flipX = true;
-			} 
-		} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
-			if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
-				gameObject.GetComponent<SpriteRenderer> ().flipX = false;
-			} 
+
+		if (ableToMove == true) {
+
+			if (onSlope) {
+				body.AddForce (-Physics2D.gravity * Math.Abs (PlayerInput.GetAxis ("Horizontal")) * Xaccel);
+			}
+
+			// What if players could accelerate while in the air?
+			Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
+			if (PlayerInput.GetAxis ("Horizontal") > 0) {
+				if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
+					gameObject.GetComponent<SpriteRenderer> ().flipX = true;
+				} 
+			} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
+				if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
+					gameObject.GetComponent<SpriteRenderer> ().flipX = false;
+				} 
+			}
+			body.AddForce (direction);
+
 		}
-		body.AddForce(direction);
 	}
 
 	void FreeFixedUpdate() {

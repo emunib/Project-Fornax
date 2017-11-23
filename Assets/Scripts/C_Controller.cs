@@ -12,6 +12,10 @@ public class C_Controller {
 		"Fire2",
 		"Horizontal_r",
 		"Vertical_r",
+		"LightAttack1",
+		"StrongAttack1",
+		"LightAttack2",
+		"StrongAttack2",
 	};
 	public C_Controller(int id) {
 		foreach (string str in Axes) {
