@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
+using System.Timers;
 
 public class PlayersReadyUp : MonoBehaviour {
 
@@ -18,11 +20,16 @@ public class PlayersReadyUp : MonoBehaviour {
     void Start () {
         Instructions = this.transform.Find("Instruction").GetComponent<Text>();
         timer = countdown;
-        Time.timeScale = 2.0f;  // For some reason, default runs too fast.
+        Time.timeScale = 1.6f;  // For some reason, default runs too fast.
     }
 
     // Update is called once per frame
     void Update()
+    {
+
+    }
+
+    private void FixedUpdate()
     {
         // Get list of names of controllers.
         controllers = Input.GetJoystickNames();
@@ -52,8 +59,8 @@ public class PlayersReadyUp : MonoBehaviour {
         // Check if everyone is ready, if true: save number of players, and change panels to mode selection.
         if (playersReady.Count == controllers.Length)
         {
-            //StartCoroutine("Countdown");
             timer = timer - Time.deltaTime;
+            //StartCoroutine("Countdown");
             Instructions.text = timer.ToString("F2"); // Changes text to timer with 2 decimal places.
             if (timer < 0)
             {
