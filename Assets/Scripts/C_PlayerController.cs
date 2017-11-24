@@ -23,6 +23,9 @@ public class C_PlayerController : C_WorldObjectController {
 	public C_Controller PlayerInput;
 	bool onSlope = false;
 	public Animator anim;
+    public int lives;
+    public int kills;
+    public GameObject lastHitBy;
 
 	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -31,7 +34,6 @@ public class C_PlayerController : C_WorldObjectController {
 	public float RadiusDelta;
 	public E_PlayerInputState PlayerInputState;
 	public E_GrapplingState GrapplingState;
-
 
 	//Need these to prevent infinite combos
 	public bool ableToAttack = true;
@@ -58,9 +60,12 @@ public class C_PlayerController : C_WorldObjectController {
 
 		anim = GetComponent<Animator> ();
 
-        int playerID = PlayerManager.AddPlayer(this);
+        int playerID = PlayerManager.AddPlayer(this.gameObject);
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
         PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
+
+        lives = ModeSettings.numLives;
+        kills = 0;
     }
 
 
@@ -89,8 +94,6 @@ public class C_PlayerController : C_WorldObjectController {
 			}
 
 		}
-
-
 
 		InputUpdates [PlayerInputState] ();
 		if (PlayerInput.GetButtonDown("Fire1")) {
@@ -252,8 +255,7 @@ public class C_PlayerController : C_WorldObjectController {
 		if ((body.position.x < - 50) || (body.position.x > LevelBuilder.width + 50) || (body.position.y < -50) || (body.position.y > LevelBuilder.height + 50)) {
 			GameObject.Destroy (ActiveGrapplingHook);
 			ActiveGrapplingHook = null;
-			body.position = spawn;
-			body.velocity = new Vector2 (0, 0);
+            this.PlayerDied();
 		}
 	}
 
@@ -276,4 +278,15 @@ public class C_PlayerController : C_WorldObjectController {
 		}
 		
 	}
+
+    private void PlayerDied()
+    {
+        GameManager.PlayerDied(this.gameObject);
+        lastHitBy.SendMessage("PlayerKilled");
+    }
+
+    private void PlayerKilled()
+    {
+        kills += 1;
+    }
 }

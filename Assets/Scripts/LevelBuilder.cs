@@ -38,6 +38,9 @@ public class LevelBuilder : MonoBehaviour
 	// Use this for initialization
 	void Awake()
 	{
+        // Change back timeScale to original.
+        Time.timeScale = 3.0f; // In project settings, this was set to 3.0f, however this runs faster than real time and will affect invoke/timer methods.
+
         RandomizePlatforms();
 		SpawnPlayers(2);
         //SpawnPlayers(ModeSettings.numPlayers);

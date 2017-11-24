@@ -20,10 +20,10 @@ public class MainCameraController : MonoBehaviour
 		}
 		
 		// find the greatest and lowest player x and y coordinates
-		foreach (C_PlayerController player in PlayerManager.PlayerLog)
+		foreach (GameObject player in PlayerManager.PlayerLog)
 		{
-			float x = player.body.position.x;
-			float y = player.body.position.y;
+			float x = player.GetComponent<C_PlayerController>().body.position.x;
+			float y = player.GetComponent<C_PlayerController>().body.position.y;
 
 			playermin.x = Mathf.Min(playermin.x, x);
 			playermin.y = Mathf.Min(playermin.y, y);
