@@ -1,9 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class HitboxHandler: MonoBehaviour
-
-{
+public class HitboxHandler: MonoBehaviour{
 
 
 	//The term "hitbox" in this case refers to colliders on certain moves that will cause
@@ -134,6 +132,7 @@ public class HitboxHandler: MonoBehaviour
 		{
 
 			currentHitbox.SetPath(0,boxes[(int)hitbox].GetPath(0));
+			return;
 
 		}
 		else
