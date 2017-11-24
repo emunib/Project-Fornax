@@ -38,8 +38,9 @@ public class LevelBuilder : MonoBehaviour
 	// Use this for initialization
 	void Awake()
 	{
-		RandomizePlatforms();
+        RandomizePlatforms();
 		SpawnPlayers(2);
+        //SpawnPlayers(ModeSettings.numPlayers);
 		OptimizeInnerTiles();
 		
 
