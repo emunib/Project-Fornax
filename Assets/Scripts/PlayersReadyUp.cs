@@ -52,12 +52,22 @@ public class PlayersReadyUp : MonoBehaviour {
         // Check if everyone is ready, if true: save number of players, and change panels to mode selection.
         if (playersReady.Count == controllers.Length)
         {
-            Invoke("ChangeToModeSelect", countdown);
+            //StartCoroutine("Countdown");
             timer = timer - Time.deltaTime;
             Instructions.text = timer.ToString("F2"); // Changes text to timer with 2 decimal places.
+            if (timer < 0)
+            {
+                ChangeToModeSelect();
+            }
         }
     }
 
+    // Function is called when object becomes enabled or active.
+    private void OnEnable()
+    {
+        // Reset timer.
+        timer = countdown;
+    }
 
     void ChangeToModeSelect()
     {
