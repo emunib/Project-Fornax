@@ -260,13 +260,9 @@ public class C_PlayerController : C_WorldObjectController {
 			// What if players could accelerate while in the air?
 			Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
 			if (PlayerInput.GetAxis ("Horizontal") > 0) {
-				if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
-					gameObject.GetComponent<SpriteRenderer> ().flipX = true;
-				} 
+				gameObject.transform.localScale = new Vector3 (-9, 9, 9);
 			} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
-				if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
-					gameObject.GetComponent<SpriteRenderer> ().flipX = false;
-				} 
+				gameObject.transform.localScale = new Vector3 (9, 9, 9);
 			}
 			body.AddForce (direction);
 
@@ -276,13 +272,9 @@ public class C_PlayerController : C_WorldObjectController {
 	void FreeFixedUpdate() {
 		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel/3;
 		if (PlayerInput.GetAxis ("Horizontal") > 0) {
-			if (!gameObject.GetComponent<SpriteRenderer> ().flipX) {
-				gameObject.GetComponent<SpriteRenderer> ().flipX = true;
-			} 
+			gameObject.transform.localScale = new Vector3 (-9, 9, 9);
 		} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
-			if (gameObject.GetComponent<SpriteRenderer> ().flipX) {
-				gameObject.GetComponent<SpriteRenderer> ().flipX = false;
-			} 
+			gameObject.transform.localScale = new Vector3 (9, 9, 9); 
 		}
 		body.AddForce(direction);
 

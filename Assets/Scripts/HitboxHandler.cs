@@ -56,6 +56,36 @@ public class HitboxHandler: MonoBehaviour{
 	//Clear hitboxes
 	public PolygonCollider2D clearHit;
 
+	//Used for determining properties of attack in collisison detection
+	public string lastHitboxUsed;
+
+	//current direction player is facing, required for adding forces to attacks
+	public int direction;
+
+
+	//Variables for attack properties
+
+	public float palmHit1ForceX;
+	public float palmHit2ForceX;
+	public float palmHit3ForceX;
+	public float diveHitForceX;
+	public float punchHit1ForceX;
+	public float punchHit2ForceX;
+	public float kickHit1ForceX;
+	public float kickHit2ForceX;
+	public float kickHit3ForceX;
+	public float kneeHit1ForceX;
+
+	public float palmHit1ForceY;
+	public float palmHit2ForceY;
+	public float palmHit3ForceY;
+	public float diveHitForceY;
+	public float punchHit1ForceY;
+	public float punchHit2ForceY;
+	public float kickHit1ForceY;
+	public float kickHit2ForceY;
+	public float kickHit3ForceY;
+	public float kneeHit1ForceY;
 
 	public enum listHitboxes
 	{
@@ -114,12 +144,73 @@ public class HitboxHandler: MonoBehaviour{
 	void OnTriggerEnter2D(Collider2D col)
 	{
 
-		//TODO: add specific tag for specific attacks, would allow us to do multihit/multiproperty moves
+	
 
-		Debug.Log ("name of hitbox:");
-		Debug.Log (col.name);
+		var caseSwitch = lastHitboxUsed;
 
-		var hitbox = col.GetComponent<PolygonCollider2D> ();
+		//var hitbox = col.GetComponent<PolygonCollider2D> ();
+
+
+		//This is where we set hitstun and other attack propertie
+
+		switch (caseSwitch) {
+
+		case "NinjaSprite_Sprite_35":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*palmHit1ForceX, palmHit1ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_36":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*palmHit2ForceX, palmHit2ForceY));
+			break;
+
+
+		case "NinjaSprite_Sprite_37":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*palmHit3ForceX, palmHit3ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_42":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*diveHitForceX, diveHitForceY));
+			break;
+
+		case "NinjaSprite_Sprite_59":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*punchHit1ForceX, punchHit1ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_60":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*punchHit2ForceX, punchHit2ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_62":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kickHit1ForceX, kickHit1ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_63":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kickHit2ForceX, kickHit2ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_64":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kickHit3ForceX, kickHit3ForceY));
+			break;
+
+		case "NinjaSprite_Sprite_67":
+
+			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kneeHit1ForceX, kneeHit1ForceY));
+			break;
+		default: 
+			
+			break;
+
+
+		}
 
 
 
@@ -132,17 +223,24 @@ public class HitboxHandler: MonoBehaviour{
 	{
 		var facing = gameObject.GetComponent<SpriteRenderer> ();
 
-		var direction = new Vector3 (1, 1);
+		if (Input.GetAxis ("Horizontal") > 0)
+		{
+			gameObject.transform.localScale = new Vector3 (-9, 9, 9);
+			direction = 1;
 
+		} 
+		else if (Input.GetAxis ("Horizontal") < 0) 
+		{
+			gameObject.transform.localScale = new Vector3 (9, 9, 9);
+			direction = -1;
+		}
 
 
 		if(hitbox != listHitboxes.clearHit)
 		{
 			
 			currentHitbox.SetPath(0,boxes[(int)hitbox].GetPath(0));
-
-		
-
+			lastHitboxUsed = boxes[(int)hitbox].name;
 			return;
 
 		}
