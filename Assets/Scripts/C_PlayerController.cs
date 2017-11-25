@@ -76,7 +76,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 		if (PlayerInput.GetButtonDown ("LightAttack1")) {
 
-			if (ableToAttack == true) {
+			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 
 				anim.Play ("Punch");
 				StartCoroutine(stopInput(0.5f));
@@ -87,13 +87,61 @@ public class C_PlayerController : C_WorldObjectController {
 
 		if (PlayerInput.GetButtonDown ("LightAttack2")) {
 
-			if (ableToAttack == true) {
+			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 
 				anim.Play ("Kick");
 				StartCoroutine (stopInput (0.767f));
 			}
 
 		}
+
+
+		if (PlayerInput.GetButtonDown("StrongAttack1")){
+
+
+			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+
+				anim.Play ("Palm Strike");
+				StartCoroutine (stopInput (1.267f));
+			}
+
+
+			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
+
+
+				//Need a condition to stay in dive kick state until player hits ground 
+
+				anim.Play ("Dive Kick");
+				StartCoroutine (stopInput (0.267f));
+
+			}
+
+		}
+
+		if (PlayerInput.GetButtonDown("StrongAttack2")){
+
+
+			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
+
+				anim.Play ("Flying Knee");
+				StartCoroutine (stopInput (0.667f));
+			}
+
+
+		}
+
+		if (PlayerInput.GetButtonDown ("Block")) {
+
+			if(ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+
+				//Need a condition to stay in block state until player lets go
+
+				anim.Play ("Block");
+				StartCoroutine (stopInput (0.667f));
+			}
+
+		}
+
 
 		InputUpdates [PlayerInputState] ();
 		if (PlayerInput.GetButtonDown("Fire1")) {

@@ -114,10 +114,14 @@ public class HitboxHandler: MonoBehaviour{
 	void OnTriggerEnter2D(Collider2D col)
 	{
 
-		//TODO: add cases for specifc tags e.g "hitbox" and "hurtbox" tag, maybe even
-		//specific tag for specific attacks, would allow us to do multihit/multiproperty moves
+		//TODO: add specific tag for specific attacks, would allow us to do multihit/multiproperty moves
 
-		Debug.Log("its not broken");
+		Debug.Log ("name of hitbox:");
+		Debug.Log (col.name);
+
+		var hitbox = col.GetComponent<PolygonCollider2D> ();
+
+
 
 	}
 
@@ -126,15 +130,23 @@ public class HitboxHandler: MonoBehaviour{
 
 	public void changeHitboxes(listHitboxes hitbox)
 	{
+		var facing = gameObject.GetComponent<SpriteRenderer> ();
+
+		var direction = new Vector3 (1, 1);
+
 
 
 		if(hitbox != listHitboxes.clearHit)
 		{
-
+			
 			currentHitbox.SetPath(0,boxes[(int)hitbox].GetPath(0));
+
+		
+
 			return;
 
 		}
+
 		else
 		{
 			currentHitbox.pathCount = 0;
@@ -145,3 +157,6 @@ public class HitboxHandler: MonoBehaviour{
 	}
 
 }
+
+
+
