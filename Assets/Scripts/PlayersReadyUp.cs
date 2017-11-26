@@ -56,7 +56,6 @@ public class PlayersReadyUp : MonoBehaviour {
                 }
             }
         }
-
         // Check if everyone is ready, if true: save number of players, and change panels to mode selection.
         if (playersReady.Count == controllers.Length)
         {
