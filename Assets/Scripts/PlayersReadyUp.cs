@@ -34,6 +34,7 @@ public class PlayersReadyUp : MonoBehaviour {
         // Get list of names of controllers.
         controllers = Input.GetJoystickNames();
 
+		Debug.Log (controllers.ToString()[0]);
         // Get Fire1 input from each controller.
         for (int i = 0; i < controllers.Length; i++)
         {

@@ -112,6 +112,7 @@ public class C_PlayerController : C_WorldObjectController {
 				//Need a condition to stay in dive kick state until player hits ground 
 
 				anim.Play ("Dive Kick");
+				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2(0, -3000));
 				StartCoroutine (stopInput (0.267f));
 
 			}
@@ -121,10 +122,23 @@ public class C_PlayerController : C_WorldObjectController {
 		if (PlayerInput.GetButtonDown("StrongAttack2")){
 
 
+			//TODO, implement dash? it works but the direction doesnt seem to want to flip. Perhaps it is getting the wrong value for local scale?
+
+			//if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+
+			//	anim.Play ("Dash");
+			//	gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((gameObject.transform.localScale.y*2500), 0));
+			//	StartCoroutine (stopInput (0.667f));
+
+			//}
+
+
+
 			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
 
 				anim.Play ("Flying Knee");
-				StartCoroutine (stopInput (0.667f));
+				//StartCoroutine (stopInput (0.667f));
+				anim.CrossFade ("Jumping Transition", 0.3F);
 			}
 
 
@@ -173,8 +187,16 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void GroundUpdate(){
-		if (PlayerInput.GetAxis("Vertical") > 0)
+		if (PlayerInput.GetAxis ("Vertical") > 0) {
 			body.AddForce ((Vector2.up * -Physics.gravity.y) / gameObject.transform.localScale.y, ForceMode2D.Impulse);
+
+				
+				anim.CrossFade ("Jumping Transition", 0.3F);
+		
+
+
+
+		}
 	}
 
 	public void SwingingUpdate(){
@@ -227,6 +249,7 @@ public class C_PlayerController : C_WorldObjectController {
 			} else if ((nearestTile.distance <= gameObject.transform.localScale.y * 0.6) && (PlayerInputState != E_PlayerInputState.Ground)) {
 				Debug.Log ("Hit Ground");
 				PlayerInputState = E_PlayerInputState.Ground;
+				anim.SetBool ("IsGrounded", true);
 			}
 		} else if (PlayerInputState == E_PlayerInputState.Ground) {
 			LeftGround ();
@@ -236,6 +259,8 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void LeftGround(){
 		Debug.Log ("Left Ground");
+		anim.CrossFade ("Jumping Transition", 0.3F);
+		anim.SetBool ("IsGrounded", false);
 		if (IsAttached())
 			PlayerInputState = E_PlayerInputState.Swinging;
 		else if (GrapplingState == E_GrapplingState.Detached) {
