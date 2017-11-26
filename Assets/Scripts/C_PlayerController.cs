@@ -14,18 +14,19 @@ public class C_PlayerController : C_WorldObjectController {
 	Dictionary<E_PlayerInputState, InputUpdate> InputUpdates;
 	Dictionary<E_PlayerInputState, FixedUpdate> FixedUpdates;
 	Dictionary<E_GrapplingState, InputUpdate> GraplingUpdates;
-	public Rigidbody2D body;
+	public Rigidbody2D body = null;
 	public GameObject GrapplingHookBase;
 	GameObject ActiveGrapplingHook;
 	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
-	public Vector2 spawn;
+	public Vector2? spawn = null; // I made this a Nullable type to get rid of the error in the OnEnable() method. https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/nullable-types/index
 	public C_Controller PlayerInput;
 	bool onSlope = false;
 	public Animator anim;
     public int lives;
     public int kills;
     public GameObject lastHitBy;
+    public GameObject gameManager;
 
 	public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -64,6 +65,7 @@ public class C_PlayerController : C_WorldObjectController {
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
         PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
 
+        gameManager = GameObject.FindWithTag("GameManager");
         lives = ModeSettings.numLives;
         kills = 0;
     }
@@ -320,6 +322,7 @@ public class C_PlayerController : C_WorldObjectController {
 		if ((body.position.x < - 50) || (body.position.x > LevelBuilder.width + 50) || (body.position.y < -50) || (body.position.y > LevelBuilder.height + 50)) {
 			GameObject.Destroy (ActiveGrapplingHook);
 			ActiveGrapplingHook = null;
+            // This actually gets called multiple times before the player respawns, may need to fix.
             this.PlayerDied();
 		}
 	}
@@ -346,12 +349,30 @@ public class C_PlayerController : C_WorldObjectController {
 
     private void PlayerDied()
     {
-        GameManager.PlayerDied(this.gameObject);
-        lastHitBy.SendMessage("PlayerKilled");
+        if (lastHitBy != null)
+        {
+            lastHitBy.SendMessage("PlayerKilled");
+        }
+        gameManager.GetComponent<GameManager>().SendMessage("PlayerDied", this.gameObject);
     }
 
     private void PlayerKilled()
     {
         kills += 1;
+    }
+
+    private void OnEnable()
+    {
+        // This will actually be called once before start which is fine since lives is not set yet.
+        lives = lives - 1;
+        if (spawn != null)
+        {
+            // Error would exist here because spawn is set after instantiate in LevelBuilder or after this is called.  So a nullable type vector is required.
+            body.position = (Vector2) spawn; // cast to vector2 to use.
+        }
+        if (body != null)
+        {
+            body.velocity = new Vector2(0, 0);
+        }
     }
 }

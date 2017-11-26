@@ -9,6 +9,6 @@ public static class ModeSettings {
 
     // Settings
     public static Modes modeType;
-    public static int numLives;
+    public static int numLives = 5; // Default
     public static int numPlayers;
 }

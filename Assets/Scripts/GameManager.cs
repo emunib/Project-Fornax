@@ -31,24 +31,21 @@ public class C_WorldObjectController : MonoBehaviour {
 }
 
 
-public class GameManager
-{
+public class GameManager : MonoBehaviour {
 
-    public static void PlayerDied(GameObject player)
+    public void PlayerDied(GameObject player)
     {
         // Deactivate player object.
         player.SetActive(false);
-
         // If they have lives left, decrement their lives and respawn them.
         if (player.GetComponent<C_PlayerController>().lives > 0)
         {
-            player.GetComponent<C_PlayerController>().lives = player.GetComponent<C_PlayerController>().lives - 1;
-            player.GetComponent<C_PlayerController>().body.position = player.GetComponent<C_PlayerController>().spawn;
-            player.GetComponent<C_PlayerController>().body.velocity = new Vector2(0, 0);
-            player.SetActive(true);
+            // Delayed respawn
+            StartCoroutine(SpawnPlayer(player));
         }
         else
         {
+
             // Check for other player's lives in PlayerLog
             // Depending on mode (practice, FFA or 2v2), if only one team has lives left, then declare winner.
             // Also make sure to clear PlayerLog since static fields are persistent across games.
@@ -103,17 +100,11 @@ public class GameManager
             }
         }
     }
-}
 
-public class World : MonoBehaviour {
+    IEnumerator SpawnPlayer(GameObject player)
+    {
+        yield return new WaitForSeconds(6);  // the "seconds" argument scales by time.TimeScale
+        player.SetActive(true);
+    }
 
-	// Use this for initialization
-	void Start () {
-
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
