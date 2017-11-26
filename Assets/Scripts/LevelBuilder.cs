@@ -20,6 +20,8 @@ public class LevelBuilder : MonoBehaviour
     public GameObject Left_Corner;
 	private List<Vector2> spawnLocations = new List<Vector2>();
 
+    public Transform levelParent;
+
     int[,] map = new int[height, width];
 	/*int[,] map = 
 	{
@@ -54,36 +56,36 @@ public class LevelBuilder : MonoBehaviour
 				switch (map[height - y - 1, x])
 				{
 					case Tiles.GROUND_TILE:
-						Instantiate(Ground, new Vector3(x, y, 0), Quaternion.identity);
+						Instantiate(Ground, new Vector3(x, y, 0), Quaternion.identity, levelParent);
 						break;
 					case Tiles.PLAYER:
-						GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity);
+						GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity, levelParent);
 						C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
 						controller.spawn = new Vector2 (x, y);
                         break;
 					case Tiles.HAZARD:
-						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity);
+						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity, levelParent);
 						break;
                     case Tiles.RAMP_LEFT:
-                        Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                     case Tiles.RAMP_RIGHT:
-                        Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Ramp_Right, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                     case Tiles.LOWER_RAMP_LEFT:
-                        Instantiate(Lower_Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Lower_Ramp_Left, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                     case Tiles.LOWER_RAMP_RIGHT:
-                        Instantiate(Lower_Ramp_Right, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Lower_Ramp_Right, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                     case Tiles.SURFACE_TILE:
-                        Instantiate(Surface, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Surface, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                     case Tiles.LEFT_CORNER:
-                        Instantiate(Left_Corner, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Left_Corner, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                     case Tiles.RIGHT_CORNER:
-                        Instantiate(Right_Corner, new Vector3(x, y, 0), Quaternion.identity);
+                        Instantiate(Right_Corner, new Vector3(x, y, 0), Quaternion.identity, levelParent);
                         break;
                 }
 			}
@@ -218,7 +220,7 @@ public class LevelBuilder : MonoBehaviour
 			{
 				map[(int) item[i].y, (int) item[i].x] = Tiles.SPACING;
 			}
-			var tile = Instantiate(InnerGround, new Vector3(item[0].x + (item.Count-1)/2f, height-item[0].y-1, 0), Quaternion.identity);
+			var tile = Instantiate(InnerGround, new Vector3(item[0].x + (item.Count-1)/2f, height-item[0].y-1, 0), Quaternion.identity, levelParent);
 			tile.GetComponent<SpriteRenderer>().size = new Vector2(item.Count, 1);
 		}
 	}
