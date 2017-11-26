@@ -22,13 +22,16 @@ public class MainCameraController : MonoBehaviour
 		// find the greatest and lowest player x and y coordinates
 		foreach (GameObject player in PlayerManager.PlayerLog)
 		{
-			float x = player.GetComponent<C_PlayerController>().body.position.x;
-			float y = player.GetComponent<C_PlayerController>().body.position.y;
+            if (player.activeSelf)  // If active and not dead.
+            {
+                float x = player.GetComponent<C_PlayerController>().body.position.x;
+                float y = player.GetComponent<C_PlayerController>().body.position.y;
 
-			playermin.x = Mathf.Min(playermin.x, x);
-			playermin.y = Mathf.Min(playermin.y, y);
-			playermax.x = Mathf.Max(playermax.x, x);
-			playermax.y = Mathf.Max(playermax.y, y);
+                playermin.x = Mathf.Min(playermin.x, x);
+                playermin.y = Mathf.Min(playermin.y, y);
+                playermax.x = Mathf.Max(playermax.x, x);
+                playermax.y = Mathf.Max(playermax.y, y);
+            }
 		}
 		// you can change playermin.y to the y coordinate of the lowest platform and the camera
 		// will keep it view, the camera will zoom out 'upwards' with the bottom edge fixed to the platform

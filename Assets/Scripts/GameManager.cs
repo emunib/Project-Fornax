@@ -31,13 +31,12 @@ public class C_WorldObjectController : MonoBehaviour {
 }
 
 
-public class GameManager
-{
+public class GameManager : MonoBehaviour {
 
-    public static void PlayerDied(GameObject player)
+    public void PlayerDied(GameObject player)
     {
         // Deactivate player object.
-        player.SetActive(false);
+        StartCoroutine(DespawnPlayer(player));
 
         // If they have lives left, decrement their lives and respawn them.
         if (player.GetComponent<C_PlayerController>().lives > 0)
@@ -45,7 +44,8 @@ public class GameManager
             player.GetComponent<C_PlayerController>().lives = player.GetComponent<C_PlayerController>().lives - 1;
             player.GetComponent<C_PlayerController>().body.position = player.GetComponent<C_PlayerController>().spawn;
             player.GetComponent<C_PlayerController>().body.velocity = new Vector2(0, 0);
-            player.SetActive(true);
+            // Delayed respawn
+            StartCoroutine(SpawnPlayer(player));
         }
         else
         {
@@ -103,17 +103,18 @@ public class GameManager
             }
         }
     }
-}
 
-public class World : MonoBehaviour {
+    IEnumerator DespawnPlayer(GameObject player)
+    {
+        yield return new WaitForSeconds(0.1f); // Necessary because setActive will occur before the physics step preventing some variables like rigidbody.position from updating.
+        // Deactivate player object.
+        player.SetActive(false);
+    }
 
-	// Use this for initialization
-	void Start () {
+    IEnumerator SpawnPlayer(GameObject player)
+    {
+        yield return new WaitForSeconds(6);  // the "seconds" argument scales by time.TimeScale
+        player.SetActive(true);
+    }
 
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
