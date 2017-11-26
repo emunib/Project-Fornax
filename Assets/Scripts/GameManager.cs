@@ -36,16 +36,19 @@ public class GameManager : MonoBehaviour {
     public void PlayerDied(GameObject player)
     {
         // Deactivate player object.
-        player.SetActive(false);
+        StartCoroutine(DespawnPlayer(player));
+
         // If they have lives left, decrement their lives and respawn them.
         if (player.GetComponent<C_PlayerController>().lives > 0)
         {
+            player.GetComponent<C_PlayerController>().lives = player.GetComponent<C_PlayerController>().lives - 1;
+            player.GetComponent<C_PlayerController>().body.position = player.GetComponent<C_PlayerController>().spawn;
+            player.GetComponent<C_PlayerController>().body.velocity = new Vector2(0, 0);
             // Delayed respawn
             StartCoroutine(SpawnPlayer(player));
         }
         else
         {
-
             // Check for other player's lives in PlayerLog
             // Depending on mode (practice, FFA or 2v2), if only one team has lives left, then declare winner.
             // Also make sure to clear PlayerLog since static fields are persistent across games.
@@ -99,6 +102,13 @@ public class GameManager : MonoBehaviour {
                     break;
             }
         }
+    }
+
+    IEnumerator DespawnPlayer(GameObject player)
+    {
+        yield return new WaitForSeconds(0.1f); // Necessary because setActive will occur before the physics step preventing some variables like rigidbody.position from updating.
+        // Deactivate player object.
+        player.SetActive(false);
     }
 
     IEnumerator SpawnPlayer(GameObject player)

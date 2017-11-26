@@ -19,7 +19,7 @@ public class C_PlayerController : C_WorldObjectController {
 	GameObject ActiveGrapplingHook;
 	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
-	public Vector2? spawn = null; // I made this a Nullable type to get rid of the error in the OnEnable() method. https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/nullable-types/index
+    public Vector2 spawn; // I made this a Nullable type to get rid of the error in the OnEnable() method. https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/nullable-types/index
 	public C_Controller PlayerInput;
 	bool onSlope = false;
 	public Animator anim;
@@ -322,9 +322,8 @@ public class C_PlayerController : C_WorldObjectController {
 		if ((body.position.x < - 50) || (body.position.x > LevelBuilder.width + 50) || (body.position.y < -50) || (body.position.y > LevelBuilder.height + 50)) {
 			GameObject.Destroy (ActiveGrapplingHook);
 			ActiveGrapplingHook = null;
-            // This actually gets called multiple times before the player respawns, may need to fix.
             this.PlayerDied();
-		}
+        }
 	}
 
 	private void OnCollisionEnter2D(Collision2D other)
@@ -361,18 +360,9 @@ public class C_PlayerController : C_WorldObjectController {
         kills += 1;
     }
 
+    // This will actually be called once before start
     private void OnEnable()
     {
-        // This will actually be called once before start which is fine since lives is not set yet.
-        lives = lives - 1;
-        if (spawn != null)
-        {
-            // Error would exist here because spawn is set after instantiate in LevelBuilder or after this is called.  So a nullable type vector is required.
-            body.position = (Vector2) spawn; // cast to vector2 to use.
-        }
-        if (body != null)
-        {
-            body.velocity = new Vector2(0, 0);
-        }
+
     }
 }
