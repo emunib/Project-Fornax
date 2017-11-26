@@ -39,6 +39,19 @@ public class C_PlayerController : C_WorldObjectController {
 	public bool ableToAttack = true;
 	public bool ableToMove = true;
 
+	//Hitstun values so we can edit on the fly
+
+
+	public float palmHit1Hitstun;
+	public float palmHit2Hitstun;
+	public float palmHit3Hitstun;
+	public float diveHitHitstun;
+	public float punchHit1Hitstun;
+	public float punchHit2Hitstun;
+	public float kickHit1Hitstun;
+	public float kickHit2Hitstun;
+	public float kickHit3Hitstun;
+	public float kneeHit1Hitstun;
 
 	C_PlayerController() {
 		InputUpdates = new Dictionary<E_PlayerInputState, InputUpdate> ();
@@ -169,7 +182,27 @@ public class C_PlayerController : C_WorldObjectController {
 			Vector2 dirVec = new Vector2 (PlayerInput.GetAxis ("Horizontal_r"), (PlayerInput.GetAxis ("Vertical_r")));
 			dirVec.Normalize ();
 			double vangle = Trig.GetAngle (dirVec);
-			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
+
+
+			if (vangle <= 2.9 && vangle >= 0.0) {
+
+				anim.CrossFade ("Grapple Up",0.3F);
+			}
+				
+
+			if (vangle >= 3.35 && vangle <= 6.25) {
+
+
+				anim.CrossFade ("Grapple Down", 0.3F);
+			}
+
+			if ((vangle > 2.9 && vangle <= 3.34) || (vangle<6.1 && vangle <= 0.13))  {
+
+
+				anim.CrossFade ("Grapple Forward", 0.3F);
+			}
+
+			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x+ Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
 			ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
 			ActiveGrapplingHook.SetActive (true);
 			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (100 * dirVec.x, 100 * dirVec.y);
@@ -184,6 +217,125 @@ public class C_PlayerController : C_WorldObjectController {
 			}
 		} 
 			
+	}
+
+
+	void OnTriggerEnter2D(Collider2D col){
+
+
+
+		if (col is PolygonCollider2D) {
+
+			HitboxHandler hitstun = col.GetComponent<HitboxHandler> ();
+
+			//TODO maybe implement some sort of hit spark, tried to get it working before but the particles would just launch players out of bounds.
+
+			//var hitspark = gameObject.GetComponent<ParticleSystem> ();
+			//hitspark.transform.localPosition = body.position;
+			//hitspark.Play();
+		
+			//Instantiate(hitspark, body.position,Quaternion.identity); 
+
+			var caseSwitch = hitstun.lastHitboxUsed;
+		
+
+			//This is where we set hitstun, similar to setting pushback in hitboxhandler.cs
+			anim.SetBool("IsInHitStun",true);
+
+			switch (caseSwitch) {
+
+			case "NinjaSprite_Sprite_35":
+
+
+				anim.Play ("Getting Hit");
+				StartCoroutine (stopInput (palmHit1Hitstun));
+
+				break;
+
+			case "NinjaSprite_Sprite_36":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit",  (palmHit2Hitstun));
+				StartCoroutine (stopInput (palmHit2Hitstun));
+
+				break;
+
+
+			case "NinjaSprite_Sprite_37":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (palmHit3Hitstun));
+				StartCoroutine (stopInput (palmHit3Hitstun));
+
+				break;
+
+			case "NinjaSprite_Sprite_42":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (diveHitHitstun));
+				StartCoroutine (stopInput (diveHitHitstun));
+
+				break;
+
+			case "NinjaSprite_Sprite_59":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (punchHit1Hitstun));
+				StartCoroutine (stopInput (punchHit1Hitstun));
+
+				break;
+
+			case "NinjaSprite_Sprite_60":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit",  (punchHit2Hitstun));
+				StartCoroutine (stopInput (punchHit2Hitstun));
+
+				break;
+
+			case "NinjaSprite_Sprite_62":
+				
+			
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (kickHit1Hitstun));
+				StartCoroutine (stopInput (kickHit1Hitstun));
+				break;
+
+			case "NinjaSprite_Sprite_63":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (kickHit2Hitstun));
+				StartCoroutine (stopInput (kickHit2Hitstun));
+
+
+				break;
+
+			case "NinjaSprite_Sprite_64":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (kickHit3Hitstun));
+				StartCoroutine (stopInput (kickHit3Hitstun));
+
+				break;
+
+			case "NinjaSprite_Sprite_67":
+
+				anim.Play ("Getting Hit");
+				//anim.CrossFade ("Getting Hit", (kneeHit1Hitstun));
+				StartCoroutine (stopInput (kneeHit1Hitstun));
+
+				break;
+			default: 
+
+				break;
+			}
+
+			anim.SetBool("IsInHitStun",false);
+
+		}
+
+
+
 	}
 
 	void GroundUpdate(){
@@ -211,12 +363,15 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	IEnumerator stopInput(float time){
+		
 		ableToAttack = false;
 		ableToMove = false;
 		yield return new WaitForSeconds (time);
 
 		ableToAttack = true;
 		ableToMove = true;
+
+
 	}
 
 	void FixedUpdate (){
