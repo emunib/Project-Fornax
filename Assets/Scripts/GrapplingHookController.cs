@@ -16,7 +16,7 @@ public class GrapplingHookController : C_WorldObjectController {
 
 		Manager.ObjectLog.Add (gameObject, this);
 		Pivots = new List<Pivot>();
-		Pivots.Add (new Pivot (PlayerBody.position));
+		Pivots.Add(new Pivot(PlayerBody.position));
 		PlayerObject.PendulumController = new C_PendulumController (PlayerObject,this);
 	}
 
