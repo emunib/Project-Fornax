@@ -8,7 +8,7 @@ public static class ModeSettings {
     public enum Modes { PRACTICE, FFA, VERSUS};
 
     // Settings
-    public static Modes modeType;
-    public static int numLives = 5; // Default
+    public static Modes modeType = ModeSettings.Modes.FFA; // Default
+    public static int numLives = 3; // Default
     public static int numPlayers;
 }

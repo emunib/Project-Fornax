@@ -27,8 +27,9 @@ public class C_PlayerController : C_WorldObjectController {
     public int kills;
     public GameObject lastHitBy;
     public GameObject gameManager;
+    public int playerID;
 
-	public float Xaccel = 25;
+    public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
 	public float MaxSpeed;
 	public float AngularAccel;
@@ -74,7 +75,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 		anim = GetComponent<Animator> ();
 
-        int playerID = PlayerManager.AddPlayer(this.gameObject);
+        playerID = PlayerManager.AddPlayer(this.gameObject);
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
         PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
 
@@ -239,7 +240,8 @@ public class C_PlayerController : C_WorldObjectController {
 			//Instantiate(hitspark, body.position,Quaternion.identity); 
 
 			var caseSwitch = hitstun.lastHitboxUsed;
-		
+
+            lastHitBy = col.gameObject; // Set who hit us so if we die, they get a kill.
 
 			//This is where we set hitstun, similar to setting pushback in hitboxhandler.cs
 			anim.SetBool("IsInHitStun",true);
@@ -505,7 +507,8 @@ public class C_PlayerController : C_WorldObjectController {
     {
         if (lastHitBy != null)
         {
-            lastHitBy.SendMessage("PlayerKilled");
+            lastHitBy.GetComponent<C_PlayerController>().PlayerKilled();
+            lastHitBy = null; // Reset lastHitBy before respawning.
         }
         gameManager.GetComponent<GameManager>().SendMessage("PlayerDied", this.gameObject);
     }
