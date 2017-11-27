@@ -105,7 +105,10 @@ public class LevelBuilder : MonoBehaviour
 			var r = Random.Range(1, _spawnLocations[i].Count-1);
 			var pos = new Vector3(_spawnLocations[i][r].x, _spawnLocations[i][r].y+1, -2);
 
-			Instantiate(Random.Range(0, 2) == 0 ? Bomb : Spring, pos, Quaternion.identity);
+			r = Random.Range(0, 4);
+			if (r == 0) Instantiate(Bomb, pos, Quaternion.identity);
+			else if (r == 1) Instantiate(Spikes, pos, Quaternion.identity);
+			else Instantiate(Spring, pos, Quaternion.identity);
 			
 			_spawnLocations.RemoveAt(i);
 			n--;
