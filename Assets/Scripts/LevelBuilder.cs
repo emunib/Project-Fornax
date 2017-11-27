@@ -69,12 +69,12 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
 		
-		FindSpanLocations();
+		FindSpawnLocations();
 		SpawnPlayers(2);
 		AddHazards(5);
     }
 
-	void FindSpanLocations()
+	void FindSpawnLocations()
 	{
 		for (int y = 0; y < height; y++)
 		{
