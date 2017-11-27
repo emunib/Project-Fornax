@@ -235,7 +235,7 @@ public class C_PlayerController : C_WorldObjectController {
 			//TODO maybe implement some sort of hit spark, tried to get it working before but the particles would just launch players out of bounds.
 
 			var hitspark = gameObject.GetComponent<ParticleSystem> ();
-			hitspark.transform.localPosition = body.position;
+            hitspark.transform.localPosition = col.transform.position;
 			hitspark.Play();
 		
 			//Instantiate(hitspark, body.position,Quaternion.identity); 
