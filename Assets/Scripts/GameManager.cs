@@ -143,7 +143,10 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator DespawnPlayer(GameObject player)
     {
-        yield return new WaitForEndOfFrame(); // Necessary because setActive will occur before the physics step preventing some variables like rigidbody.position from updating.
+        for (int i = 0; i < 2; i++)
+        {
+            yield return new WaitForEndOfFrame(); // Necessary because setActive will occur before the physics step preventing some variables like rigidbody.position from updating.
+        }
         // Deactivate player object.
         player.SetActive(false);
     }

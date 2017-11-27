@@ -129,7 +129,7 @@ public class C_PlayerController : C_WorldObjectController {
 				//Need a condition to stay in dive kick state until player hits ground 
 
 				anim.Play ("Dive Kick");
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2(0, -3000));
+				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((3000*(gameObject.transform.localScale.x/-9)), -3000));
 				StartCoroutine (stopInput (0.267f));
 
 			}
@@ -186,6 +186,18 @@ public class C_PlayerController : C_WorldObjectController {
 			Vector2 dirVec = new Vector2 (PlayerInput.GetAxis ("Horizontal_r"), (PlayerInput.GetAxis ("Vertical_r")));
 			dirVec.Normalize ();
 			double vangle = Trig.GetAngle (dirVec);
+			Debug.Log (dirVec);
+			//TODO:Flip player if grappling from behind
+
+			//if (dirVec.x <= 0 && gameObject.transform.localScale.x == -9) {
+
+			//	gameObject.transform.localScale = new Vector3 (9, 9, 9);
+			//}
+
+			//if (dirVec.x > 0 && gameObject.transform.localScale.x == 9) {
+
+			//	gameObject.transform.localScale = new Vector3 (-9, 9, 9);
+			//}
 
 
 			if (vangle <= 2.9 && vangle >= 0.0) {
@@ -228,16 +240,16 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 
-		if (col is PolygonCollider2D) {
+		if (col is PolygonCollider2D && col.GetComponent<Rigidbody2D>()!= null) {
 
 			HitboxHandler hitstun = col.GetComponent<HitboxHandler> ();
 
 			//TODO maybe implement some sort of hit spark, tried to get it working before but the particles would just launch players out of bounds.
 
-			var hitspark = gameObject.GetComponent<ParticleSystem> ();
-			hitspark.transform.localPosition = body.position;
-			hitspark.Play();
-		
+			//var hitspark = gameObject.GetComponent<ParticleSystem> ();
+			//hitspark.transform.localPosition = col.transform.position;
+			//hitspark.Play();
+
 			//Instantiate(hitspark, body.position,Quaternion.identity); 
 
 			var caseSwitch = hitstun.lastHitboxUsed;
@@ -345,7 +357,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 	void GroundUpdate(){
 		if (PlayerInput.GetAxis ("Vertical") > 0) {
-			body.AddForce ((Vector2.up * -Physics.gravity.y) / gameObject.transform.localScale.y, ForceMode2D.Impulse);
+			body.AddForce ((Vector2.up * -(Physics.gravity.y*2)) / gameObject.transform.localScale.y, ForceMode2D.Impulse);
 
 				
 				anim.CrossFade ("Jumping Transition", 0.3F);
@@ -444,9 +456,9 @@ public class C_PlayerController : C_WorldObjectController {
 
 			// What if players could accelerate while in the air?
 			Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
-			if (PlayerInput.GetAxis ("Horizontal") > 0) {
+			if (PlayerInput.GetAxis ("Horizontal") > 0 ) {
 				gameObject.transform.localScale = new Vector3 (-9, 9, 9);
-			} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
+			} else if (PlayerInput.GetAxis ("Horizontal") < 0 ) {
 				gameObject.transform.localScale = new Vector3 (9, 9, 9);
 			}
 			body.AddForce (direction);
