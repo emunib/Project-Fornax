@@ -148,10 +148,10 @@ public class HitboxHandler: MonoBehaviour{
 
 		var caseSwitch = lastHitboxUsed;
 
-		//var hitbox = col.GetComponent<PolygonCollider2D> ();
+        //var hitbox = col.GetComponent<PolygonCollider2D> ();
 
 
-		//This is where we set hitstun and other attack propertie
+        //This is where we set hitstun and other attack propertie
 
 		switch (caseSwitch) {
 

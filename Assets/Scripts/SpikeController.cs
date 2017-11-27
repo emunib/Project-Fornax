@@ -12,7 +12,7 @@ public class SpikeController : C_WorldObjectController
 	{
 		if (other.gameObject.CompareTag("Player"))
 		{
-			other.gameObject.SendMessage("Die");
+			other.gameObject.GetComponent<C_PlayerController>().PlayerDied();
 		}
 	}
 }

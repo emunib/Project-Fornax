@@ -42,9 +42,11 @@ public class GameManager : MonoBehaviour {
         StartCoroutine(DespawnPlayer(player));
 
         // If they have lives left, decrement their lives and respawn them.
-
         if (player.GetComponent<C_PlayerController>().lives > 0)
         {
+            Debug.Log("Lives = " + player.GetComponent<C_PlayerController>().lives);
+            Debug.Log("Spawn = " + player.GetComponent<C_PlayerController>().spawn);
+            Debug.Log("Location = " + player.GetComponent<C_PlayerController>().body.position);
             player.GetComponent<C_PlayerController>().lives = player.GetComponent<C_PlayerController>().lives - 1;
             player.GetComponent<C_PlayerController>().body.position = player.GetComponent<C_PlayerController>().spawn;
             player.GetComponent<C_PlayerController>().body.velocity = new Vector2(0, 0);

@@ -28,6 +28,7 @@ public class C_PlayerController : C_WorldObjectController {
     public GameObject lastHitBy;
     public GameObject gameManager;
     public int playerID;
+    public bool alive;
 
     public float Xaccel = 25;
 	public KeyCode XPos = KeyCode.RightArrow, XNeg = KeyCode.LeftArrow, YPos = KeyCode.UpArrow, YNeg = KeyCode.DownArrow;
@@ -233,9 +234,9 @@ public class C_PlayerController : C_WorldObjectController {
 
 			//TODO maybe implement some sort of hit spark, tried to get it working before but the particles would just launch players out of bounds.
 
-			//var hitspark = gameObject.GetComponent<ParticleSystem> ();
-			//hitspark.transform.localPosition = body.position;
-			//hitspark.Play();
+			var hitspark = gameObject.GetComponent<ParticleSystem> ();
+			hitspark.transform.localPosition = body.position;
+			hitspark.Play();
 		
 			//Instantiate(hitspark, body.position,Quaternion.identity); 
 
@@ -503,14 +504,18 @@ public class C_PlayerController : C_WorldObjectController {
 		
 	}
 
-    private void PlayerDied()
+    public void PlayerDied()
     {
-        if (lastHitBy != null)
+        if (alive)
         {
-            lastHitBy.GetComponent<C_PlayerController>().PlayerKilled();
-            lastHitBy = null; // Reset lastHitBy before respawning.
+            alive = false;
+            if (lastHitBy != null)
+            {
+                lastHitBy.GetComponent<C_PlayerController>().PlayerKilled();
+                lastHitBy = null; // Reset lastHitBy before respawning.
+            }
+            gameManager.GetComponent<GameManager>().SendMessage("PlayerDied", this.gameObject);
         }
-        gameManager.GetComponent<GameManager>().SendMessage("PlayerDied", this.gameObject);
     }
 
     private void PlayerKilled()
@@ -521,6 +526,6 @@ public class C_PlayerController : C_WorldObjectController {
     // This will actually be called once before start
     private void OnEnable()
     {
-
+        alive = true;
     }
 }
