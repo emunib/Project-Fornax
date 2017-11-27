@@ -44,9 +44,11 @@ public class GameManager : MonoBehaviour {
         // If they have lives left, decrement their lives and respawn them.
         if (player.GetComponent<C_PlayerController>().lives > 0)
         {
-            Debug.Log("Lives = " + player.GetComponent<C_PlayerController>().lives);
-            Debug.Log("Spawn = " + player.GetComponent<C_PlayerController>().spawn);
-            Debug.Log("Location = " + player.GetComponent<C_PlayerController>().body.position);
+            //Debug.Log("Lives = " + player.GetComponent<C_PlayerController>().lives);
+            //Debug.Log("Spawn = " + player.GetComponent<C_PlayerController>().spawn);
+            //Debug.Log("Location = " + player.GetComponent<C_PlayerController>().body.position);
+            player.GetComponent<Renderer>().enabled = false;
+            player.GetComponent<Collider2D>().enabled = false;
             player.GetComponent<C_PlayerController>().lives = player.GetComponent<C_PlayerController>().lives - 1;
             player.GetComponent<C_PlayerController>().body.position = player.GetComponent<C_PlayerController>().spawn;
             player.GetComponent<C_PlayerController>().body.velocity = new Vector2(0, 0);
@@ -143,9 +145,9 @@ public class GameManager : MonoBehaviour {
 
     IEnumerator DespawnPlayer(GameObject player)
     {
-        for (int i = 0; i < 2; i++)
+        for (int i = 0; i < 1; i++)
         {
-            yield return new WaitForEndOfFrame(); // Necessary because setActive will occur before the physics step preventing some variables like rigidbody.position from updating.
+            yield return null; // Necessary because setActive will occur before the physics step preventing some variables like rigidbody.position from updating.
         }
         // Deactivate player object.
         player.SetActive(false);
