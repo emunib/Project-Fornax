@@ -249,7 +249,7 @@ public class C_PlayerController : C_WorldObjectController {
 			//var hitspark = gameObject.GetComponent<ParticleSystem> ();
 			//hitspark.transform.localPosition = col.transform.position;
 			//hitspark.Play();
-		
+
 			//Instantiate(hitspark, body.position,Quaternion.identity); 
 
 			var caseSwitch = hitstun.lastHitboxUsed;
