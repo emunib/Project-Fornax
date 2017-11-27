@@ -2,23 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpikeController : MonoBehaviour {
-
-	// Use this for initialization
+public class SpikeController : C_WorldObjectController
+{
 	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+		Manager.ObjectLog.Add (gameObject, this);
 	}
 
 	private void OnCollisionEnter2D(Collision2D other)
 	{
 		if (other.gameObject.CompareTag("Player"))
 		{
-			Destroy(other.gameObject);
+			other.gameObject.SendMessage("Die");
 		}
 	}
 }

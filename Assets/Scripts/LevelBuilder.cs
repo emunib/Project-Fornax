@@ -11,6 +11,7 @@ public class LevelBuilder : MonoBehaviour
 	public GameObject InnerGround;
 	public GameObject Player;
 	public GameObject Spikes;
+	public GameObject Spring;
 	public GameObject Bomb;
     public GameObject Ramp_Left;
     public GameObject Ramp_Right;
@@ -37,9 +38,6 @@ public class LevelBuilder : MonoBehaviour
 				{
 					case Tiles.GROUND_TILE:
 						Instantiate(Ground, new Vector3(x, y, 0), Quaternion.identity);
-						break;
-					case Tiles.BOMB:
-						Instantiate(Bomb, new Vector3(x, y, 0), Quaternion.identity);
 						break;
                     case Tiles.RAMP_LEFT:
                         Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity);
@@ -105,8 +103,10 @@ public class LevelBuilder : MonoBehaviour
 			}
 			
 			var r = Random.Range(1, _spawnLocations[i].Count-1);
-			var pos = new Vector2(_spawnLocations[i][r].x, _spawnLocations[i][r].y+1);
-			Instantiate(Bomb, pos, Quaternion.identity);
+			var pos = new Vector3(_spawnLocations[i][r].x, _spawnLocations[i][r].y+1, -2);
+
+			Instantiate(Random.Range(0, 2) == 0 ? Bomb : Spring, pos, Quaternion.identity);
+			
 			_spawnLocations.RemoveAt(i);
 			n--;
 		}

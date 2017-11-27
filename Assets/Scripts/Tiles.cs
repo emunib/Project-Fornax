@@ -15,6 +15,4 @@ public static class Tiles {
     public const int SURFACE_TILE = 9;
     public const int LEFT_CORNER = 10;
     public const int RIGHT_CORNER = 11;
-    public const int SPIKES = 12;
-    public const int BOMB = 13;
 }
