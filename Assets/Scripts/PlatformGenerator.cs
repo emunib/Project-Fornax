@@ -168,7 +168,7 @@ public class PlatformGenerator {
                 // Fill in area between ceiling and floor.
                 for (int k = elevation; k <= depression; k++)
                 {
-                    if (k < platformHeight)
+					if (k >= 0 && k < platformHeight)
                     {
                         platform[k, i] = Tiles.GROUND_TILE;
                     }

@@ -153,65 +153,69 @@ public class HitboxHandler: MonoBehaviour{
 
         //This is where we set hitstun and other attack propertie
 
-		switch (caseSwitch) {
-
-		case "NinjaSprite_Sprite_35":
-
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*palmHit1ForceX, palmHit1ForceY));
-			break;
-
-		case "NinjaSprite_Sprite_36":
-
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*palmHit2ForceX, palmHit2ForceY));
-			break;
+		if (col.GetComponent<Rigidbody2D> () != null) {
 
 
-		case "NinjaSprite_Sprite_37":
+			switch (caseSwitch) {
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*palmHit3ForceX, palmHit3ForceY));
-			break;
+			case "NinjaSprite_Sprite_35":
 
-		case "NinjaSprite_Sprite_42":
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * palmHit1ForceX, palmHit1ForceY));
+				break;
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*diveHitForceX, diveHitForceY));
-			break;
+			case "NinjaSprite_Sprite_36":
 
-		case "NinjaSprite_Sprite_59":
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * palmHit2ForceX, palmHit2ForceY));
+				break;
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*punchHit1ForceX, punchHit1ForceY));
-			break;
 
-		case "NinjaSprite_Sprite_60":
+			case "NinjaSprite_Sprite_37":
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*punchHit2ForceX, punchHit2ForceY));
-			break;
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * palmHit3ForceX, palmHit3ForceY));
+				break;
 
-		case "NinjaSprite_Sprite_62":
+			case "NinjaSprite_Sprite_42":
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kickHit1ForceX, kickHit1ForceY));
-			break;
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * diveHitForceX, diveHitForceY));
+				break;
 
-		case "NinjaSprite_Sprite_63":
+			case "NinjaSprite_Sprite_59":
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kickHit2ForceX, kickHit2ForceY));
-			break;
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * punchHit1ForceX, punchHit1ForceY));
+				break;
 
-		case "NinjaSprite_Sprite_64":
+			case "NinjaSprite_Sprite_60":
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kickHit3ForceX, kickHit3ForceY));
-			break;
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * punchHit2ForceX, punchHit2ForceY));
+				break;
 
-		case "NinjaSprite_Sprite_67":
+			case "NinjaSprite_Sprite_62":
 
-			col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction*kneeHit1ForceX, kneeHit1ForceY));
-			break;
-		default: 
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * kickHit1ForceX, kickHit1ForceY));
+				break;
+
+			case "NinjaSprite_Sprite_63":
+
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * kickHit2ForceX, kickHit2ForceY));
+				break;
+
+			case "NinjaSprite_Sprite_64":
+
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * kickHit3ForceX, kickHit3ForceY));
+				break;
+
+			case "NinjaSprite_Sprite_67":
+
+				col.GetComponent<Rigidbody2D> ().AddForce (new Vector2 (direction * kneeHit1ForceX, kneeHit1ForceY));
+				break;
+			default: 
 			
-			break;
+				break;
 
+
+			}
 
 		}
-
 
 
 	}
