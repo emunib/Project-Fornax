@@ -228,16 +228,16 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 
-		if (col is PolygonCollider2D) {
+		if (col is PolygonCollider2D && col.GetComponent<Rigidbody2D>()!= null) {
 
 			HitboxHandler hitstun = col.GetComponent<HitboxHandler> ();
 
 			//TODO maybe implement some sort of hit spark, tried to get it working before but the particles would just launch players out of bounds.
 
-			var hitspark = gameObject.GetComponent<ParticleSystem> ();
-            hitspark.transform.localPosition = col.transform.position;
-			hitspark.Play();
-		
+			//var hitspark = gameObject.GetComponent<ParticleSystem> ();
+			//hitspark.transform.localPosition = col.transform.position;
+			//hitspark.Play();
+
 			//Instantiate(hitspark, body.position,Quaternion.identity); 
 
 			var caseSwitch = hitstun.lastHitboxUsed;
