@@ -94,9 +94,9 @@ public class C_PlayerController : C_WorldObjectController {
 		if (PlayerInput.GetButtonDown ("LightAttack1")) {
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-
+				StartCoroutine(stopInput(0.625f));
 				anim.Play ("Punch");
-				StartCoroutine(stopInput(0.5f));
+
 		
 			} 
 
@@ -105,9 +105,9 @@ public class C_PlayerController : C_WorldObjectController {
 		if (PlayerInput.GetButtonDown ("LightAttack2")) {
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-
+				StartCoroutine (stopInput (1.334f));
 				anim.Play ("Kick");
-				StartCoroutine (stopInput (0.767f));
+
 			}
 
 		}
@@ -117,20 +117,20 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-
+				StartCoroutine (stopInput (2.0f));
 				anim.Play ("Palm Strike");
-				StartCoroutine (stopInput (1.267f));
+
 			}
 
 
-			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
+			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground ) {
 
 
 				//Need a condition to stay in dive kick state until player hits ground 
-
+				StartCoroutine (stopInput (0.3125f));
 				anim.Play ("Dive Kick");
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((3000*(gameObject.transform.localScale.x/-9)), -3000));
-				StartCoroutine (stopInput (0.267f));
+				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((2000*(gameObject.transform.localScale.x/-9)), -2000));
+
 
 			}
 
@@ -155,6 +155,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 				anim.Play ("Flying Knee");
 				//StartCoroutine (stopInput (0.667f));
+				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((1100*(gameObject.transform.localScale.x/-9)), 0));
 				anim.CrossFade ("Jumping Transition", 0.3F);
 			}
 
@@ -356,7 +357,7 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void GroundUpdate(){
-		if (PlayerInput.GetAxis ("Vertical") > 0) {
+		if (PlayerInput.GetAxis ("Vertical") > 0 && ableToAttack==true) {
 			body.AddForce ((Vector2.up * -(Physics.gravity.y*2)) / gameObject.transform.localScale.y, ForceMode2D.Impulse);
 
 				
