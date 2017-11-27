@@ -12,18 +12,13 @@ public class MainCameraController : MonoBehaviour
 		Vector2 playermin = new Vector2(float.MaxValue, float.MaxValue);
 		Vector2 playermax = new Vector2(float.MinValue, float.MinValue);
 
-		// if there are no players fit camera to the platforms
-		if (PlayerManager.PlayerLog.Count == 0)
-		{
-			playermin = Vector2.zero;
-			playermax = new Vector2(LevelBuilder.width, LevelBuilder.height);
-		}
-		
+		var allDead = true;
 		// find the greatest and lowest player x and y coordinates
 		foreach (GameObject player in PlayerManager.PlayerLog)
 		{
             if (player.activeSelf)  // If active and not dead.
             {
+	            allDead = false;
                 float x = player.GetComponent<C_PlayerController>().body.position.x;
                 float y = player.GetComponent<C_PlayerController>().body.position.y;
 
@@ -33,6 +28,14 @@ public class MainCameraController : MonoBehaviour
                 playermax.y = Mathf.Max(playermax.y, y);
             }
 		}
+
+		// if there are no players fit camera to the platforms
+		if (PlayerManager.PlayerLog.Count == 0 || allDead)
+		{
+			playermin = Vector2.zero;
+			playermax = new Vector2(LevelBuilder.width, LevelBuilder.height);
+		}
+		
 		// you can change playermin.y to the y coordinate of the lowest platform and the camera
 		// will keep it view, the camera will zoom out 'upwards' with the bottom edge fixed to the platform
 
