@@ -10,7 +10,9 @@ public class LevelBuilder : MonoBehaviour
 	public GameObject Ground;
 	public GameObject InnerGround;
 	public GameObject Player;
-	public GameObject Hazard;
+	public GameObject Spikes;
+	public GameObject Spring;
+	public GameObject Bomb;
     public GameObject Ramp_Left;
     public GameObject Ramp_Right;
     public GameObject Surface;
@@ -18,24 +20,11 @@ public class LevelBuilder : MonoBehaviour
     public GameObject Lower_Ramp_Left;
     public GameObject Right_Corner;
     public GameObject Left_Corner;
-	private List<Vector2> spawnLocations = new List<Vector2>();
+	private List<List<Vector2>> _spawnLocations = new List<List<Vector2>>();
 
     public Transform levelParent;
 
     int[,] map = new int[height, width];
-	/*int[,] map = 
-	{
-		{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 3, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0},
-		{1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1}
-	};
-    */   
 
 	// Use this for initialization
 	void Awake()
@@ -44,11 +33,8 @@ public class LevelBuilder : MonoBehaviour
         Time.timeScale = 2.52f; // In project settings, this was set to 3.0f, however this runs faster than real time and will affect invoke/timer methods.
 
         RandomizePlatforms();
-		SpawnPlayers(2);
-        //SpawnPlayers(ModeSettings.numPlayers);
 		OptimizeInnerTiles();
 		
-
         for (int x = 0; x < width; x++)
 		{
 			for (int y = 0; y < height; y++)
@@ -57,14 +43,6 @@ public class LevelBuilder : MonoBehaviour
 				{
 					case Tiles.GROUND_TILE:
 						Instantiate(Ground, new Vector3(x, y, 0), Quaternion.identity, levelParent);
-						break;
-					case Tiles.PLAYER:
-						GameObject temp = Instantiate (Player, new Vector3 (x, y, 0), Quaternion.identity, levelParent);
-						C_PlayerController controller = temp.GetComponent<C_PlayerController> ();
-						controller.spawn = new Vector2 (x, y);
-                        break;
-					case Tiles.HAZARD:
-						Instantiate(Hazard, new Vector3(x, y, 0), Quaternion.identity, levelParent);
 						break;
                     case Tiles.RAMP_LEFT:
                         Instantiate(Ramp_Left, new Vector3(x, y, 0), Quaternion.identity, levelParent);
@@ -90,15 +68,69 @@ public class LevelBuilder : MonoBehaviour
                 }
 			}
 		}
+		
+		FindSpanLocations();
+		SpawnPlayers(2);
+		AddHazards(5);
     }
+
+	void FindSpanLocations()
+	{
+		for (int y = 0; y < height; y++)
+		{
+			List<Vector2> row = new List<Vector2>();
+			for (int x = 0; x < width; x++)
+			{
+				if (map[y, x] == Tiles.SURFACE_TILE)
+				{
+					row.Add(new Vector2(x, height-y));
+				}
+				else if (row.Count > 0)
+				{
+					_spawnLocations.Add(row);
+					row = new List<Vector2>();
+				}
+			}	
+		}
+	}
+	
+
+	private void AddHazards(int n)
+	{
+		while (n > 0 && _spawnLocations.Count > 0)
+		{
+			var i = Random.Range(0, _spawnLocations.Count);
+
+			if (_spawnLocations[i].Count <= 4)
+			{
+				_spawnLocations.RemoveAt(i);
+				continue;
+			}
+			
+			var r = Random.Range(1, _spawnLocations[i].Count-1);
+			var pos = new Vector3(_spawnLocations[i][r].x, _spawnLocations[i][r].y+1, -2);
+
+			r = Random.Range(0, 4);
+			if (r == 0) Instantiate(Bomb, pos, Quaternion.identity);
+			else if (r == 1) Instantiate(Spikes, pos, Quaternion.identity);
+			else Instantiate(Spring, pos, Quaternion.identity);
+			
+			_spawnLocations.RemoveAt(i);
+			n--;
+		}
+	}
 
 	private void SpawnPlayers(int n)
 	{
 		for (int i = 0; i < n; i++)
 		{
-			var r = Random.Range(0, spawnLocations.Count);
-			map[(int)spawnLocations[r].y, (int)spawnLocations[r].x] = Tiles.PLAYER;
-			spawnLocations.RemoveAt(r);
+			var r = Random.Range(0, _spawnLocations.Count);
+			var pos = _spawnLocations[r][_spawnLocations[r].Count/2];
+			pos.y += Player.GetComponent<SpriteRenderer>().bounds.extents.y;
+			GameObject temp = Instantiate (Player, new Vector3 (pos.x, pos.y, 0), Quaternion.identity);
+			C_PlayerController controller = temp.GetComponent<C_PlayerController> (); 
+			controller.spawn = new Vector2 (pos.x, pos.y); 
+			_spawnLocations.RemoveAt(r);
 		}
 	}
 
@@ -134,7 +166,7 @@ public class LevelBuilder : MonoBehaviour
 			flag = false;
 			while (true)
 			{
-				w = Random.Range(10, 80);
+				w = Random.Range(5, 80);
 				h = Random.Range(15, 50);
 				hs = Random.Range(10, 30);
 				vs = Random.Range(5, 20);
@@ -172,7 +204,6 @@ public class LevelBuilder : MonoBehaviour
 			}
 		}
 		replaceArea(px, py, pg.CreateIsland(ph, pw));
-		spawnLocations.Add(new Vector2(x + w - pw/2, y));
 	}
 
 	bool CheckRow(int x, int y, int w)
