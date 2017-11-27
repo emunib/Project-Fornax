@@ -539,5 +539,7 @@ public class C_PlayerController : C_WorldObjectController {
     private void OnEnable()
     {
         alive = true;
+        this.GetComponent<Renderer>().enabled = true;
+        this.GetComponent<Collider2D>().enabled = true;
     }
 }
