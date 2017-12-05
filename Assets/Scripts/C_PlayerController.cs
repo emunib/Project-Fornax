@@ -85,13 +85,13 @@ public class C_PlayerController : C_WorldObjectController {
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
 
 
-
 	
 
-
+		if (InputManager.Devices [playerID]!=null) {
+			
+			pInput = InputManager.Devices [playerID];
 	
-		pInput = InputManager.Devices [playerID];
-
+		}
 
         PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
 
@@ -104,144 +104,150 @@ public class C_PlayerController : C_WorldObjectController {
 
 	// Update is called once per frame
 	void Update () {
-		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
+
+		if (pInput != null) {
+
+			anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 
 
-		if (pInput.GetControl(InputControlType.Action3)) {
+			if (pInput.GetControl (InputControlType.Action3)) {
 
 
 
-			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-				StartCoroutine(stopInput(0.625f));
-				anim.Play ("Punch");
+				if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+					StartCoroutine (stopInput (0.625f));
+					anim.Play ("Punch");
 
 			
+				} 
+
+			}
+
+			if (pInput.GetControl (InputControlType.Action4)) {
+
+				if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+					StartCoroutine (stopInput (1.334f));
+					anim.Play ("Kick");
+
+				}
+
+			}
+
+
+			if (pInput.GetControl (InputControlType.LeftBumper)) {
+
+	
+				if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+					StartCoroutine (stopInput (2.0f));
+					anim.Play ("Palm Strike");
+
+				}
+
+
+				if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
+
+					//Need a condition to stay in dive kick state until player hits ground 
+					StartCoroutine (stopInput (0.3125f));
+					anim.Play ("Dive Kick");
+					gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2 ((2000 * (gameObject.transform.localScale.x / -9)), -2000));
+
+
+				}
+
+			}
+
+			if (pInput.GetControl (InputControlType.RightBumper)) {
+
+
+				//TODO, implement dash? it works but the direction doesnt seem to want to flip. Perhaps it is getting the wrong value for local scale?
+
+				//if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
+
+				//	anim.Play ("Dash");
+				//	gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((gameObject.transform.localScale.y*2500), 0));
+				//	StartCoroutine (stopInput (0.667f));
+
+				//}
+
+
+
+				if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
+
+					anim.Play ("Flying Knee");
+					StartCoroutine (stopInput (0.667f));
+					gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2 ((1100 * (gameObject.transform.localScale.x / -9)), 0));
+					anim.CrossFade ("Jumping Transition", 0.3F);
+				}
+
+
+			}
+
+	
+
+
+			InputUpdates [PlayerInputState] ();
+			if (pInput.GetControl (InputControlType.RightTrigger)) {
+				if (ActiveGrapplingHook != null) {
+					GrapplingState = E_GrapplingState.Detached;
+					if (PlayerInputState == E_PlayerInputState.Swinging) {
+						PlayerInputState = E_PlayerInputState.Free;
+					}
+					GameObject.Destroy (ActiveGrapplingHook);
+				}
+				Vector2 dirVec = new Vector2 (pInput.RightStickX.Value, pInput.RightStickY.Value);
+				dirVec.Normalize ();
+				double vangle = Trig.GetAngle (dirVec);
+		
+				//TODO:Flip player if grappling from behind
+
+				//if (dirVec.x <= 0 && gameObject.transform.localScale.x == -9) {
+
+				//	gameObject.transform.localScale = new Vector3 (9, 9, 9);
+				//}
+
+				//if (dirVec.x > 0 && gameObject.transform.localScale.x == 9) {
+
+				//	gameObject.transform.localScale = new Vector3 (-9, 9, 9);
+				//}
+
+
+				if (vangle <= 2.9 && vangle >= 0.0) {
+
+					anim.CrossFade ("Grapple Up", 0.3F);
+				}
+				
+
+				if (vangle >= 3.35 && vangle <= 6.25) {
+
+
+					anim.CrossFade ("Grapple Down", 0.3F);
+				}
+
+				if ((vangle > 2.9 && vangle <= 3.34) || (vangle < 6.1 && vangle <= 0.13)) {
+
+
+					anim.CrossFade ("Grapple Forward", 0.3F);
+				}
+
+				ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x + Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
+				ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
+				ActiveGrapplingHook.SetActive (true);
+				ActiveGrapplingHook.GetComponent<Rigidbody2D> ().velocity = new Vector2 (100 * dirVec.x, 100 * dirVec.y);
+			}
+
+			if (pInput.GetControl (InputControlType.LeftTrigger) && (ActiveGrapplingHook != null)) {
+				GrapplingState = E_GrapplingState.Detached;
+				GameObject.Destroy (ActiveGrapplingHook);
+				ActiveGrapplingHook = null;
+				if (PlayerInputState == E_PlayerInputState.Swinging) {
+					PlayerInputState = E_PlayerInputState.Free;
+				}
 			} 
 
 		}
 
-		if (pInput.GetControl(InputControlType.Action4)) {
-
-			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-				StartCoroutine (stopInput (1.334f));
-				anim.Play ("Kick");
-
-			}
-
-		}
-
-
-		if (pInput.GetControl(InputControlType.LeftBumper)){
-
-	
-			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-				StartCoroutine (stopInput (2.0f));
-				anim.Play ("Palm Strike");
-
-			}
-
-
-			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground ) {
-
-				//Need a condition to stay in dive kick state until player hits ground 
-				StartCoroutine (stopInput (0.3125f));
-				anim.Play ("Dive Kick");
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((2000*(gameObject.transform.localScale.x/-9)), -2000));
-
-
-			}
-
-		}
-
-		if (pInput.GetControl(InputControlType.RightBumper)){
-
-
-			//TODO, implement dash? it works but the direction doesnt seem to want to flip. Perhaps it is getting the wrong value for local scale?
-
-			//if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-
-			//	anim.Play ("Dash");
-			//	gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((gameObject.transform.localScale.y*2500), 0));
-			//	StartCoroutine (stopInput (0.667f));
-
-			//}
-
-
-
-			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
-
-				anim.Play ("Flying Knee");
-				StartCoroutine (stopInput (0.667f));
-				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((1100*(gameObject.transform.localScale.x/-9)), 0));
-				anim.CrossFade ("Jumping Transition", 0.3F);
-			}
-
-
-		}
-
-	
-
-
-		InputUpdates [PlayerInputState] ();
-		if (pInput.GetControl(InputControlType.RightTrigger)) {
-			if (ActiveGrapplingHook != null) {
-				GrapplingState = E_GrapplingState.Detached;
-				if (PlayerInputState == E_PlayerInputState.Swinging) {
-					PlayerInputState = E_PlayerInputState.Free;
-				}
-				GameObject.Destroy (ActiveGrapplingHook);
-            }
-			Vector2 dirVec = new Vector2 (pInput.RightStickX.Value, pInput.RightStickY.Value);
-			dirVec.Normalize ();
-			double vangle = Trig.GetAngle (dirVec);
-		
-			//TODO:Flip player if grappling from behind
-
-			//if (dirVec.x <= 0 && gameObject.transform.localScale.x == -9) {
-
-			//	gameObject.transform.localScale = new Vector3 (9, 9, 9);
-			//}
-
-			//if (dirVec.x > 0 && gameObject.transform.localScale.x == 9) {
-
-			//	gameObject.transform.localScale = new Vector3 (-9, 9, 9);
-			//}
-
-
-			if (vangle <= 2.9 && vangle >= 0.0) {
-
-				anim.CrossFade ("Grapple Up",0.3F);
-			}
-				
-
-			if (vangle >= 3.35 && vangle <= 6.25) {
-
-
-				anim.CrossFade ("Grapple Down", 0.3F);
-			}
-
-			if ((vangle > 2.9 && vangle <= 3.34) || (vangle<6.1 && vangle <= 0.13))  {
-
-
-				anim.CrossFade ("Grapple Forward", 0.3F);
-			}
-
-			ActiveGrapplingHook = Instantiate (GrapplingHookBase, new Vector3 (body.position.x+ Mathf.Cos ((float)vangle), body.position.y + Mathf.Sin ((float)vangle), 0), new Quaternion ()).gameObject;
-			ActiveGrapplingHook.GetComponent<GrapplingHookController> ().SetPendulum (this);
-			ActiveGrapplingHook.SetActive (true);
-			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (100 * dirVec.x, 100 * dirVec.y);
-		}
-
-		if (pInput.GetControl(InputControlType.LeftTrigger) && (ActiveGrapplingHook != null)) {
-			GrapplingState = E_GrapplingState.Detached;
-			GameObject.Destroy (ActiveGrapplingHook);
-			ActiveGrapplingHook = null;
-			if (PlayerInputState == E_PlayerInputState.Swinging) {
-				PlayerInputState = E_PlayerInputState.Free;
-			}
-		} 
-			
 	}
+
 
 
 	void OnTriggerEnter2D(Collider2D col){
@@ -456,22 +462,26 @@ public class C_PlayerController : C_WorldObjectController {
 	void GroundFixedUpdate() {
 
 
-		if (ableToMove == true) {
+		if (pInput != null) {
+
+			if (ableToMove == true) {
 			
-			if (onSlope) {
-				body.AddForce (-Physics2D.gravity * Math.Abs (pInput.LeftStickX.Value * Xaccel));
-			}
+				if (onSlope) {
+					body.AddForce (-Physics2D.gravity * Math.Abs (pInput.LeftStickX.Value * Xaccel));
+				}
 
 		
 
-			// What if players could accelerate while in the air?
-			Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel;
-			if (pInput.LeftStickX.Value > 0 ) {
-				gameObject.transform.localScale = new Vector3 (-9, 9, 9);
-			} else if (pInput.LeftStickX.Value < 0 ) {
-				gameObject.transform.localScale = new Vector3 (9, 9, 9);
+				// What if players could accelerate while in the air?
+				Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel;
+				if (pInput.LeftStickX.Value > 0) {
+					gameObject.transform.localScale = new Vector3 (-9, 9, 9);
+				} else if (pInput.LeftStickX.Value < 0) {
+					gameObject.transform.localScale = new Vector3 (9, 9, 9);
+				}
+				body.AddForce (direction);
+
 			}
-			body.AddForce (direction);
 
 		}
 	}
@@ -479,16 +489,18 @@ public class C_PlayerController : C_WorldObjectController {
 	void FreeFixedUpdate() {
 
 
+		if (pInput != null) {
 
-		Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel/3;
-		if (pInput.LeftStick.X > 0) {
-			gameObject.transform.localScale = new Vector3 (-9, 9, 9);
-		} else if (pInput.LeftStick.X < 0) {
-			gameObject.transform.localScale = new Vector3 (9, 9, 9); 
+			Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel / 3;
+			if (pInput.LeftStick.X > 0) {
+				gameObject.transform.localScale = new Vector3 (-9, 9, 9);
+			} else if (pInput.LeftStick.X < 0) {
+				gameObject.transform.localScale = new Vector3 (9, 9, 9); 
+			}
+			body.AddForce (direction);
+
+
 		}
-		body.AddForce(direction);
-
-
 	}
 
 	void SwingingFixedUpdate() {
