@@ -264,7 +264,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\generated\Printer.cs" />
     <Compile Include="Assets\Scripts\C_Controller.cs" />
     <Compile Include="Assets\Scripts\C_PendulumController.cs" />
     <Compile Include="Assets\Scripts\C_PlayerController.cs" />
@@ -286,6 +285,8 @@
     <Compile Include="Assets\Scripts\TileController.cs" />
     <Compile Include="Assets\Scripts\Tiles.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
+    <Compile Include="Assets\Scripts\PlayerRegisterPrx.cs" />
+    <Compile Include="Assets\Scripts\PlayerPrx.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

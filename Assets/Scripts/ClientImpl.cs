@@ -1,31 +1,29 @@
 using UnityEngine;
 using System.Collections;
-using Online;
-using Ice;
 
-public class ClientImpl : ClientDisp_
+public class ClientImpl 
 {
-    public override void GetInput(Current current = null)
+    public void GetInput()
     {
         throw new System.NotImplementedException();
     }
 
-    public override ServerPrx MakeHost(Current current = null)
+    public ServerPrx MakeHost()
     {
         throw new System.NotImplementedException();
     }
 
-    public override void Notify(Current current = null)
+    public void Notify()
     {
         throw new System.NotImplementedException();
     }
 
-    public override void NotifyKicked(Current current = null)
+    public void NotifyKicked()
     {
         throw new System.NotImplementedException();
     }
 
-    public override void Update(Command[] commandList, Current current = null)
+    public void Update(Command[] commandList)
     {
         throw new System.NotImplementedException();
     }

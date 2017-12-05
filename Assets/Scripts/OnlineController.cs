@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
-using Online;
-using Ice;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -22,7 +20,6 @@ public class OnlineController : MonoBehaviour {
     public GameObject CreateNew;
     public GameObject Login;
 
-    private GameRegisterPrx gameRegister;
     private PlayerRegisterPrx playerRegister;
     private LobbyListenerImpl lobbyListener;
     private string[] args = new string[0];
@@ -40,19 +37,11 @@ public class OnlineController : MonoBehaviour {
         lobbyListener = new LobbyListenerImpl();
         try
         {
-            Ice.Communicator communicator = Ice.Util.initialize(ref args);
             Debug.Log(IPAddress.Any.ToString());
-            OnlineManager.Adapater = communicator.createObjectAdapterWithEndpoints("Test", "tcp -h " + IPAddress.Any.ToString() + " -p 10001");
-            Ice.ObjectPrx obj = communicator.stringToProxy("SimplePrinter:tcp -h 192.168.1.18  -p 10000");
-            gameRegister = GameRegisterPrxHelper.checkedCast(obj);
-            if (gameRegister == null)
-            {
-                throw new ApplicationException("Invalid proxy");
-            }
+
             OnlineManager.LobbyLstnrImpl = lobbyListener;
-            OnlineManager.LobbyLstnrProxy = LobbyListenerPrxHelper.checkedCast(OnlineManager.Adapater.addWithUUID(lobbyListener));
             OnlineManager.Adapater.activate();
-            playerRegister = gameRegister.Connect(OnlineManager.LobbyLstnrProxy);
+            //playerRegister = gameRegister.Connect(OnlineManager.LobbyLstnrProxy);
         }
         catch (System.Exception e)
         {

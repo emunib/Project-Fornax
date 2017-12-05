@@ -1,0 +1,46 @@
+RESTful Game Service for projectFORNAX
+
+Defined nouns
+/users - Representation of all users
+    POST - Create a new user
+/users/{userID} - A single user
+    POST - Logs the user in
+    GET - Gets the user public profile
+    PUT - Modifies some aspect of the users profile
+/users/{userID}/{sessionID} - An active user
+    DELETE - Logs the user out
+    GET - Gets the sessions info
+
+/games - A representation of all games
+    GET - returns a list of all games
+/games/{gameID} - A particular instance of the game
+
+/games/{gameID}/users - The users in the game (the game lobby)
+    POST - User enters the game
+    GET - Returns all users in the game
+
+/games/{gameID}/users/{userID}
+    DELETE - User leaves the game
+
+/games/{gameID}/input
+     GET - Get the input of all agents in the game
+
+/games/{gameID}/input/{userID}
+     PUT - Updates the users input state
+
+/games/{gameID}/gameobjects
+    GET - Returns all game objects
+    PUT - Updates all game objects
+
+/games/{gameID}/update - The current state of the game
+    POST - Creates a new update the current state (update)
+    GET - Returns info on existing updates
+
+/games/{gameID}/update - A resource representing updates
+    POST - Creates a new update
+    GET - Returns info on existing updates
+
+/games/{gameID}/update/{updateID} - A particular update
+    GET - Returns the update
+
+
