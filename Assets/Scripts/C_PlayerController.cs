@@ -84,14 +84,7 @@ public class C_PlayerController : C_WorldObjectController {
         playerID = PlayerManager.AddPlayer(this.gameObject);
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
 
-
-
-		for (int i = 0; i < InputManager.Devices.Count (); i++) {
-
-			Debug.Log (InputManager.Devices [i].Name.ToString ());
-			Debug.Log (InputManager.Devices [i].GetType ().ToString ());
-		}
-
+	
 
 
 	
@@ -111,11 +104,8 @@ public class C_PlayerController : C_WorldObjectController {
 	void Update () {
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 
-<<<<<<< HEAD
 		if (pInput.GetControl(InputControlType.Action3)) {
-=======
-        if (PlayerInput.GetButtonDown ("LightAttack1")) {
->>>>>>> 5553258679e937a10fe7d2b3ae4fe1838a9340ab
+
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 				StartCoroutine(stopInput(0.625f));
