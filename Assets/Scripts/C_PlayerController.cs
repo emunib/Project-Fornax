@@ -20,7 +20,7 @@ public class C_PlayerController : C_WorldObjectController {
 	GameObject ActiveGrapplingHook;
 	public C_PendulumController PendulumController;
     LineRenderer RopeLine;
-    public Vector2 spawn; // I made this a Nullable type to get rid of the error in the OnEnable() method. https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/nullable-types/index
+    public Vector2 spawn;
 	public C_Controller PlayerInput;
 	bool onSlope = false;
 	public Animator anim;
@@ -111,7 +111,11 @@ public class C_PlayerController : C_WorldObjectController {
 	void Update () {
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 
+<<<<<<< HEAD
 		if (pInput.GetControl(InputControlType.Action3)) {
+=======
+        if (PlayerInput.GetButtonDown ("LightAttack1")) {
+>>>>>>> 5553258679e937a10fe7d2b3ae4fe1838a9340ab
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 				StartCoroutine(stopInput(0.625f));
@@ -144,7 +148,6 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground ) {
-
 
 				//Need a condition to stay in dive kick state until player hits ground 
 				StartCoroutine (stopInput (0.3125f));
@@ -555,7 +558,14 @@ public class C_PlayerController : C_WorldObjectController {
     private void OnEnable()
     {
         alive = true;
+        ableToAttack = true;
+        ableToMove = true;
         this.GetComponent<Renderer>().enabled = true;
         this.GetComponent<Collider2D>().enabled = true;
+        if (anim != null)
+        {
+            PlayerInputState = E_PlayerInputState.Ground;
+            anim.SetBool("IsGrounded", true);
+        }
     }
 }
