@@ -84,7 +84,14 @@ public class C_PlayerController : C_WorldObjectController {
         playerID = PlayerManager.AddPlayer(this.gameObject);
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
 
-	
+
+
+		for (int i = 0; i < InputManager.Devices.Count (); i++) {
+
+			Debug.Log (InputManager.Devices [i].Name.ToString ());
+			Debug.Log (InputManager.Devices [i].GetType ().ToString ());
+		}
+
 
 
 	
@@ -104,7 +111,9 @@ public class C_PlayerController : C_WorldObjectController {
 	void Update () {
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 
+
 		if (pInput.GetControl(InputControlType.Action3)) {
+
 
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
@@ -129,7 +138,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 		if (pInput.GetControl(InputControlType.LeftBumper)){
 
-			pInput.Vibrate (100f);
+	
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 				StartCoroutine (stopInput (2.0f));
 				anim.Play ("Palm Strike");
