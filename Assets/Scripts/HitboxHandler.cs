@@ -225,7 +225,7 @@ public class HitboxHandler: MonoBehaviour{
 
 	public void changeHitboxes(listHitboxes hitbox)
 	{
-		var facing = gameObject.GetComponent<SpriteRenderer> ();
+		//var facing = gameObject.GetComponent<SpriteRenderer> ();
 
 		if (Input.GetAxis ("Horizontal") > 0)
 		{

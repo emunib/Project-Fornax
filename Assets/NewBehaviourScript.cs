@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class NewBehaviourScript : MonoBehaviour
 {
-	private Button[] buttons;
+	//private Button[] buttons;
 	// Use this for initialization
 	void Start () {
-		buttons = this.GetComponentsInChildren<Button>(true);
+		//buttons = this.GetComponentsInChildren<Button>(true);
 	}
 	
 	// Update is called once per frame

@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using InControl;
 
 public delegate void InputUpdate();
 public delegate void FixedUpdate();
@@ -56,6 +57,9 @@ public class C_PlayerController : C_WorldObjectController {
 	public float kickHit3Hitstun;
 	public float kneeHit1Hitstun;
 
+
+	public InputDevice pInput;
+
 	C_PlayerController() {
 		InputUpdates = new Dictionary<E_PlayerInputState, InputUpdate> ();
 		InputUpdates.Add (E_PlayerInputState.Swinging, SwingingUpdate);
@@ -74,10 +78,26 @@ public class C_PlayerController : C_WorldObjectController {
 		GrapplingState = E_GrapplingState.Detached;
 		InvokeRepeating ("MapCheck", 0f, 0.5f);
 
+
 		anim = GetComponent<Animator> ();
 
         playerID = PlayerManager.AddPlayer(this.gameObject);
         GetComponent<Renderer>().material = Resources.Load<Material>("PlayerMaterial_" + (playerID + 1)); // Loads appropriate material for player ID.
+
+
+
+		for (int i = 0; i < InputManager.Devices.Count (); i++) {
+
+			Debug.Log (InputManager.Devices [i].Name.ToString ());
+			Debug.Log (InputManager.Devices [i].GetType ().ToString ());
+		}
+
+
+
+	
+		pInput = InputManager.Devices [playerID];
+
+
         PlayerInput = new C_Controller (playerID);  // Appropriate controls for player ID.
 
         gameManager = GameObject.FindWithTag("GameManager");
@@ -91,18 +111,18 @@ public class C_PlayerController : C_WorldObjectController {
 	void Update () {
 		anim.SetFloat ("PlayerSpeed", body.velocity.magnitude);
 
-		if (PlayerInput.GetButtonDown ("LightAttack1")) {
+		if (pInput.GetControl(InputControlType.Action3)) {
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 				StartCoroutine(stopInput(0.625f));
 				anim.Play ("Punch");
 
-		
+			
 			} 
 
 		}
 
-		if (PlayerInput.GetButtonDown ("LightAttack2")) {
+		if (pInput.GetControl(InputControlType.Action4)) {
 
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 				StartCoroutine (stopInput (1.334f));
@@ -113,9 +133,9 @@ public class C_PlayerController : C_WorldObjectController {
 		}
 
 
-		if (PlayerInput.GetButtonDown("StrongAttack1")){
+		if (pInput.GetControl(InputControlType.LeftBumper)){
 
-
+			pInput.Vibrate (100f);
 			if (ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
 				StartCoroutine (stopInput (2.0f));
 				anim.Play ("Palm Strike");
@@ -136,7 +156,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 		}
 
-		if (PlayerInput.GetButtonDown("StrongAttack2")){
+		if (pInput.GetControl(InputControlType.RightBumper)){
 
 
 			//TODO, implement dash? it works but the direction doesnt seem to want to flip. Perhaps it is getting the wrong value for local scale?
@@ -154,7 +174,7 @@ public class C_PlayerController : C_WorldObjectController {
 			if (ableToAttack == true && PlayerInputState != E_PlayerInputState.Ground) {
 
 				anim.Play ("Flying Knee");
-				//StartCoroutine (stopInput (0.667f));
+				StartCoroutine (stopInput (0.667f));
 				gameObject.GetComponent<Rigidbody2D> ().AddForce (new Vector2((1100*(gameObject.transform.localScale.x/-9)), 0));
 				anim.CrossFade ("Jumping Transition", 0.3F);
 			}
@@ -162,21 +182,11 @@ public class C_PlayerController : C_WorldObjectController {
 
 		}
 
-		if (PlayerInput.GetButtonDown ("Block")) {
-
-			if(ableToAttack == true && PlayerInputState == E_PlayerInputState.Ground) {
-
-				//Need a condition to stay in block state until player lets go
-
-				anim.Play ("Block");
-				StartCoroutine (stopInput (0.667f));
-			}
-
-		}
+	
 
 
 		InputUpdates [PlayerInputState] ();
-		if (PlayerInput.GetButtonDown("Fire1")) {
+		if (pInput.GetControl(InputControlType.RightTrigger)) {
 			if (ActiveGrapplingHook != null) {
 				GrapplingState = E_GrapplingState.Detached;
 				if (PlayerInputState == E_PlayerInputState.Swinging) {
@@ -184,7 +194,7 @@ public class C_PlayerController : C_WorldObjectController {
 				}
 				GameObject.Destroy (ActiveGrapplingHook);
             }
-			Vector2 dirVec = new Vector2 (PlayerInput.GetAxis ("Horizontal_r"), (PlayerInput.GetAxis ("Vertical_r")));
+			Vector2 dirVec = new Vector2 (pInput.RightStickX.Value, pInput.RightStickY.Value);
 			dirVec.Normalize ();
 			double vangle = Trig.GetAngle (dirVec);
 			Debug.Log (dirVec);
@@ -225,7 +235,7 @@ public class C_PlayerController : C_WorldObjectController {
 			ActiveGrapplingHook.GetComponent<Rigidbody2D>().velocity = new Vector2 (100 * dirVec.x, 100 * dirVec.y);
 		}
 
-		if ((PlayerInput.GetButtonDown("Fire2")) && (ActiveGrapplingHook != null)) {
+		if (pInput.GetControl(InputControlType.LeftTrigger) && (ActiveGrapplingHook != null)) {
 			GrapplingState = E_GrapplingState.Detached;
 			GameObject.Destroy (ActiveGrapplingHook);
 			ActiveGrapplingHook = null;
@@ -357,7 +367,7 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void GroundUpdate(){
-		if (PlayerInput.GetAxis ("Vertical") > 0 && ableToAttack==true) {
+		if (pInput.GetControl(InputControlType.Action2) && ableToAttack==true) {
 			body.AddForce ((Vector2.up * -(Physics.gravity.y*2)) / gameObject.transform.localScale.y, ForceMode2D.Impulse);
 
 				
@@ -450,16 +460,18 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 		if (ableToMove == true) {
-
+			
 			if (onSlope) {
-				body.AddForce (-Physics2D.gravity * Math.Abs (PlayerInput.GetAxis ("Horizontal")) * Xaccel);
+				body.AddForce (-Physics2D.gravity * Math.Abs (pInput.LeftStickX.Value * Xaccel));
 			}
 
+			Debug.Log (pInput.LeftStick.X.ToString());
+
 			// What if players could accelerate while in the air?
-			Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel;
-			if (PlayerInput.GetAxis ("Horizontal") > 0 ) {
+			Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel;
+			if (pInput.LeftStickX.Value > 0 ) {
 				gameObject.transform.localScale = new Vector3 (-9, 9, 9);
-			} else if (PlayerInput.GetAxis ("Horizontal") < 0 ) {
+			} else if (pInput.LeftStickX.Value < 0 ) {
 				gameObject.transform.localScale = new Vector3 (9, 9, 9);
 			}
 			body.AddForce (direction);
@@ -468,10 +480,13 @@ public class C_PlayerController : C_WorldObjectController {
 	}
 
 	void FreeFixedUpdate() {
-		Vector2 direction = new Vector2 (PlayerInput.GetAxis ("Horizontal"), 0) * Xaccel/3;
-		if (PlayerInput.GetAxis ("Horizontal") > 0) {
+
+
+
+		Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel/3;
+		if (pInput.LeftStick.X > 0) {
 			gameObject.transform.localScale = new Vector3 (-9, 9, 9);
-		} else if (PlayerInput.GetAxis ("Horizontal") < 0) {
+		} else if (pInput.LeftStick.X < 0) {
 			gameObject.transform.localScale = new Vector3 (9, 9, 9); 
 		}
 		body.AddForce(direction);

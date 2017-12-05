@@ -13,7 +13,7 @@ public static class TestGamepadEditor
     static void OnHierarchyChange()
     {
 
-        if (EditorApplication.currentScene.Contains("controllerTest")) 
+        if (2==0) 
         {
             PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
             
