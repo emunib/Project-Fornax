@@ -127,7 +127,7 @@ public class C_PendulumController {
 		
 
 	public void Update(){
-		float y = Player.PlayerInput.GetAxis ("Vertical");
+		float y = Player.pInput.LeftStickY.Value;
 		if (y > 0) {
 			if (Radius - y > 0.1) {
 				Radius -= y;
@@ -137,7 +137,7 @@ public class C_PendulumController {
 		} else {
 			Radius -= y;
 		}
-		float x = Player.PlayerInput.GetAxis ("Horizontal");
+		float x = Player.pInput.LeftStickX.Value;
 		Player.AngularAccel = x;
 	}
 
@@ -149,10 +149,10 @@ public class C_PendulumController {
 
 		//Draw a line with all the pivots as points in the line
 		Hook.RopeLine.positionCount = Pivots.Count + 1;
-		Hook.RopeLine.SetPosition (0, new Vector3(Pendulum.position.x, Pendulum.position.y+1.94f));
+		Hook.RopeLine.SetPosition (0, new Vector3(Pendulum.position.x, Pendulum.position.y));
 		int i = Pivots.Count;
 		foreach (Pivot pivot in Pivots){
-			Hook.RopeLine.SetPosition (i--, new Vector3(pivot.Position.x, pivot.Position.y+1.94f));
+			Hook.RopeLine.SetPosition (i--, new Vector3(pivot.Position.x, pivot.Position.y));
 		}
 	}
 

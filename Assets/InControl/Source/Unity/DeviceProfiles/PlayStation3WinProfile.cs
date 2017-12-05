@@ -17,54 +17,55 @@ namespace InControl
 			};
 
 			JoystickNames = new[] {
-				"MotioninJoy Virtual Game Controller"
+				"MotioninJoy Virtual Game Controller",
+				"PS3 GamePad"
 			};
 
 			ButtonMappings = new[] {
 				new InputControlMapping {
-					Handle = "Cross",
+					Handle = "Circle",
 					Target = InputControlType.Action1,
-					Source = Button2
+					Source = Button1
 				},
 				new InputControlMapping {
-					Handle = "Circle",
+					Handle = "Cross",
 					Target = InputControlType.Action2,
-					Source = Button1
+					Source = Button14
 				},
 				new InputControlMapping {
 					Handle = "Square",
 					Target = InputControlType.Action3,
-					Source = Button3
+					Source = Button15
 				},
 				new InputControlMapping {
 					Handle = "Triangle",
 					Target = InputControlType.Action4,
-					Source = Button0
+					Source = Button12
 				},
 				new InputControlMapping {
 					Handle = "Left Bumper",
 					Target = InputControlType.LeftBumper,
-					Source = Button4
+					Source = Button10
 				},
 				new InputControlMapping {
 					Handle = "Right Bumper",
 					Target = InputControlType.RightBumper,
-					Source = Button5
+					Source = Button11
 				},
 				new InputControlMapping {
 					Handle = "Left Trigger",
 					Target = InputControlType.LeftTrigger,
-					Source = Button6
+					Source = Button8
 				},
 				new InputControlMapping {
 					Handle = "Right Trigger",
 					Target = InputControlType.RightTrigger,
-					Source = Button7
+					Source = Button9
 				},
 				new InputControlMapping {
 					Handle = "Select",
 					Target = InputControlType.Select,
-					Source = Button8
+					Source = Button9
 				},
 				new InputControlMapping {
 					Handle = "Left Stick Button",
@@ -74,12 +75,12 @@ namespace InControl
 				new InputControlMapping {
 					Handle = "Right Stick Button",
 					Target = InputControlType.RightStickButton,
-					Source = Button10
+					Source = Button18
 				},
 				new InputControlMapping {
 					Handle = "Start",
 					Target = InputControlType.Start,
-					Source = Button11
+					Source = Button19
 				},
 				new InputControlMapping {
 					Handle = "System",
@@ -108,49 +109,10 @@ namespace InControl
 				new InputControlMapping {
 					Handle = "Right Stick Y",
 					Target = InputControlType.RightStickY,
-					Source = Analog5,
+					Source = Analog3,
 					Invert = true
 				},
-				new InputControlMapping {
-					Handle = "DPad Left",
-					Target = InputControlType.DPadLeft,
-					Source = Analog8,
-					SourceRange = InputControlMapping.Range.Negative,
-					TargetRange = InputControlMapping.Range.Negative,
-					Invert = true
-				},
-				new InputControlMapping {
-					Handle = "DPad Right",
-					Target = InputControlType.DPadRight,
-					Source = Analog8,
-					SourceRange = InputControlMapping.Range.Positive,
-					TargetRange = InputControlMapping.Range.Positive
-				},
-				new InputControlMapping {
-					Handle = "DPad Up",
-					Target = InputControlType.DPadUp,
-					Source = Analog9,
-					SourceRange = InputControlMapping.Range.Positive,
-					TargetRange = InputControlMapping.Range.Positive
-				},
-				new InputControlMapping {
-					Handle = "DPad Down",
-					Target = InputControlType.DPadDown,
-					Source = Analog9,
-					SourceRange = InputControlMapping.Range.Negative,
-					TargetRange = InputControlMapping.Range.Negative,
-					Invert = true
-				},
-				new InputControlMapping {
-					Handle = "Tilt X",
-					Target = InputControlType.TiltX,
-					Source = Analog3
-				},
-				new InputControlMapping {
-					Handle = "Tilt Y",
-					Target = InputControlType.TiltY,
-					Source = Analog4
-				}
+
 			};
 		}
 	}

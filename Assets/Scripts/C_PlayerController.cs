@@ -86,12 +86,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 
-		for (int i = 0; i < InputManager.Devices.Count (); i++) {
-
-			Debug.Log (InputManager.Devices [i].Name.ToString ());
-			Debug.Log (InputManager.Devices [i].GetType ().ToString ());
-		}
-
+	
 
 
 	
@@ -199,7 +194,7 @@ public class C_PlayerController : C_WorldObjectController {
 			Vector2 dirVec = new Vector2 (pInput.RightStickX.Value, pInput.RightStickY.Value);
 			dirVec.Normalize ();
 			double vangle = Trig.GetAngle (dirVec);
-			Debug.Log (dirVec);
+		
 			//TODO:Flip player if grappling from behind
 
 			//if (dirVec.x <= 0 && gameObject.transform.localScale.x == -9) {
@@ -467,7 +462,7 @@ public class C_PlayerController : C_WorldObjectController {
 				body.AddForce (-Physics2D.gravity * Math.Abs (pInput.LeftStickX.Value * Xaccel));
 			}
 
-			Debug.Log (pInput.LeftStick.X.ToString());
+		
 
 			// What if players could accelerate while in the air?
 			Vector2 direction = new Vector2 (pInput.LeftStickX.Value, 0) * Xaccel;

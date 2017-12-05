@@ -51,7 +51,6 @@ namespace InControl
 			"InControl.PlayStation3AndroidProfile",
 			"InControl.PlayStation3LinuxProfile",
 			"InControl.PlayStation3MacProfile",
-			"InControl.PlayStation3ShenghicWinProfile",
 			"InControl.PlayStation3WinProfile",
 			"InControl.PlayStation4AndroidProfile",
 			"InControl.PlayStation4LinuxProfile",
