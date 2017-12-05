@@ -184,6 +184,7 @@ public class C_PendulumController {
 			// of the algorithm has failed, throw an error
 			if (collidee.collider.bounds.Contains (Pivots[Pivots.Count - 1].Position)) {
 				throw new Exception ("pivot inside of bounding box");
+
 			}
 
 			// This directionVec should lead away from object that the raycast hit
@@ -204,6 +205,7 @@ public class C_PendulumController {
 			// of the algorithm has failed, throw an error
 			if (collidee.collider.bounds.Contains (Pivots[Pivots.Count - 1].Position)) {
 				throw new Exception ("pivot inside of bounding box");
+
 			}
 
 			// Adjust the radius to account for the length that has been consumed by the new pivot

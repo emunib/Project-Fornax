@@ -65,7 +65,7 @@ namespace InControl
 				new InputControlMapping {
 					Handle = "Select",
 					Target = InputControlType.Select,
-					Source = Button9
+					Source = Button17
 				},
 				new InputControlMapping {
 					Handle = "Left Stick Button",
