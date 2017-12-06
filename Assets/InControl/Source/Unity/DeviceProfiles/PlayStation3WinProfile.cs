@@ -70,7 +70,7 @@ namespace InControl
 				new InputControlMapping {
 					Handle = "Left Stick Button",
 					Target = InputControlType.LeftStickButton,
-					Source = Button9
+					Source = Button16
 				},
 				new InputControlMapping {
 					Handle = "Right Stick Button",

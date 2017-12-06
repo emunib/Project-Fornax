@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
+
 public class HitboxHandler: MonoBehaviour{
 
 
@@ -60,7 +61,7 @@ public class HitboxHandler: MonoBehaviour{
 	public string lastHitboxUsed;
 
 	//current direction player is facing, required for adding forces to attacks
-	public int direction;
+	public float direction;
 
 
 	//Variables for attack properties
@@ -143,13 +144,15 @@ public class HitboxHandler: MonoBehaviour{
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-
+		
 	
+		direction = Mathf.Abs (gameObject.GetComponent<Transform> ().localScale.x / 9);
 
 		var caseSwitch = lastHitboxUsed;
 
         //var hitbox = col.GetComponent<PolygonCollider2D> ();
 
+	
 
         //This is where we set hitstun and other attack propertie
 

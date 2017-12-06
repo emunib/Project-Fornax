@@ -30,7 +30,7 @@ public class LevelBuilder : MonoBehaviour
 	void Awake()
 	{
         // Change back timeScale to original.
-        Time.timeScale = 4f; // In project settings, this was set to 3.0f, however this runs faster than real time and will affect invoke/timer methods.
+        Time.timeScale = 4.0f; // In project settings, this was set to 3.0f, however this runs faster than real time and will affect invoke/timer methods.
 
         RandomizePlatforms();
 		OptimizeInnerTiles();

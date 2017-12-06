@@ -135,7 +135,11 @@ public class C_PendulumController {
 				Radius = 0.1f;
 			}
 		} else {
-			Radius -= y;
+			if (Radius < 50f ) {
+				Radius -= y;
+			} else {
+				Radius = 50f;
+			}
 		}
 		float x = Player.pInput.LeftStickX.Value;
 		Player.AngularAccel = x;
