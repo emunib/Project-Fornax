@@ -53,7 +53,11 @@ public class PlayersReadyUp : MonoBehaviour {
                     playersReady.Add(i);
                     this.transform.Find("Player" + i).gameObject.SetActive(true);
                 }
-                else
+
+            }
+			else if (InputManager.Devices[i].GetControl(InputControlType.LeftTrigger))
+            {
+                if (playersReady.Contains(i))
                 {
                     Instructions.text = "Press R1 to ready up";
                     playersReady.Remove(i);
