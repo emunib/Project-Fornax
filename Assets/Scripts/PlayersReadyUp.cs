@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Timers;
+using InControl;
 
 public class PlayersReadyUp : MonoBehaviour {
 
@@ -13,6 +14,8 @@ public class PlayersReadyUp : MonoBehaviour {
     public GameObject nextPanel;
     public Text Instructions;
 
+	public InputDevice pInput;
+
     float timer;
     float countdown = 10f;
 
@@ -21,6 +24,9 @@ public class PlayersReadyUp : MonoBehaviour {
         Instructions = this.transform.Find("Instruction").GetComponent<Text>();
         timer = countdown;
         Time.timeScale = 1.6f;  // For some reason, default runs too fast.
+
+
+
     }
 
     // Update is called once per frame
@@ -35,9 +41,9 @@ public class PlayersReadyUp : MonoBehaviour {
         controllers = Input.GetJoystickNames();
 
         // Get Fire1 input from each controller.
-        for (int i = 0; i < controllers.Length; i++)
+		for (int i = 0; i < InputManager.Devices.Count; i++)
         {
-            if (Input.GetButtonDown("Fire1" + "_" + i))
+			if (InputManager.Devices[i].GetControl(InputControlType.RightTrigger))
             {
 
                 timer = countdown;
