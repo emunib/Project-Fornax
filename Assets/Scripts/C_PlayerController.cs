@@ -186,7 +186,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 
 			InputUpdates [PlayerInputState] ();
-			if (pInput.GetControl (InputControlType.RightTrigger)) {
+			if (pInput.GetControl (InputControlType.RightTrigger).Value > 0) {
 				if (ActiveGrapplingHook != null) {
 					GrapplingState = E_GrapplingState.Detached;
 					if (PlayerInputState == E_PlayerInputState.Swinging) {
@@ -197,6 +197,8 @@ public class C_PlayerController : C_WorldObjectController {
 				Vector2 dirVec = new Vector2 (pInput.RightStickX.Value, pInput.RightStickY.Value);
 				dirVec.Normalize ();
 				double vangle = Trig.GetAngle (dirVec);
+
+				StartCoroutine(stopInput (0.5f));
 		
 				//TODO:Flip player if grappling from behind
 
@@ -278,14 +280,14 @@ public class C_PlayerController : C_WorldObjectController {
 			case "NinjaSprite_Sprite_35":
 
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				StartCoroutine (stopInput (palmHit1Hitstun));
 
 				break;
 
 			case "NinjaSprite_Sprite_36":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit",  (palmHit2Hitstun));
 				StartCoroutine (stopInput (palmHit2Hitstun));
 
@@ -294,7 +296,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_37":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit", (palmHit3Hitstun));
 				StartCoroutine (stopInput (palmHit3Hitstun));
 
@@ -302,7 +304,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_42":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit", (diveHitHitstun));
 				StartCoroutine (stopInput (diveHitHitstun));
 
@@ -310,7 +312,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_59":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit", (punchHit1Hitstun));
 				StartCoroutine (stopInput (punchHit1Hitstun));
 
@@ -318,7 +320,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_60":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit",  (punchHit2Hitstun));
 				StartCoroutine (stopInput (punchHit2Hitstun));
 
@@ -334,7 +336,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_63":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit", (kickHit2Hitstun));
 				StartCoroutine (stopInput (kickHit2Hitstun));
 
@@ -343,7 +345,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_64":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit", (kickHit3Hitstun));
 				StartCoroutine (stopInput (kickHit3Hitstun));
 
@@ -351,7 +353,7 @@ public class C_PlayerController : C_WorldObjectController {
 
 			case "NinjaSprite_Sprite_67":
 
-				anim.Play ("Getting Hit");
+				//anim.Play ("Getting Hit");
 				//anim.CrossFade ("Getting Hit", (kneeHit1Hitstun));
 				StartCoroutine (stopInput (kneeHit1Hitstun));
 
