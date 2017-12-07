@@ -172,11 +172,20 @@ public class C_PendulumController {
 		//and get the closest hit to the pivot that is not the anchor itself
 		foreach (RaycastHit2D hit in collidees){
 			if (Manager.ObjectLog [hit.collider.gameObject] != AnchorObject) {
-				if (notfound) {
-					collidee = hit;
-					notfound = false;
-				} else if (hit.distance < collidee.distance) {
-					collidee = hit;
+				if (Manager.ObjectLog [hit.collider.gameObject] == PendulumObject) {
+					if (notfound) {
+						collidee = hit;
+						notfound = false;
+					} else if (hit.distance < collidee.distance) {
+						collidee = hit;
+					}
+				} else if (Manager.ObjectLog[hit.collider.gameObject].GetType() != typeof(C_PlayerController)){
+					if (notfound) {
+						collidee = hit;
+						notfound = false;
+					} else if (hit.distance < collidee.distance) {
+						collidee = hit;
+					}
 				}
 			}
 		}
