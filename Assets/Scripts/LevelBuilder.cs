@@ -70,7 +70,7 @@ public class LevelBuilder : MonoBehaviour
 		}
 		
 		FindSpawnLocations();
-		SpawnPlayers(2);
+		SpawnPlayers(ModeSettings.numPlayers);
 		AddHazards(5);
     }
 
