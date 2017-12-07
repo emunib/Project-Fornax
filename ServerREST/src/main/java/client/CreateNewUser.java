@@ -78,7 +78,7 @@ public class CreateNewUser extends javax.swing.JFrame {
             }
         });
 
-        jLabel1.setText("New User Creation");
+        jLabel1.setText("New PlayerImpl Creation");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -151,7 +151,7 @@ public class CreateNewUser extends javax.swing.JFrame {
                 MainWindow.NewMainWindow(username);
                 this.dispose();
             } else {
-                UsernameField.setText("User already exists");
+                UsernameField.setText("PlayerImpl already exists");
                 PasswordField.setText(null);
                 CnfrmPsswrdField.setText(null);
             }

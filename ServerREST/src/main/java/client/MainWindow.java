@@ -60,7 +60,7 @@ public class MainWindow extends javax.swing.JFrame {
         initComponents();
         timer = new Timer();
         timer.schedule(new ClockUpdater(), 0, 1000);
-        Username.setText("User: " + username);
+        Username.setText("PlayerImpl: " + username);
         FetchnRefreshConvLst();
     }
 

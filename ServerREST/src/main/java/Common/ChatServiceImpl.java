@@ -18,7 +18,7 @@ public class ChatServiceImpl implements ChatService {
     final public static Map<String, Session> sessions = new HashMap<>();
     final public Map<Long, Conversation> conversations = new HashMap<>();
     final public Map<String, User> userMap = new HashMap<>();
-    //final public Map<User> activerUsers = new HashSet<>();
+    //final public Map<PlayerImpl> activerUsers = new HashSet<>();
     final static public Clock clock = Clock.systemUTC();
     final public static Random rand = new Random(Clock.systemUTC().millis());
     public long conversationCount = 0;

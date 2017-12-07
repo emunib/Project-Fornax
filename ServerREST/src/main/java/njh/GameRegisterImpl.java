@@ -1,57 +1,42 @@
 package njh;
-import Online.*;
-import com.zeroc.Ice.*;
+import RESTinterface.Game;
+import RESTinterface.GameRegister;
 
+import javax.ws.rs.core.Response;
 import java.lang.Exception;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 public class GameRegisterImpl implements GameRegister
 {
-    final public HashMap<LobbyListenerPrx, PlayerPrx> ActiveUsers;
+    final private HashMap<GameImpl, String> GameList;
+    final private HashMap<GameImpl, String> HiddenGameList;
 
-    final private HashMap<GameImpl, GamePrx> GameList;
-    final private HashMap<GameImpl, GamePrx> HiddenGameList;
-
-    final private PlayerRegistry playerRegistry;
     private boolean clean;
     private boolean waiting;
     public final IdGenerator idGenerator;
-    Communicator communicator;
-    ObjectAdapter adapter;
 
 
-    public GameRegisterImpl(ObjectAdapter nadapter, Communicator nCommunicator){
-        playerRegistry = new PlayerRegistry(this, nadapter);
-        ActiveUsers = new HashMap<>();
+    public GameRegisterImpl(){
         GameList = new HashMap<>();
         HiddenGameList = new HashMap<>();
         clean = true;
         waiting = false;
-        adapter = nadapter;
         idGenerator = new IdGenerator();
-        communicator = nCommunicator;
-       Thread updater = new Thread(new Updater());
-       Thread pinger = new Thread(new Pinger());
-       updater.start();
-       pinger.start();
     }
 
 
-    public GamePrx AddGame(GameImpl game){
-        GamePrx newproxy;
+    public void AddGame(GameImpl game){
         synchronized (GameList){
             if (clean){
                 clean = false;
             }
-            newproxy = GamePrx.checkedCast(adapter.addWithUUID(game));
-            GameList.put(game, newproxy);
+            /*newproxy = GamePrx.checkedCast(adapter.addWithUUID(game));
+            GameList.put(game, newproxy); */
             if (waiting){
                 GameList.notify();
                 waiting = false;
             }
         }
-        return newproxy;
     }
 
     public void HideGame(GameImpl game){
@@ -60,9 +45,9 @@ public class GameRegisterImpl implements GameRegister
                 if (clean) {
                     clean = false;
                 }
-                GamePrx gamePrx = GameList.remove(game);
+                /*GamePrx gamePrx = GameList.remove(game);
                 if (gamePrx == null) throw new Exception();
-                HiddenGameList.put(game, gamePrx);
+                HiddenGameList.put(game, gamePrx); */
                 if (waiting) {
                     GameList.notify();
                     waiting = false;
@@ -79,9 +64,9 @@ public class GameRegisterImpl implements GameRegister
                 if (clean) {
                     clean = false;
                 }
-                GamePrx gamePrx = HiddenGameList.remove(game);
+                /*GamePrx gamePrx = HiddenGameList.remove(game);
                 if (gamePrx == null) throw new Exception();
-                GameList.put(game, gamePrx);
+                GameList.put(game, gamePrx); */
                 if (waiting) {
                     GameList.notify();
                     waiting = false;
@@ -97,11 +82,12 @@ public class GameRegisterImpl implements GameRegister
             if (clean){
                 clean = false;
             }
+            /*
             GamePrx proxy = GameList.remove(game);
             if (proxy == null){
                 proxy = HiddenGameList.remove(game);
-            }
-            adapter.remove(proxy.ice_getIdentity());
+            } */
+            //adapter.remove(proxy.ice_getIdentity());
             if (waiting){
                 GameList.notify();
                 waiting = false;
@@ -109,16 +95,18 @@ public class GameRegisterImpl implements GameRegister
         }
     }
 
-    private void flushInactiveUser(HashSet<LobbyListenerPrx> UnactiveUsers){
-        UnactiveUsers.forEach(lobbyListenerPrx -> {
-            PlayerPrx player = ActiveUsers.get(lobbyListenerPrx);
-            if (player != null) {
-                PlayerImpl temp = (PlayerImpl) adapter.findByProxy(player);
-                if (temp != null) {
-                    player.LogOut(null);
-                }
-            }
-            ActiveUsers.remove(lobbyListenerPrx);
-        });
+    @Override
+    public List<Game> GetGames() {
+        return null;
+    }
+
+    @Override
+    public Response CreateGame() {
+        return null;
+    }
+
+    @Override
+    public Game GetGame(String gameID) {
+        return null;
     }
 }

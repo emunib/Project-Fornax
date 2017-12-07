@@ -8,7 +8,6 @@ public class GameRegistryController : MonoBehaviour
     public Text Username;
     public Button LogoutButton;
     public Button CreateButton;
-    public Button JoinButton;
 
     public GameObject text;
 
@@ -19,37 +18,35 @@ public class GameRegistryController : MonoBehaviour
         if (text == null){
             throw new System.Exception();
         }
-        LogoutButton = GameObject.Find("/Canvas/Online/GameRegistry/LogoutButton").GetComponent<Button>();
+        LogoutButton = GameObject.FindGameObjectWithTag("GameRegistryLogoutButton").GetComponent<Button>();
         LogoutButton.onClick.AddListener(LogoutClick);
 
-        CreateButton = GameObject.Find("/Canvas/Online/GameRegistry/CreateGameButton").GetComponent<Button>();
+        CreateButton = GameObject.FindGameObjectWithTag("GameRegistryCreateGameButton").GetComponent<Button>();
         CreateButton.onClick.AddListener(CreateGameClick);
 
-        JoinButton = GameObject.Find("/Canvas/Online/GameRegistry/JoinGameButton").GetComponent<Button>();
-        JoinButton.onClick.AddListener(LogoutClick);
-
-        Username.text = OnlineManager.Player.GetStats().Username;
+        Username.text = OnlineManager.Player.username;
         InvokeRepeating("UpdateList", 0f, 1f);
         Gameset = new Dictionary<GamePrx, GameObject>();
     }
 
     void LogoutClick(){
-        OnlineManager.Player.LogOut(null);
+        //OnlineManager.Player.LogOut(null);
         this.gameObject.SetActive(false);
         GameObject.Find("/Canvas/Online/OnlineLogin").SetActive(true);
     }
 
     void CreateGameClick() {
-        ServerPrx server = ServerPrxHelper.checkedCast(OnlineManager.Adapater.addWithUUID(new ServerImpl()));
+        /*
         OnlineManager.GameHost = OnlineManager.Player.CreateGame(server, null);
         if (OnlineManager.GameHost != null){
             GameObject.Find("/Canvas/Online/GameHostLobby").SetActive(true);
             gameObject.SetActive(false);
         }
+        */
     }
 
     void UpdateList(){
-        UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameRegistry/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
+        UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameRegistryScrollViewViewportContent").GetComponent<UnityEngine.Transform>();
         Dictionary<GamePrx, GameObject> NewGameSet = new Dictionary<GamePrx, GameObject>();
         OnlineManager.LobbyLstnrImpl.mutex.WaitOne();
         foreach(GamePrx game in OnlineManager.LobbyLstnrImpl.AvailableGames){
@@ -66,14 +63,13 @@ public class GameRegistryController : MonoBehaviour
                 rectTransform.anchorMin = new Vector2(0.5f, 1);
                 rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-                childText.text = game.ice_getIdentity().name;
+                childText.text = "Unset";
                 childButton.onClick.AddListener(() => {
-                    ClientPrx client = ClientPrxHelper.checkedCast(OnlineManager.Adapater.addWithUUID(new ClientImpl()));
-                    if (OnlineManager.Player.JoinGame(client, game)){
+                    /* if (OnlineManager.Player.JoinGame(client, game)){
                         OnlineManager.Game = game;
                         gameObject.SetActive(false);
                         GameObject.Find("/Canvas/Online/GameLobby").SetActive(true);
-                    }
+                    } */
                 });
                 NewGameSet.Add(game, newText);
             }
@@ -86,21 +82,15 @@ public class GameRegistryController : MonoBehaviour
         int i = 0;
         foreach (KeyValuePair<GamePrx,GameObject>  pair in Gameset){
             Text childText = pair.Value.transform.Find("Text").GetComponent<Text>();
-            try
-            {
-                    LobbyInfo info = pair.Key.GetLobbyInfo();
-                childText.text = "Game Id: " + info.Id + " Host: " + info.Host.Username + " Players: " + (info.Players.Length + 1);
+                LobbyInfo info = pair.Key.GetLobbyInfo();
+                childText.text = "Game Id: " + info.Id + " Host: " + info.Host.username + " Players: " + (info.Players.Count + 1);
                 if (!pair.Value.activeSelf){
                     pair.Value.SetActive(true);
                 }
                 UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
                 pos.y = (i++ * -30f) - 15f;
                 pair.Value.transform.localPosition = pos;
-            }
-            catch (Ice.ObjectNotExistException e)
-            {
-                
-            }
+            
         }
     }
 

@@ -4,8 +4,7 @@ using System;
 using UnityEngine;
 using System.Threading;
 using System.Runtime.InteropServices;
-using Online;
-using Ice;
+using Schemas;
 
 public class PlayerManager {
 	public static HashSet<C_PlayerController> PlayerLog = new HashSet<C_PlayerController> ();
@@ -29,11 +28,8 @@ public class PlayerManager {
 
 public class OnlineManager
 {
-    public static PlayerPrx Player;
+	public static session Player;
     public static LobbyListenerImpl LobbyLstnrImpl;
-    public static LobbyListenerPrx LobbyLstnrProxy;
-    public static ObjectAdapter Adapater;
-    public static GameHostPrx GameHost;
     public static GamePrx Game;
 }
 

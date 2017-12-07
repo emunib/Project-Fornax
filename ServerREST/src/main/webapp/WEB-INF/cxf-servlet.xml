@@ -5,19 +5,24 @@
 	xmlns:soap="http://cxf.apache.org/bindings/soap" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
 	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://cxf.apache.org/bindings/soap http://cxf.apache.org/schemas/configuration/soap.xsd http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd  http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
-	<jaxrs:server id="chatservice" address="/chatservice"
+	<jaxrs:server id="users" address="/users"
 		staticSubresourceResolution="true">
 		<jaxrs:serviceBeans>
-			<ref bean="serviceBean" />
+			<ref bean="usersServiceBean" />
 		</jaxrs:serviceBeans>
-		<jaxrs:providers>
-			<ref bean='jsonProvider' />
-		</jaxrs:providers>
 	</jaxrs:server>
 
-	<bean id="serviceBean"
-		class="Common.ChatServiceImpl" />
+	<jaxrs:server id="games" address="/games"
+				  staticSubresourceResolution="true">
+		<jaxrs:serviceBeans>
+			<ref bean="gamesServiceBean" />
+		</jaxrs:serviceBeans>
+	</jaxrs:server>
 
-	<bean id="jsonProvider" class="org.codehaus.jackson.jaxrs.JacksonJsonProvider" />
+	<bean id="usersServiceBean"
+		class="njh.PlayerRegisterImpl" />
+
+	<bean id="gamesServiceBean"
+		  class="njh.GameRegisterImpl" />
 
 </beans>

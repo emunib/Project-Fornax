@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Schemas;
 
 public class GameLobbyController : MonoBehaviour {
-    Dictionary<Online.PlayerStats, Text> Gameset;
+    Dictionary<userPublic, Text> Gameset;
     private Button LeaveButton;
 
     public GameObject text;
@@ -16,7 +17,7 @@ public class GameLobbyController : MonoBehaviour {
         {
             throw new System.Exception();
         }
-        Gameset = new Dictionary<Online.PlayerStats, Text>();
+        Gameset = new Dictionary<userPublic, Text>();
         LeaveButton = GameObject.Find("Canvas/Online/GameLobby/LeaveGameButton").GetComponent<Button>();
         LeaveButton.onClick.AddListener(LeaveClick);
         InvokeRepeating("UpdateList", 0.0f, 1f);
@@ -26,7 +27,7 @@ public class GameLobbyController : MonoBehaviour {
     {
         OnlineManager.Game = null;
         CancelInvoke();
-        OnlineManager.Player.LeaveGame();
+        //OnlineManager.Player.LeaveGame();
         gameObject.SetActive(false);
         GameObject.Find("Canvas/Online/GameRegistry").SetActive(true);
     }
@@ -34,9 +35,9 @@ public class GameLobbyController : MonoBehaviour {
     // Update is called once per frame
     void UpdateList()
     {
-        Online.LobbyInfo info = OnlineManager.Game.GetLobbyInfo();
+        LobbyInfo info = OnlineManager.Game.GetLobbyInfo();
         UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
-        Dictionary<Online.PlayerStats, Text> NewGameSet = new Dictionary<Online.PlayerStats, Text>();
+        Dictionary<userPublic, Text> NewGameSet = new Dictionary<userPublic, Text>();
         if (Gameset.ContainsKey(info.Host)){
             NewGameSet.Add(info.Host, Gameset[info.Host]);
             Gameset.Remove(info.Host);
@@ -47,10 +48,10 @@ public class GameLobbyController : MonoBehaviour {
             newText.rectTransform.anchorMin = new Vector2(0.5f, 1);
             newText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
             newText.rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-            newText.text = "Host: " + info.Host.Username;
+            newText.text = "Host: " + info.Host.username;
             NewGameSet.Add(info.Host, newText);
         }
-        foreach (Online.PlayerStats stat in info.Players)
+        foreach (userPublic stat in info.Players)
         {
             if (Gameset.ContainsKey(stat))
             {
@@ -65,17 +66,17 @@ public class GameLobbyController : MonoBehaviour {
                 newText.rectTransform.anchorMin = new Vector2(0.5f, 1);
                 newText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
                 newText.rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-                newText.text = stat.Username;
+                newText.text = stat.username;
                 NewGameSet.Add(stat, newText);
             }
         }
-        foreach (KeyValuePair<Online.PlayerStats, Text> pair in Gameset)
+        foreach (KeyValuePair<userPublic, Text> pair in Gameset)
         {
             Destroy(pair.Value.gameObject);
         }
         Gameset = NewGameSet;
         int i = 0;
-        foreach (KeyValuePair<Online.PlayerStats, Text> pair in Gameset)
+        foreach (KeyValuePair<userPublic, Text> pair in Gameset)
         {
             UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
             pos.y = (i++ * -30f) - 15f;

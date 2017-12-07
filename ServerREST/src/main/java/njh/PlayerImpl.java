@@ -1,59 +1,55 @@
 package njh;
-import Online.*;
-import com.zeroc.Ice.Current;
-import com.zeroc.Ice.ObjectAdapter;
 
-public class PlayerImpl implements Player {
-	private final User _User;
-	ObjectAdapter Adapter;
-	private final GameRegisterImpl Register;
-	private final PlayerRegistry playerRegistry;
-	GameImpl Game;
+import RESTinterface.Player;
+import XMLechangeable.*;
 
-	public PlayerImpl(User user, ObjectAdapter adapter, GameRegisterImpl register, PlayerRegistry nPlayerRegistry){
-		_User = user;
-		Adapter = adapter;
-		Register = register;
-		playerRegistry = nPlayerRegistry;
-	}
-	@Override
-	public PlayerStats GetStats(Current current) {
-		PlayerStats stats = new PlayerStats();
-		stats.Username = _User.Username;
-		return stats;
+import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+import java.util.TimeZone;
+
+public class PlayerImpl extends UserPublic implements Player {
+	private final String Password;
+	private final HashMap <String, Session> sessionHashMap;
+
+	public PlayerImpl(String username, String password){
+		setUsername(username);
+		Password = password;
+		sessionHashMap = new HashMap<>();
 	}
 
+	public boolean isEqualPassword(String password){
+		return password.equals(Password);
+	}
+
 	@Override
-	public boolean JoinGame(ClientPrx client, GamePrx game, Current current) {
-		GameImpl gameImpl = (GameImpl) Adapter.findByProxy(game);
-		if (gameImpl.AddPlayer(this, client)){
-			Game = gameImpl;
-			return true;
+	public UserPublic GetProfile() {
+		return (UserPublic)this;
+	}
+
+	@Override
+	public Response UpdateUser() {
+		return null;
+	}
+
+	@Override
+	public Response Logout(String sessionID) {
+		return null;
+	}
+
+	@Override
+	public SessionInfo GetSession(String sessionID) {
+		return null;
+	}
+
+	@Override
+	public Session LoginUser(UserLogin userLogin) {
+		Session newsession = new Session();
+		if (isEqualPassword(userLogin.getPassword())){
+			newsession = SessionFactory.GetNewSession(getUsername());
+			sessionHashMap.put(newsession.getPublicID(), newsession);
 		}
-		return false;
-	}
-
-	@Override
-	public GameHostPrx CreateGame(ServerPrx server, Current current) {
-		GameImpl gameHost = new GameImpl(server, this, Register, playerRegistry, Register.idGenerator.GetId());
-		Game = gameHost;
-		Register.AddGame(gameHost);
-		return GameHostPrx.checkedCast(Adapter.addWithUUID(gameHost));
-	}
-
-	@Override
-	public void LeaveGame(Current current) {
-		Game.RemovePlayer(this);
-		Game = null;
-	}
-
-	@Override
-	public void LogOut(Current current) {
-		_User.Instance = null;
-		if (Game != null){
-			Game.RemovePlayer(this);
-			Game = null;
-		}
-		Adapter.remove(current.id);
+		return newsession;
 	}
 }

@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Schemas;
 public class GameHostLobbyController : MonoBehaviour {
-    Dictionary<Online.PlayerStats, GameObject> Gameset;
+    Dictionary<userPublic, GameObject> Gameset;
     private Button LeaveButton;
     private Button StartButton;
     private Button LockRoomButton;
-    private Online.LobbyInfo lobbyInfo;
+    private LobbyInfo lobbyInfo;
 
     public GameObject Panel;
 	// Use this for initialization
@@ -17,7 +18,7 @@ public class GameHostLobbyController : MonoBehaviour {
         {
             throw new System.Exception();
         }
-        Gameset = new Dictionary<Online.PlayerStats, GameObject>();
+        Gameset = new Dictionary<userPublic, GameObject>();
         LeaveButton = GameObject.Find("Canvas/Online/GameHostLobby/LeaveGameButton").GetComponent<Button>();
         LeaveButton.onClick.AddListener(LeaveClick);
 
@@ -30,22 +31,24 @@ public class GameHostLobbyController : MonoBehaviour {
 	}
 
     void SwitchLock(){
-        OnlineManager.GameHost.SwitchLock();
+        //OnlineManager.GameHost.SwitchLock();
+        session ses = new session();
+        ses.publicID = "Bob";
     }
 
     void LeaveClick(){
-        OnlineManager.GameHost = null;
+        //OnlineManager.GameHost = null;
         CancelInvoke();
-        OnlineManager.Player.LeaveGame();
+        //OnlineManager.Player.LeaveGame();
         gameObject.SetActive(false);
         GameObject.Find("Canvas/Online/GameRegistry").SetActive(true);
     }
 	
 	// Update is called once per frame
 	void UpdateList () {
-        lobbyInfo = OnlineManager.GameHost.GetLobbyInfo();
+        //lobbyInfo = OnlineManager.GameHost.GetLobbyInfo();
         UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameHostLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
-        Dictionary<Online.PlayerStats, GameObject> NewGameSet = new Dictionary<Online.PlayerStats, GameObject>();
+        Dictionary<userPublic, GameObject> NewGameSet = new Dictionary<userPublic, GameObject>();
         if (Gameset.ContainsKey(lobbyInfo.Host))
         {
             NewGameSet.Add(lobbyInfo.Host, Gameset[lobbyInfo.Host]);
@@ -55,7 +58,7 @@ public class GameHostLobbyController : MonoBehaviour {
         {
             NewGameSet.Add(lobbyInfo.Host, SetupItem(parent, true, lobbyInfo.Host));
         }
-        foreach (Online.PlayerStats stat in lobbyInfo.Players)
+        foreach (userPublic stat in lobbyInfo.Players)
         {
             if (Gameset.ContainsKey(stat))
             {
@@ -67,7 +70,7 @@ public class GameHostLobbyController : MonoBehaviour {
                 NewGameSet.Add(stat, SetupItem(parent, false, stat));
             }
         }
-        foreach (KeyValuePair<Online.PlayerStats, GameObject> pair in Gameset)
+        foreach (KeyValuePair<userPublic, GameObject> pair in Gameset)
         {
             Destroy(pair.Value);
         }
@@ -75,7 +78,7 @@ public class GameHostLobbyController : MonoBehaviour {
         Gameset = NewGameSet;
         int i = 0;
 
-        foreach (KeyValuePair<Online.PlayerStats, GameObject> pair in Gameset)
+        foreach (KeyValuePair<userPublic, GameObject> pair in Gameset)
         {
             UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
             pos.y = (i++ * -30f) - 15f;
@@ -83,11 +86,11 @@ public class GameHostLobbyController : MonoBehaviour {
         }
 
         Text bttnText = LockRoomButton.transform.Find("Text").GetComponent<Text>();
-        if (lobbyInfo.IsLocked){
+        /*if (lobbyInfo.IsLocked){
             bttnText.text = "Unlock Room";
         } else {
             bttnText.text = "Lock Room";
-        }
+        } */
 	}
 
     void Update()
@@ -95,7 +98,7 @@ public class GameHostLobbyController : MonoBehaviour {
         
     }
 
-    GameObject SetupItem(Transform parent, bool isHost, Online.PlayerStats stat){
+    GameObject SetupItem(Transform parent, bool isHost, userPublic stat){
         GameObject newPanel = Instantiate(Panel, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity);
         RectTransform rectTransform = newPanel.GetComponent<RectTransform>();
         Text newText = newPanel.transform.Find("Text").GetComponent<Text>();
@@ -109,12 +112,12 @@ public class GameHostLobbyController : MonoBehaviour {
         rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
 
         if (isHost){
-            newText.text = "Host: " + stat.Username;
+            newText.text = "Host: " + stat.username;
             newButton.gameObject.SetActive(false);
         } else {
-            newText.text = stat.Username;
+            newText.text = stat.username;
             newButton.onClick.AddListener(() => {
-                OnlineManager.GameHost.KickPlayer(stat.Username);
+                //OnlineManager.GameHost.KickPlayer(stat.Username);
             });
         }
 

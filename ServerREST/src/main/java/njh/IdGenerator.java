@@ -10,10 +10,11 @@ class Int2AlphaNumeric {
 	};
 	public static String Convert(long value){
 		StringBuilder builder = new StringBuilder();
+		if (value < 0) value = -value;
 		while (value > 0){
-			int temp = (int) value % 62;
+			long temp =  value % 62;
 			value = value / 62;
-			builder.append(table[temp]);
+			builder.append(table[(int)temp]);
 		}
 		return builder.reverse().toString();
 	}

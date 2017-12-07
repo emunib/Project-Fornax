@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author nathanhupka
  */
 
-@XmlRootElement(name = "User")
+@XmlRootElement(name = "PlayerImpl")
 public class User {
     String Username;
     String Password;

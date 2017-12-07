@@ -11,7 +11,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{E097FAD1-6243-4DAD-9C02-E9B9EFC3FFC1};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <TargetFrameworkProfile></TargetFrameworkProfile>
     <CompilerResponseFile></CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
@@ -52,14 +52,14 @@
     <Reference Include="System">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/System.dll</HintPath>
     </Reference>
-    <Reference Include="System.XML">
+    <Reference Include="System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+      <HintPath>Assets\Library\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/System.XML.dll</HintPath>
     </Reference>
     <Reference Include="System.Core">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/System.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/Microsoft.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization">
       <HintPath>/Applications/Unity/Unity.app/Contents/MonoBleedingEdge/lib/mono/4.5/System.Runtime.Serialization.dll</HintPath>
@@ -94,57 +94,31 @@
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
     </Reference>
-    <Reference Include="IceBox">
-      <HintPath>Assets/Library/IceBox.dll</HintPath>
-    </Reference>
-    <Reference Include="IceSSL">
-      <HintPath>Assets/Library/IceSSL.dll</HintPath>
-    </Reference>
-    <Reference Include="IceStorm">
-      <HintPath>Assets/Library/IceStorm.dll</HintPath>
-    </Reference>
-    <Reference Include="Ice">
-      <HintPath>Assets/Library/Ice.dll</HintPath>
-    </Reference>
-    <Reference Include="IcePatch2">
-      <HintPath>Assets/Library/IcePatch2.dll</HintPath>
-    </Reference>
-    <Reference Include="IceGrid">
-      <HintPath>Assets/Library/IceGrid.dll</HintPath>
-    </Reference>
-    <Reference Include="IceDiscovery">
-      <HintPath>Assets/Library/IceDiscovery.dll</HintPath>
-    </Reference>
-    <Reference Include="IceLocatorDiscovery">
-      <HintPath>Assets/Library/IceLocatorDiscovery.dll</HintPath>
-    </Reference>
-    <Reference Include="Glacier2">
-      <HintPath>Assets/Library/Glacier2.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\generated\schema1.cs" />
     <Compile Include="Assets\Scripts\GameHostLobbyController.cs" />
-    <Compile Include="Assets\generated\Printer.cs" />
     <Compile Include="Assets\Scripts\C_Controller.cs" />
     <Compile Include="Assets\Scripts\C_PendulumController.cs" />
     <Compile Include="Assets\Scripts\C_PlayerController.cs" />
     <Compile Include="Assets\Scripts\GameLobbyController.cs" />
+    <Compile Include="Assets\Scripts\GamePrx.cs" />
     <Compile Include="Assets\Scripts\GameRegistryController.cs" />
     <Compile Include="Assets\Scripts\Generic.cs" />
     <Compile Include="Assets\Scripts\GrapplingHookController.cs" />
     <Compile Include="Assets\Scripts\HazardController.cs" />
     <Compile Include="Assets\Scripts\LevelBuilder.cs" />
     <Compile Include="Assets\Scripts\LoadSceneOnClick.cs" />
+    <Compile Include="Assets\Scripts\LobbyInfo.cs" />
     <Compile Include="Assets\Scripts\LobbyListenerImpl.cs" />
     <Compile Include="Assets\Scripts\MainCameraController.cs" />
-    <Compile Include="Assets\Scripts\ServerImpl.cs" />
     <Compile Include="Assets\Scripts\OnlineController.cs" />
     <Compile Include="Assets\Scripts\PlatformGenerator.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\PlayerRegisterProxy.cs" />
     <Compile Include="Assets\Scripts\TileController.cs" />
     <Compile Include="Assets\Scripts\Tiles.cs" />
     <Compile Include="Assets\Scripts\World.cs" />
-    <Compile Include="Assets\Scripts\ClientImpl.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
