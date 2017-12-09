@@ -5,6 +5,8 @@ import XMLechangeable.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+import static RESTinterface.Constants.*;
+
 @Produces({ "application/xml"})
 public interface Player {
 	@GET
@@ -17,7 +19,7 @@ public interface Player {
 
 	@DELETE // Logs the user out
 	@Path("/sessions/{sessionID}")
-	Response Logout(@PathParam("sessionID") String sessionID);
+	Response Logout(@PathParam("sessionID") String sessionID, @HeaderParam(PrivateID) String privateID);
 
 	@GET // Gets the sessions info
 	@Path("/sessions/{sessionID}")
@@ -25,5 +27,5 @@ public interface Player {
 
 	@POST
 	@Path("/sessions/") // A single user
-	Session LoginUser(UserLogin userLogin);
+	SessionInfo LoginUser(UserLogin userLogin);
 }

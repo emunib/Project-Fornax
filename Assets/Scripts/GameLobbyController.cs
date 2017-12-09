@@ -18,7 +18,7 @@ public class GameLobbyController : MonoBehaviour {
             throw new System.Exception();
         }
         Gameset = new Dictionary<userPublic, Text>();
-        LeaveButton = GameObject.Find("Canvas/Online/GameLobby/LeaveGameButton").GetComponent<Button>();
+        LeaveButton = GameObject.FindGameObjectWithTag("GameLobbyLeaveGameButton").GetComponent<Button>();
         LeaveButton.onClick.AddListener(LeaveClick);
         InvokeRepeating("UpdateList", 0.0f, 1f);
     }
@@ -35,23 +35,10 @@ public class GameLobbyController : MonoBehaviour {
     // Update is called once per frame
     void UpdateList()
     {
-        LobbyInfo info = OnlineManager.Game.GetLobbyInfo();
-        UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
+        publicGameInfo info = OnlineManager.Game;
+        UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameLobbyScrollViewViewportContent").GetComponent<UnityEngine.Transform>();
         Dictionary<userPublic, Text> NewGameSet = new Dictionary<userPublic, Text>();
-        if (Gameset.ContainsKey(info.Host)){
-            NewGameSet.Add(info.Host, Gameset[info.Host]);
-            Gameset.Remove(info.Host);
-        } else {
-            Text newText = Instantiate(text, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity).GetComponent<Text>();
-            newText.transform.SetParent(parent);
-            newText.rectTransform.anchorMax = new Vector2(0.5f, 1);
-            newText.rectTransform.anchorMin = new Vector2(0.5f, 1);
-            newText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
-            newText.rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-            newText.text = "Host: " + info.Host.username;
-            NewGameSet.Add(info.Host, newText);
-        }
-        foreach (userPublic stat in info.Players)
+        foreach (userPublic stat in info.players)
         {
             if (Gameset.ContainsKey(stat))
             {
@@ -65,8 +52,15 @@ public class GameLobbyController : MonoBehaviour {
                 newText.rectTransform.anchorMax = new Vector2(0.5f, 1);
                 newText.rectTransform.anchorMin = new Vector2(0.5f, 1);
                 newText.rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                if (info.host == stat)
+                {
+                    newText.text = "Host: " + stat.username;
+                }
+                else
+                {
+                    newText.text = stat.username;
+                }
                 newText.rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-                newText.text = stat.username;
                 NewGameSet.Add(stat, newText);
             }
         }

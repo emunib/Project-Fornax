@@ -1,6 +1,6 @@
 package njh;
 
-import XMLechangeable.Session;
+import XMLechangeable.SessionInfo;
 
 import java.util.HashSet;
 import java.util.Random;
@@ -14,15 +14,11 @@ public class SessionFactory {
 	}
 
 
-	public static Session GetNewSession(String username){
-		Session newsession = new Session();
-		newsession.setUsername(username);
-		newsession.setPublicID(GetId());
-		newsession.setPrivateID(GetId());
-		return newsession;
+	public static SessionImpl GetNewSession(PlayerImpl player){
+		return new SessionImpl(player, GetId(), GetId());
 	}
 
-	public static void DiposeSession(Session session){
+	public static void DiposeSession(SessionImpl session){
 		IdList.remove(session.getPrivateID());
 		IdList.remove(session.getPublicID());
 	}

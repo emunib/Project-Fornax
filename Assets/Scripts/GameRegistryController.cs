@@ -1,15 +1,27 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using Schemas;
 using UnityEngine;
 using UnityEngine.UI;
 public class GameRegistryController : MonoBehaviour
 {
-    public Dictionary<GamePrx,GameObject> Gameset;
+    public Dictionary<publicGameInfo,GameObject> Gameset;
     public Text Username;
     public Button LogoutButton;
     public Button CreateButton;
 
     public GameObject text;
+
+    private Deleter LogoutService;
+    private GenericPoster<publicGameInfo, sessionInfo> CreateGameService;
+    private Getter<publicGameInfoList> GameListService;
+    private GenericPoster<publicGameInfo, sessionInfo> JoinGameService;
+    private String ServiceUrl = OnlineManager.ServiceUrl;
+    private String UsersUrl = OnlineManager.UsersUrl;
+    private String SessionUrl = OnlineManager.SessionUrl;
 
     // Use this for initialization
     void Start()
@@ -26,30 +38,42 @@ public class GameRegistryController : MonoBehaviour
 
         Username.text = OnlineManager.Player.username;
         InvokeRepeating("UpdateList", 0f, 1f);
-        Gameset = new Dictionary<GamePrx, GameObject>();
-    }
-
-    void LogoutClick(){
-        //OnlineManager.Player.LogOut(null);
-        this.gameObject.SetActive(false);
-        GameObject.Find("/Canvas/Online/OnlineLogin").SetActive(true);
-    }
-
-    void CreateGameClick() {
-        /*
-        OnlineManager.GameHost = OnlineManager.Player.CreateGame(server, null);
-        if (OnlineManager.GameHost != null){
-            GameObject.Find("/Canvas/Online/GameHostLobby").SetActive(true);
-            gameObject.SetActive(false);
-        }
-        */
-    }
-
-    void UpdateList(){
-        UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameRegistryScrollViewViewportContent").GetComponent<UnityEngine.Transform>();
-        Dictionary<GamePrx, GameObject> NewGameSet = new Dictionary<GamePrx, GameObject>();
-        OnlineManager.LobbyLstnrImpl.mutex.WaitOne();
-        foreach(GamePrx game in OnlineManager.LobbyLstnrImpl.AvailableGames){
+        Gameset = new Dictionary<publicGameInfo, GameObject>();
+        
+        LogoutService = new Deleter(ServiceUrl + UsersUrl, response =>
+        {
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                gameObject.SetActive(false);
+                OnlineManager.Player = null;
+                CancelInvoke();
+                GameObject.Find("/Canvas/Online/OnlineLogin").SetActive(true);
+            }
+            else
+            {
+                Debug.Log("Logout Failed Status Code: " + response.StatusCode);
+                Debug.Log(response.Headers.ToString());
+            }
+        }) ;
+        LogoutService.SetHeader("PrivateID", OnlineManager.Player.privateID);
+        
+        
+        CreateGameService = new GenericPoster<publicGameInfo, sessionInfo>(ServiceUrl + "/games", type =>
+        {
+            OnlineManager.Game = type;
+            if ((OnlineManager.Game.host != null) && (OnlineManager.Game.host.username == OnlineManager.Player.username)){
+                CancelInvoke();
+                GameObject.Find("/Canvas/Online/GameHostLobby").SetActive(true);
+                gameObject.SetActive(false);
+            }
+        });
+        
+        
+        GameListService = new Getter<publicGameInfoList>(ServiceUrl + "/games", type =>
+        {
+             UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameRegistryScrollViewViewportContent").GetComponent<UnityEngine.Transform>();
+            Dictionary<publicGameInfo, GameObject> NewGameSet = new Dictionary<publicGameInfo, GameObject>();
+            foreach(publicGameInfo game in type.publicGameInfos){
             if (Gameset.ContainsKey(game)){
                 NewGameSet.Add(game, Gameset[game]);
                 Gameset.Remove(game);
@@ -65,25 +89,20 @@ public class GameRegistryController : MonoBehaviour
                 rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
                 childText.text = "Unset";
                 childButton.onClick.AddListener(() => {
-                    /* if (OnlineManager.Player.JoinGame(client, game)){
-                        OnlineManager.Game = game;
-                        gameObject.SetActive(false);
-                        GameObject.Find("/Canvas/Online/GameLobby").SetActive(true);
-                    } */
+                    JoinGameService.Run(OnlineManager.Player, "/" + game.gameID + "/" + "users");
                 });
                 NewGameSet.Add(game, newText);
             }
         }
-        OnlineManager.LobbyLstnrImpl.mutex.ReleaseMutex();
-        foreach (KeyValuePair<GamePrx, GameObject> pair in Gameset){
+        foreach (KeyValuePair<publicGameInfo, GameObject> pair in Gameset){
             Destroy(pair.Value.gameObject);
         }
         Gameset = NewGameSet;
         int i = 0;
-        foreach (KeyValuePair<GamePrx,GameObject>  pair in Gameset){
+        foreach (KeyValuePair<publicGameInfo,GameObject>  pair in Gameset){
             Text childText = pair.Value.transform.Find("Text").GetComponent<Text>();
-                LobbyInfo info = pair.Key.GetLobbyInfo();
-                childText.text = "Game Id: " + info.Id + " Host: " + info.Host.username + " Players: " + (info.Players.Count + 1);
+                publicGameInfo info = pair.Key;
+                childText.text = "Game Id: " + info.gameID + " Host: " + info.host.username + " Players: " + (info.players.Length);
                 if (!pair.Value.activeSelf){
                     pair.Value.SetActive(true);
                 }
@@ -92,6 +111,31 @@ public class GameRegistryController : MonoBehaviour
                 pair.Value.transform.localPosition = pos;
             
         }
+        });
+        
+        JoinGameService = new GenericPoster<publicGameInfo, sessionInfo>(ServiceUrl + "/games", type =>
+        {    
+            OnlineManager.Game = type;
+            if (type.players != null)
+            {
+                CancelInvoke();
+                gameObject.SetActive(false);
+                GameObject.Find("/Canvas/Online/GameLobby").SetActive(true);
+            }
+        });
+    }
+
+    void LogoutClick(){
+        LogoutService.Run("/" + OnlineManager.Player.username + SessionUrl + "/" + OnlineManager.Player.publicID);
+    }
+
+    void CreateGameClick()
+    {
+        CreateGameService.Run(OnlineManager.Player);
+    }
+
+    void UpdateList(){
+       GameListService.Run();
     }
 
     // Update is called once per frame

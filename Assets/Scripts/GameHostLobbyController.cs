@@ -8,7 +8,10 @@ public class GameHostLobbyController : MonoBehaviour {
     private Button LeaveButton;
     private Button StartButton;
     private Button LockRoomButton;
-    private LobbyInfo lobbyInfo;
+	
+	public GameObject text;
+
+    private Getter<publicGameInfo> GetUsersService;
 
     public GameObject Panel;
 	// Use this for initialization
@@ -19,20 +22,63 @@ public class GameHostLobbyController : MonoBehaviour {
             throw new System.Exception();
         }
         Gameset = new Dictionary<userPublic, GameObject>();
-        LeaveButton = GameObject.Find("Canvas/Online/GameHostLobby/LeaveGameButton").GetComponent<Button>();
+        LeaveButton = GameObject.FindGameObjectWithTag("GameHostLobbyLeaveGameButton").GetComponent<Button>();
         LeaveButton.onClick.AddListener(LeaveClick);
 
-        LockRoomButton = GameObject.Find("Canvas/Online/GameHostLobby/Panel/LockRoomButton").GetComponent<Button>();
+        LockRoomButton = GameObject.FindGameObjectWithTag("GameHostLobbyPanelLockRoomButton").GetComponent<Button>();
         LockRoomButton.onClick.AddListener(SwitchLock);
-        StartButton = GameObject.Find("Canvas/Online/GameHostLobby/StartGameButton").GetComponent<Button>();
+        StartButton = GameObject.FindGameObjectWithTag("GameHostLobbyStartGameButton").GetComponent<Button>();
+
+	    GetUsersService = new Getter<publicGameInfo>(
+	        OnlineManager.ServiceUrl + "/games/" + OnlineManager.Game.gameID + "/lobbyinfo",
+	        type =>
+	        {
+		        UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameHostLobbyScroll ViewViewportContent").GetComponent<UnityEngine.Transform>();
+		        Dictionary<userPublic, GameObject> NewGameSet = new Dictionary<userPublic, GameObject>();
+
+		        foreach (userPublic stat in type.players)
+		        {
+			        if (Gameset.ContainsKey(stat))
+			        {
+				        NewGameSet.Add(stat, Gameset[stat]);
+				        Gameset.Remove(stat);
+			        }
+			        else
+			        {
+				        NewGameSet.Add(stat, SetupItem(parent, type.host.username.Equals(stat.username), stat));
+			        }
+		        }
+		        foreach (KeyValuePair<userPublic, GameObject> pair in Gameset)
+		        {
+			        Destroy(pair.Value);
+		        }
+
+		        Gameset = NewGameSet;
+		        int i = 0;
+
+		        foreach (KeyValuePair<userPublic, GameObject> pair in Gameset)
+		        {
+			        UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
+			        pos.y = (i++ * -30f) - 15f;
+			        pair.Value.transform.localPosition = pos;
+		        }
 
 
+		        Text bttnText = LockRoomButton.transform.Find("Text").GetComponent<Text>();
+		        /*if (lobbyInfo.IsLocked){
+		            bttnText.text = "Unlock Room";
+		        } else {
+		            bttnText.text = "Lock Room";
+		        } */
+	        });
         InvokeRepeating("UpdateList", 0.0f, 1f);
+	    
+	    
 	}
 
     void SwitchLock(){
         //OnlineManager.GameHost.SwitchLock();
-        session ses = new session();
+        sessionInfo ses = new sessionInfo();
         ses.publicID = "Bob";
     }
 
@@ -45,52 +91,9 @@ public class GameHostLobbyController : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void UpdateList () {
-        //lobbyInfo = OnlineManager.GameHost.GetLobbyInfo();
-        UnityEngine.Transform parent = GameObject.Find("/Canvas/Online/GameHostLobby/Scroll View/Viewport/Content").GetComponent<UnityEngine.Transform>();
-        Dictionary<userPublic, GameObject> NewGameSet = new Dictionary<userPublic, GameObject>();
-        if (Gameset.ContainsKey(lobbyInfo.Host))
-        {
-            NewGameSet.Add(lobbyInfo.Host, Gameset[lobbyInfo.Host]);
-            Gameset.Remove(lobbyInfo.Host);
-        }
-        else
-        {
-            NewGameSet.Add(lobbyInfo.Host, SetupItem(parent, true, lobbyInfo.Host));
-        }
-        foreach (userPublic stat in lobbyInfo.Players)
-        {
-            if (Gameset.ContainsKey(stat))
-            {
-                NewGameSet.Add(stat, Gameset[stat]);
-                Gameset.Remove(stat);
-            }
-            else
-            {
-                NewGameSet.Add(stat, SetupItem(parent, false, stat));
-            }
-        }
-        foreach (KeyValuePair<userPublic, GameObject> pair in Gameset)
-        {
-            Destroy(pair.Value);
-        }
-
-        Gameset = NewGameSet;
-        int i = 0;
-
-        foreach (KeyValuePair<userPublic, GameObject> pair in Gameset)
-        {
-            UnityEngine.Vector3 pos = pair.Value.transform.localPosition;
-            pos.y = (i++ * -30f) - 15f;
-            pair.Value.transform.localPosition = pos;
-        }
-
-        Text bttnText = LockRoomButton.transform.Find("Text").GetComponent<Text>();
-        /*if (lobbyInfo.IsLocked){
-            bttnText.text = "Unlock Room";
-        } else {
-            bttnText.text = "Lock Room";
-        } */
+	void UpdateList ()
+	{
+		GetUsersService.Run();
 	}
 
     void Update()

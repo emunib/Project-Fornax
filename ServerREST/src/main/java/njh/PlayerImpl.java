@@ -11,7 +11,8 @@ import java.util.TimeZone;
 
 public class PlayerImpl extends UserPublic implements Player {
 	private final String Password;
-	private final HashMap <String, Session> sessionHashMap;
+	private final HashMap <String, SessionImpl> sessionHashMap;
+	private GameImpl activeGame;
 
 	public PlayerImpl(String username, String password){
 		setUsername(username);
@@ -21,6 +22,16 @@ public class PlayerImpl extends UserPublic implements Player {
 
 	public boolean isEqualPassword(String password){
 		return password.equals(Password);
+	}
+
+	public boolean isValidSession(SessionInfo sessionInfo){
+		SessionImpl session = sessionHashMap.get(sessionInfo.getPublicID());
+		if (session == null) return false;
+		return session.isValidSession(sessionInfo);
+	}
+
+	public SessionImpl getSession(SessionInfo sessionInfo){
+		return sessionHashMap.get(sessionInfo.getPublicID());
 	}
 
 	@Override
@@ -34,8 +45,22 @@ public class PlayerImpl extends UserPublic implements Player {
 	}
 
 	@Override
-	public Response Logout(String sessionID) {
-		return null;
+	public Response Logout(String sessionID, String PrivateID) {
+		Response response;
+		System.out.println("Logout was invoked... (sessionID = " + sessionID + " )");
+		SessionImpl session = sessionHashMap.get(sessionID);
+		if (session != null) {
+			if (session.isValidSession(PrivateID)) {
+				sessionHashMap.remove(sessionID);
+				response = Response.ok().build();
+			} else {
+				response = Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+		} else {
+			response = Response.status(Response.Status.NOT_FOUND).build();
+		}
+		System.out.println("...Logout is returning");
+		return response;
 	}
 
 	@Override
@@ -44,12 +69,13 @@ public class PlayerImpl extends UserPublic implements Player {
 	}
 
 	@Override
-	public Session LoginUser(UserLogin userLogin) {
-		Session newsession = new Session();
+	public SessionInfo LoginUser(UserLogin userLogin) {
+		SessionInfo newsessioninfo = new SessionInfo();
 		if (isEqualPassword(userLogin.getPassword())){
-			newsession = SessionFactory.GetNewSession(getUsername());
-			sessionHashMap.put(newsession.getPublicID(), newsession);
+			SessionImpl newSession = SessionFactory.GetNewSession(this);
+			sessionHashMap.put(newSession.getPublicID(), newSession);
+			newsessioninfo = newSession;
 		}
-		return newsession;
+		return newsessioninfo;
 	}
 }

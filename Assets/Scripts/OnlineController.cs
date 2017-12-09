@@ -14,14 +14,14 @@ public class OnlineController : MonoBehaviour {
     public UnityEngine.UI.InputField CreateNewPassword;
     public UnityEngine.UI.InputField CreateNewConfirmPassword;
     public Button CreateNewButton;
-    private Task<session> restcall;
+    private Task<sessionInfo> restcall;
 
     public GameObject GameLobby;
     public GameObject CreateNew;
     public GameObject Login;
 
-    private GenericPoster<session, userLogin> createNewUser;
-    
+    private GenericPoster<sessionInfo, userLogin> createNewUser;
+    private GenericPoster<sessionInfo, userLogin> loginService;
     
     private LobbyListenerImpl lobbyListener;
     private string[] args = new string[0];
@@ -48,12 +48,12 @@ public class OnlineController : MonoBehaviour {
         {
             Debug.Log(e);
         }
-        createNewUser =  new GenericPoster<session, userLogin>("http://localhost:8080/services/users", type =>
+        createNewUser =  new GenericPoster<sessionInfo, userLogin>(OnlineManager.ServiceUrl + OnlineManager.UsersUrl, type =>
         {
             OnlineManager.Player = type;
             if (OnlineManager.Player.publicID == "")
             {
-                CreateNewUsername.text = "Login failed";
+                CreateNewUsername.text = "Create User failed";
             }
             else
             {
@@ -61,31 +61,33 @@ public class OnlineController : MonoBehaviour {
                 GameLobby.SetActive(true);
             }
         });
+	    
+	    loginService = new GenericPoster<sessionInfo, userLogin>(OnlineManager.ServiceUrl + OnlineManager.UsersUrl, type =>
+	    {
+	        OnlineManager.Player = type;
+	        if (OnlineManager.Player.publicID == "")
+	        {
+	            LoginUsername.text = "Login failed";
+	        }
+	        else
+	        {
+	            Login.SetActive(false);
+	            GameLobby.SetActive(true);
+	        }
+	    } );
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	    if (restcall != null)
-	    {
-	        if (restcall.IsCompleted)
-	        {
-	            Debug.Log(restcall.Result.username);
-	            restcall = null;
-	        }
-	    }
+
 	}
 
     public void LoginClick()
     {
-        /* OnlineManager.Player = playerRegister.Login(LoginUsername.text,
-                                    LoginPassword.text,
-                                    null); */
-        if (OnlineManager.Player == null){
-            LoginUsername.text = "Login failed";
-        } else {
-            Login.SetActive(false);
-            GameLobby.SetActive(true);
-        }
+	    var userLogin = new userLogin();
+	    userLogin.password = LoginPassword.text;
+	    userLogin.username = LoginUsername.text;
+	    loginService.Run(userLogin, "/" + LoginUsername.text + OnlineManager.SessionUrl);
     }
 
 

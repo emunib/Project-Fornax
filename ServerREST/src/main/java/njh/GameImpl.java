@@ -1,116 +1,73 @@
 package njh;
 import RESTinterface.Game;
-import XMLechangeable.GameObject;
-import XMLechangeable.Update;
-import XMLechangeable.UserPublic;
+import XMLechangeable.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-class LocalLobbyInfo {
-	public HashMap<PlayerImpl, String> PlayerList;
-	//public KeyPair<PlayerImpl, String> Host;
-}
-
-class GameInfo {
-	private final HashMap<PlayerImpl, String> PlayerList = new HashMap<>();
-	//private final KeyPair<PlayerImpl, String> Host = new KeyPair<>(null, null);
-	//public final ReadOnlyKeyPair<PlayerImpl, String> host = new ReadOnlyKeyPair<>(Host);
-	//public final ReadOnlyHashMap<PlayerImpl, String> playerList = new ReadOnlyHashMap<>(PlayerList);
-	//private final LobbyInfo CachedLobbyInfo;
-	private boolean Modified;
-	private boolean IsLocked;
-
-	public GameInfo(String id){
-		//CachedLobbyInfo = new LobbyInfo();
-		//CachedLobbyInfo.Id = id;
-		IsLocked = false;
-	}
-
-	public synchronized void GetLobbyInfo(){
-		if (Modified) {
-			Modified = false;
-			//CachedLobbyInfo.Players = new PlayerStats[PlayerList.size()];
-			Counter i = new Counter();
-			PlayerList.forEach((player, clientPrx) -> {
-				//CachedLobbyInfo.Players[i.IncUp()] = player.GetStats(null);
-			});
-			//CachedLobbyInfo.Host = Host.Key.GetStats(null);
-			//CachedLobbyInfo.IsLocked = IsLocked;
-		}
-		//return CachedLobbyInfo;
-	}
-
-	public synchronized void SetHost(PlayerImpl player){
-		Modified = true;
-		//Host.Key = player;
-		//Host.Value = server;
-	}
-
-
-	public synchronized void AddPlayer(PlayerImpl player){
-		Modified = true;
-		//PlayerList.put(player, clientPrx);
-	}
-
-	public synchronized void RemovePlayer(PlayerImpl player){
-		Modified = true;
-		//return PlayerList.remove(player);
-	}
-
-	public synchronized boolean SwitchLock(){
-		Modified = true;
-		IsLocked = !IsLocked;
-		return IsLocked;
-	}
-}
+import static sun.audio.AudioPlayer.player;
 
 public class GameImpl implements Game {
-	private final GameInfo gameInfo;
-	private final GameRegisterImpl Register;
+	private final RegisterImpl Register;
+	final String Id;
+
+	private SessionImpl Host;
+	private final PublicGameInfo CachedLobbyInfo;
+	private final HashMap<String, SessionImpl> PlayerMap;
 	private boolean Locked;
 	private boolean Joinable;
+	private boolean Hidden;
 
+	public boolean isHidden() {
+		return Hidden;
+	}
 
-	public GameImpl( PlayerImpl player, GameRegisterImpl register, String id) {
-		gameInfo = new GameInfo(id);
-		//gameInfo.SetHost(player, server);
+	public GameImpl(SessionImpl session, RegisterImpl register, String id) {
+		PlayerMap = new HashMap<>();
+		CachedLobbyInfo = new PublicGameInfo();
+		CachedLobbyInfo.setGameID(id);
+		CachedLobbyInfo.setPlayers(new LinkedList<>());
+		CachedLobbyInfo.setLocked(Locked);
+		CachedLobbyInfo.getPlayers().add(session.player.GetProfile());
+		SetHost(session);
+		Id = id;
+		PlayerMap.put(session.getUsername(), session);
+
 		Register = register;
 		Joinable = true;
-		//playerRegistry = nPlayerRegistry;
 		Locked = false;
 	}
 
-	public synchronized void GetLobbyInfo() {
-		//return gameInfo.GetLobbyInfo();
+
+	public synchronized void SetHost(SessionImpl session){
+		CachedLobbyInfo.setHost(session.player.GetProfile());
+		Host = session;
+	}
+
+
+
+	public synchronized PublicGameInfo GetLobbyInfo() {
+		return CachedLobbyInfo;
 	}
 
 	public synchronized boolean AddPlayer(PlayerImpl player){
-		if ((Joinable) && (!Locked)){
-			//gameInfo.AddPlayer(player, client);
-			return true;
-		}
+
 		return false;
 	}
 
-	public synchronized boolean RemovePlayer(PlayerImpl player){
-		/*if (player == gameInfo.host.getKey()){
-			if (gameInfo.playerList.isEmpty()){
-				Register.RemoveGame(this);
-			} else {
-				//TODO migrate host
-			}
-		} else {
-			gameInfo.RemovePlayer(player);
-		} */
-		return true;
+	public synchronized boolean SwitchLock(){
+		Locked = !Locked;
+		CachedLobbyInfo.setLocked(Locked);
+		Hidden = Locked;
+		return Locked;
 	}
 
-
 	public synchronized void StartGame() {
-		Register.HideGame(this);
+		Hidden = true;
 		Joinable = false;
 	}
 
@@ -124,29 +81,54 @@ public class GameImpl implements Game {
 
 	}
 
-	public synchronized void SwitchLock() {
-		if ((Locked = gameInfo.SwitchLock())){
-			Register.HideGame(this);
-		} else {
-			Register.UnHideGame(this);
+	@Override
+	public PublicGameInfo JoinGame(SessionInfo sessionInfo) {
+		SessionImpl session = Register.GetUser(sessionInfo.getUsername()).getSession(sessionInfo);
+		PublicGameInfo publicGameInfo = new PublicGameInfo();
+		if ((session != null) && (session.isValidSession(session))){
+			if ((Joinable) && (!Locked)){
+				if (!PlayerMap.containsValue(session)){
+					CachedLobbyInfo.getPlayers().add(session.player.GetProfile());
+					PlayerMap.put(session.getUsername(), session);
+					publicGameInfo = GetLobbyInfo();
+				}
+			}
 		}
-
+		return publicGameInfo;
 	}
 
 	@Override
-	public Response JoinGame() {
-		return null;
+	public PublicGameInfo GetUsers() {
+		return CachedLobbyInfo;
 	}
 
 	@Override
-	public List<UserPublic> GetUsers() {
-		return null;
+	public Response RemoveUser(String userID, String PrivateID) {
+		Response response;
+		SessionImpl session = PlayerMap.get(userID);
+		if (session != null){
+			response = Response.status(Response.Status.NOT_FOUND).build();
+		}
+		else {
+			if ((session.isValidSession(PrivateID)) || (Host.isValidSession(PrivateID))){
+				SessionImpl remove = PlayerMap.remove(userID);
+				CachedLobbyInfo.getPlayers().remove(session.player.GetProfile());
+				if (remove == Host){
+					Host = null;
+					if (PlayerMap.isEmpty()) {
+						Register.RemoveGame(this);
+					} else {
+						//TODO migrate Host
+					}
+				}
+				response = Response.status(Response.Status.OK).build();
+			} else {
+				response = Response.status(Response.Status.UNAUTHORIZED).build();
+			}
+		}
+		return response;
 	}
 
-	@Override
-	public Response RemoveUser() {
-		return null;
-	}
 
 	@Override
 	public List<InputState> GetInputs() {
@@ -154,9 +136,10 @@ public class GameImpl implements Game {
 	}
 
 	@Override
-	public Response UpdateInput(String userID, InputState inputState) {
+	public Response UpdateInput(String userID, String privateID, InputState inputState) {
 		return null;
 	}
+
 
 	@Override
 	public List<GameObject> GetGameObjects() {

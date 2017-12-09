@@ -28,9 +28,12 @@ public class PlayerManager {
 
 public class OnlineManager
 {
-	public static session Player;
+	public static readonly String ServiceUrl = "http://localhost:8080/services/GameService";
+	public static readonly String UsersUrl = "/users";
+	public static readonly String SessionUrl = "/sessions";
+	public static sessionInfo Player;
     public static LobbyListenerImpl LobbyLstnrImpl;
-    public static GamePrx Game;
+	public static publicGameInfo Game;
 }
 
 public class Manager {
