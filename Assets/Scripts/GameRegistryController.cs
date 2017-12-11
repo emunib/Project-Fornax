@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Net;
-using System.Net.Http;
 using Schemas;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,15 +14,15 @@ public class GameRegistryController : MonoBehaviour
     public GameObject text;
 
     private Deleter LogoutService;
-    private GenericPoster<publicGameInfo, sessionInfo> CreateGameService;
+    private Poster<publicGameInfo, sessionInfo> CreateGameService;
     private Getter<publicGameInfoList> GameListService;
-    private GenericPoster<publicGameInfo, sessionInfo> JoinGameService;
+    private Poster<publicGameInfo, sessionInfo> JoinGameService;
     private String ServiceUrl = OnlineManager.ServiceUrl;
     private String UsersUrl = OnlineManager.UsersUrl;
     private String SessionUrl = OnlineManager.SessionUrl;
 
     // Use this for initialization
-    void Start()
+    void Awake()
     {
         text = Resources.Load("GamePanel") as GameObject;
         if (text == null){
@@ -36,17 +34,14 @@ public class GameRegistryController : MonoBehaviour
         CreateButton = GameObject.FindGameObjectWithTag("GameRegistryCreateGameButton").GetComponent<Button>();
         CreateButton.onClick.AddListener(CreateGameClick);
 
-        Username.text = OnlineManager.Player.username;
-        InvokeRepeating("UpdateList", 0f, 1f);
         Gameset = new Dictionary<publicGameInfo, GameObject>();
         
-        LogoutService = new Deleter(ServiceUrl + UsersUrl, response =>
+        LogoutService = new Deleter(ServiceUrl + UsersUrl + "/{userID}" + SessionUrl + "/{sessionID}", response =>
         {
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 gameObject.SetActive(false);
                 OnlineManager.Player = null;
-                CancelInvoke();
                 GameObject.Find("/Canvas/Online/OnlineLogin").SetActive(true);
             }
             else
@@ -54,15 +49,12 @@ public class GameRegistryController : MonoBehaviour
                 Debug.Log("Logout Failed Status Code: " + response.StatusCode);
                 Debug.Log(response.Headers.ToString());
             }
-        }) ;
-        LogoutService.SetHeader("PrivateID", OnlineManager.Player.privateID);
+        }) ;        
         
-        
-        CreateGameService = new GenericPoster<publicGameInfo, sessionInfo>(ServiceUrl + "/games", type =>
+        CreateGameService = new Poster<publicGameInfo, sessionInfo>(ServiceUrl + "/games", type =>
         {
             OnlineManager.Game = type;
             if ((OnlineManager.Game.host != null) && (OnlineManager.Game.host.username == OnlineManager.Player.username)){
-                CancelInvoke();
                 GameObject.Find("/Canvas/Online/GameHostLobby").SetActive(true);
                 gameObject.SetActive(false);
             }
@@ -73,28 +65,39 @@ public class GameRegistryController : MonoBehaviour
         {
              UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameRegistryScrollViewViewportContent").GetComponent<UnityEngine.Transform>();
             Dictionary<publicGameInfo, GameObject> NewGameSet = new Dictionary<publicGameInfo, GameObject>();
-            foreach(publicGameInfo game in type.publicGameInfos){
-            if (Gameset.ContainsKey(game)){
-                NewGameSet.Add(game, Gameset[game]);
-                Gameset.Remove(game);
-            } else {
-                GameObject newText = Instantiate(text, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity);
-                Text childText = newText.transform.Find("Text").GetComponent<Text>();
-                RectTransform rectTransform = newText.GetComponent<RectTransform>();
-                Button childButton = newText.transform.Find("Button").GetComponent<Button>();
-                newText.transform.SetParent(parent);
-                rectTransform.anchorMax = new Vector2(0.5f, 1);
-                rectTransform.anchorMin = new Vector2(0.5f, 1);
-                rectTransform.pivot = new Vector2(0.5f, 0.5f);
-                rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
-                childText.text = "Unset";
-                childButton.onClick.AddListener(() => {
-                    JoinGameService.Run(OnlineManager.Player, "/" + game.gameID + "/" + "users");
-                });
-                NewGameSet.Add(game, newText);
+            if (type.publicGameInfos != null)
+            {
+                foreach (publicGameInfo game in type.publicGameInfos)
+                {
+                    if (Gameset.ContainsKey(game))
+                    {
+                        NewGameSet.Add(game, Gameset[game]);
+                        Gameset.Remove(game);
+                    }
+                    else
+                    {
+                        GameObject newText = Instantiate(text, new UnityEngine.Vector3(0, 0, 0), Quaternion.identity);
+                        Text childText = newText.transform.Find("Text").GetComponent<Text>();
+                        RectTransform rectTransform = newText.GetComponent<RectTransform>();
+                        Button childButton = newText.transform.Find("Button").GetComponent<Button>();
+                        newText.transform.SetParent(parent);
+                        rectTransform.anchorMax = new Vector2(0.5f, 1);
+                        rectTransform.anchorMin = new Vector2(0.5f, 1);
+                        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+                        rectTransform.anchoredPosition = new UnityEngine.Vector3(0, 0, 0);
+                        childText.text = "Unset";
+                        childButton.onClick.AddListener(() =>
+                        {
+                            var dictionary = new Dictionary<string, string>();
+                            dictionary.Add("gameID", game.gameID);
+                            JoinGameService.SetUrlVariables(dictionary);
+                            JoinGameService.Run(OnlineManager.Player);
+                        });
+                        NewGameSet.Add(game, newText);
+                    }
+                }
             }
-        }
-        foreach (KeyValuePair<publicGameInfo, GameObject> pair in Gameset){
+            foreach (KeyValuePair<publicGameInfo, GameObject> pair in Gameset){
             Destroy(pair.Value.gameObject);
         }
         Gameset = NewGameSet;
@@ -113,20 +116,36 @@ public class GameRegistryController : MonoBehaviour
         }
         });
         
-        JoinGameService = new GenericPoster<publicGameInfo, sessionInfo>(ServiceUrl + "/games", type =>
+        JoinGameService = new Poster<publicGameInfo, sessionInfo>(ServiceUrl + "/games/{gameID}/users", type =>
         {    
             OnlineManager.Game = type;
             if (type.players != null)
             {
-                CancelInvoke();
                 gameObject.SetActive(false);
                 GameObject.Find("/Canvas/Online/GameLobby").SetActive(true);
             }
         });
     }
 
-    void LogoutClick(){
-        LogoutService.Run("/" + OnlineManager.Player.username + SessionUrl + "/" + OnlineManager.Player.publicID);
+    void LogoutClick()
+    {
+        LogoutService.SetHeader("PrivateID", OnlineManager.Player.privateID);
+        var dictionary = new Dictionary<string, string>();
+        dictionary.Add("userID", OnlineManager.Player.username);
+        dictionary.Add("sessionID",  OnlineManager.Player.publicID);
+        LogoutService.SetUrlVariables(dictionary);
+        LogoutService.Run();
+    }
+
+    private void OnEnable()
+    {
+        Username.text = OnlineManager.Player.username;
+        InvokeRepeating("UpdateList", 0f, 1f);
+    }
+
+    private void OnDisable()
+    {
+        CancelInvoke();
     }
 
     void CreateGameClick()

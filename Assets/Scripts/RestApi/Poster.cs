@@ -8,40 +8,27 @@ using Schemas;
 using System.Xml.Serialization;
 using UnityEngine;
 
-public class GenericPoster<ResponseType, RequestType>
+public class Poster<ResponseType, RequestType> : CRUDop<ResponseType>
 {
     public delegate void Callback(ResponseType responseType);
 
     private Callback callback;
-    private String ResourceUrl;
     private XmlSerializer requestSerializer;
     private XmlSerializer responseSerializer;
-    private HttpClient client;
-    public GenericPoster(String nurl, Callback ncallback)
+    public Poster(String nurl, Callback ncallback) : base(nurl)
     {
-        ResourceUrl = nurl;
         callback = ncallback;
         requestSerializer = new XmlSerializer(typeof(RequestType));
         responseSerializer = new XmlSerializer(typeof(ResponseType)); 
-        client = new HttpClient();
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Accept.Add(
-            new MediaTypeWithQualityHeaderValue("application/xml"));
     }
 
     public async void Run(RequestType request)
     {
-        ResponseType response = await Work(request, "");
-        callback(response);
-    }
-    
-    public async void Run(RequestType request, String Url)
-    {
-        ResponseType response = await Work(request, Url);
+        ResponseType response = await Work(request);
         callback(response);
     }
 
-    public async Task<ResponseType> Work(RequestType request, String Url)
+    public async Task<ResponseType> Work(RequestType request)
     {
         MemoryStream memoryStream = new MemoryStream();
         requestSerializer.Serialize(memoryStream, request);
@@ -49,7 +36,7 @@ public class GenericPoster<ResponseType, RequestType>
         StreamReader sr = new StreamReader(memoryStream);
         var stringContent = new StringContent(sr.ReadToEnd(), Encoding.UTF8, "application/xml");
         HttpResponseMessage httpResponseMessage = await client.PostAsync(
-          ResourceUrl + Url, stringContent).ConfigureAwait(false);
+          resourceUrl, stringContent).ConfigureAwait(false);
         memoryStream.Dispose();
         Stream stream = await httpResponseMessage.Content.ReadAsStreamAsync();
         ResponseType response = (ResponseType) responseSerializer.Deserialize(stream);

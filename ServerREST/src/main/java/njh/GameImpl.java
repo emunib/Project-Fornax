@@ -18,6 +18,7 @@ public class GameImpl implements Game {
 	private SessionImpl Host;
 	private final PublicGameInfo CachedLobbyInfo;
 	private final HashMap<String, SessionImpl> PlayerMap;
+	private final LinkedList<SessionImpl> PlayerList;
 	private boolean Locked;
 	private boolean Joinable;
 	private boolean Hidden;
@@ -28,6 +29,7 @@ public class GameImpl implements Game {
 
 	public GameImpl(SessionImpl session, RegisterImpl register, String id) {
 		PlayerMap = new HashMap<>();
+		PlayerList = new LinkedList<>();
 		CachedLobbyInfo = new PublicGameInfo();
 		CachedLobbyInfo.setGameID(id);
 		CachedLobbyInfo.setPlayers(new LinkedList<>());
@@ -36,7 +38,7 @@ public class GameImpl implements Game {
 		SetHost(session);
 		Id = id;
 		PlayerMap.put(session.getUsername(), session);
-
+		PlayerList.add(session);
 		Register = register;
 		Joinable = true;
 		Locked = false;
@@ -71,18 +73,8 @@ public class GameImpl implements Game {
 		Joinable = false;
 	}
 
-	public synchronized void KickPlayer(String username) {
-		/* PlayerImpl player = playerRegistry.FindPlayerImplByString(username);
-		if (player != null){
-			ClientPrx clientPrx = gameInfo.RemovePlayer(player);
-			// Asynchronously notify player it has been kicked;
-			clientPrx.NotifyKickedAsync();
-		} */
-
-	}
-
 	@Override
-	public PublicGameInfo JoinGame(SessionInfo sessionInfo) {
+	public synchronized PublicGameInfo JoinGame(SessionInfo sessionInfo) {
 		SessionImpl session = Register.GetUser(sessionInfo.getUsername()).getSession(sessionInfo);
 		PublicGameInfo publicGameInfo = new PublicGameInfo();
 		if ((session != null) && (session.isValidSession(session))){
@@ -90,6 +82,7 @@ public class GameImpl implements Game {
 				if (!PlayerMap.containsValue(session)){
 					CachedLobbyInfo.getPlayers().add(session.player.GetProfile());
 					PlayerMap.put(session.getUsername(), session);
+					PlayerList.add(session);
 					publicGameInfo = GetLobbyInfo();
 				}
 			}
@@ -98,27 +91,28 @@ public class GameImpl implements Game {
 	}
 
 	@Override
-	public PublicGameInfo GetUsers() {
+	public synchronized PublicGameInfo GetUsers() {
 		return CachedLobbyInfo;
 	}
 
 	@Override
-	public Response RemoveUser(String userID, String PrivateID) {
+	public synchronized Response RemoveUser(String userID, String PrivateID) {
 		Response response;
 		SessionImpl session = PlayerMap.get(userID);
-		if (session != null){
+		if (session == null){
 			response = Response.status(Response.Status.NOT_FOUND).build();
 		}
 		else {
 			if ((session.isValidSession(PrivateID)) || (Host.isValidSession(PrivateID))){
 				SessionImpl remove = PlayerMap.remove(userID);
+				PlayerList.remove(remove);
 				CachedLobbyInfo.getPlayers().remove(session.player.GetProfile());
 				if (remove == Host){
 					Host = null;
 					if (PlayerMap.isEmpty()) {
 						Register.RemoveGame(this);
 					} else {
-						//TODO migrate Host
+						SetHost(PlayerList.getFirst());
 					}
 				}
 				response = Response.status(Response.Status.OK).build();

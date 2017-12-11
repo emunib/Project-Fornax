@@ -1,19 +1,16 @@
 package RESTinterface;
 
-import XMLechangeable.PublicGameInfo;
-import XMLechangeable.PublicGameInfoList;
-import XMLechangeable.SessionInfo;
-import XMLechangeable.UserLogin;
+import XMLechangeable.*;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+
 import java.util.List;
 
 @Produces({ "application/xml"})
 public interface Register {
 	@POST
 	@Path("/users") // Create a new user
-	SessionInfo CreateUser(UserLogin userLogin);
+	CreateUserResponse CreateUser(UserLogin userLogin);
 
 	@Path("/users/{userID}") // A single user
 	Player GetUser(@PathParam("userID") String userID);

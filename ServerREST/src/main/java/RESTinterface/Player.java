@@ -27,5 +27,5 @@ public interface Player {
 
 	@POST
 	@Path("/sessions/") // A single user
-	SessionInfo LoginUser(UserLogin userLogin);
+	LoginResponse LoginUser(UserLogin userLogin);
 }

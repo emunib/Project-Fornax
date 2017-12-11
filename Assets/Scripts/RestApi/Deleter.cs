@@ -8,34 +8,34 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-public class Deleter
+public class Deleter : CRUDop<HttpResponseMessage>
 {
     public delegate void Callback(HttpResponseMessage response);
 
     private Callback callback;
-    private String BaseUrl;
-    private HttpClient client;
-    public Deleter(String nurl, Callback ncallback)
+    public Deleter(String nurl, Callback ncallback) : base(nurl)
     {
-        BaseUrl = nurl;
         callback = ncallback;
-        client = new HttpClient();
     }
 
     public void SetHeader(String key, String value)
     {
+        if (client.DefaultRequestHeaders.Contains(key))
+        {
+            client.DefaultRequestHeaders.Remove(key);
+        }
         client.DefaultRequestHeaders.Add(key, value);
     }
 
-    public async void Run(String URL)
+    public async void Run()
     {
-        HttpResponseMessage response = await Work(URL);
+        HttpResponseMessage response = await Work();
         callback(response);
     }
 
-    public async Task<HttpResponseMessage> Work(String URL)
+    public async Task<HttpResponseMessage> Work()
     {
         return await client.DeleteAsync(
-            BaseUrl + URL).ConfigureAwait(false);
+            resourceUrl).ConfigureAwait(false);
     }
 }

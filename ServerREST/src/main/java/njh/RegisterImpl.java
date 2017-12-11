@@ -1,7 +1,5 @@
 package njh;
 
-import RESTinterface.Game;
-import RESTinterface.Player;
 import RESTinterface.Register;
 import XMLechangeable.*;
 
@@ -22,7 +20,7 @@ public class RegisterImpl implements Register {
 
 	public void RemoveGame(GameImpl game){
 		synchronized (GameList) {
-			GameList.remove(game);
+			GameList.remove(game.Id);
 			GameFactory.DisposeGame(game);
 		}
 	}
@@ -57,22 +55,49 @@ public class RegisterImpl implements Register {
 	}
 
 	@Override
-	public SessionInfo CreateUser(UserLogin userLogin) {
+	public CreateUserResponse CreateUser(UserLogin userLogin) {
 		System.out.println("CreateUser was invoked... ");
-		PlayerImpl temp = UserList.get(userLogin.getUsername());
-		SessionInfo session = new SessionInfo();
-		if (temp == null){
-			PlayerImpl newuser = new PlayerImpl(userLogin.getUsername(), userLogin.getPassword());
-			UserList.put(newuser.getUsername(), newuser);
-			session = newuser.LoginUser(userLogin);
+		CreateUserResponse response = new CreateUserResponse();
+		if (userLogin.getUsername().matches("^guest.*")){
+			return CreateGuest();
+		} else {
+			PlayerImpl temp = UserList.get(userLogin.getUsername());
+			if (temp == null){
+				PlayerImpl newuser = new PlayerImpl(userLogin.getUsername(), userLogin.getPassword());
+				UserList.put(newuser.getUsername(), newuser);
+				SessionInfo session = newuser.LoginUser(userLogin).getSessionInfo();
+				response.setSessionInfo(session);
+				response.setResponse(CreateUserCode.SUCCESS);
+			} else {
+				response.setResponse(CreateUserCode.ALREADYEXISTS);
+			}
 		}
+
 		System.out.println("...CreateUser is returning");
-		return session;
+		return response;
+	}
+
+	public CreateUserResponse CreateGuest() {
+		CreateUserResponse response = new CreateUserResponse();
+		GuestImpl newuser = GuestFactory.GetNewGuest(this);
+		UserList.put(newuser.getUsername(), newuser);
+		UserLogin userLogin = new UserLogin();
+		userLogin.setUsername(newuser.getUsername());
+		userLogin.setPassword(newuser.Password);
+		SessionInfo session = newuser.LoginUser(userLogin).getSessionInfo();
+		response.setSessionInfo(session);
+		response.setResponse(CreateUserCode.SUCCESS);
+		System.out.println("...CreateUser is returning");
+		return response;
 	}
 
 	@Override
 	public PlayerImpl GetUser(String userID) {
 		return UserList.get(userID);
+	}
+
+	public void DeleteUser(String username){
+		UserList.remove(username);
 	}
 
 }

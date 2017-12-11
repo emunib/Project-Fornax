@@ -1,6 +1,7 @@
 ﻿using UnityEngine.UI;
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Schemas;
@@ -14,14 +15,15 @@ public class OnlineController : MonoBehaviour {
     public UnityEngine.UI.InputField CreateNewPassword;
     public UnityEngine.UI.InputField CreateNewConfirmPassword;
     public Button CreateNewButton;
-    private Task<sessionInfo> restcall;
 
+	public Button GuestSigninButton;
+	
     public GameObject GameLobby;
     public GameObject CreateNew;
     public GameObject Login;
 
-    private GenericPoster<sessionInfo, userLogin> createNewUser;
-    private GenericPoster<sessionInfo, userLogin> loginService;
+    private Poster<createUserResponse, userLogin> createNewUser;
+    private Poster<loginResponse, userLogin> loginService;
     
     private LobbyListenerImpl lobbyListener;
     private string[] args = new string[0];
@@ -35,6 +37,9 @@ public class OnlineController : MonoBehaviour {
 
         CreateNewButton = GameObject.Find("/Canvas/Online/OnlineCreateUser/CreateNewButton").GetComponent<Button>();
         CreateNewButton.onClick.AddListener(CreateNewClick);
+		
+		GuestSigninButton = GameObject.Find("/Canvas/Online/OnlineLogin/GuestSigninButton").GetComponent<Button>();
+		GuestSigninButton.onClick.AddListener(GuestSigninClick);
 
         lobbyListener = new LobbyListenerImpl();
         try
@@ -48,32 +53,41 @@ public class OnlineController : MonoBehaviour {
         {
             Debug.Log(e);
         }
-        createNewUser =  new GenericPoster<sessionInfo, userLogin>(OnlineManager.ServiceUrl + OnlineManager.UsersUrl, type =>
+        createNewUser =  new Poster<createUserResponse, userLogin>(OnlineManager.ServiceUrl + OnlineManager.UsersUrl, type =>
         {
-            OnlineManager.Player = type;
-            if (OnlineManager.Player.publicID == "")
-            {
-                CreateNewUsername.text = "Create User failed";
-            }
-            else
-            {
-                CreateNew.SetActive(false);
-                GameLobby.SetActive(true);
-            }
-        });
-	    
-	    loginService = new GenericPoster<sessionInfo, userLogin>(OnlineManager.ServiceUrl + OnlineManager.UsersUrl, type =>
-	    {
-	        OnlineManager.Player = type;
-	        if (OnlineManager.Player.publicID == "")
+	        if (type.response.Equals(CreateUserCode.SUCCESS))
 	        {
-	            LoginUsername.text = "Login failed";
+		        OnlineManager.Player = type.sessionInfo;
+		        if (CreateNew.activeSelf)
+		        {
+			        CreateNew.SetActive(false);
+		        }
+		        else if (Login.activeSelf)
+		        {
+			        Login.SetActive(false);
+		        }
+		        GameLobby.SetActive(true);
 	        }
 	        else
 	        {
-	            Login.SetActive(false);
-	            GameLobby.SetActive(true);
+		        CreateNewUsername.text = "Create User failed";
+		        Debug.Log(type.response.ToString());
 	        }
+        });
+	    
+	    loginService = new Poster<loginResponse, userLogin>(OnlineManager.ServiceUrl + OnlineManager.UsersUrl + "/{userId}" + OnlineManager.SessionUrl, type =>
+	    {
+		    if (type.response.Equals(LoginCode.SUCCESS))
+		    {
+			    OnlineManager.Player = type.sessionInfo;
+				Login.SetActive(false);
+			    GameLobby.SetActive(true);   
+		    }
+		    else
+		    {
+			    LoginUsername.text = "Login failed";
+				Debug.Log(type.response.ToString());
+		    }
 	    } );
 	}
 	
@@ -82,12 +96,22 @@ public class OnlineController : MonoBehaviour {
 
 	}
 
+	public void GuestSigninClick()
+	{
+		var userLogin = new userLogin();
+		userLogin.username = "guest";
+		createNewUser.Run(userLogin);
+	}
+
     public void LoginClick()
     {
 	    var userLogin = new userLogin();
 	    userLogin.password = LoginPassword.text;
 	    userLogin.username = LoginUsername.text;
-	    loginService.Run(userLogin, "/" + LoginUsername.text + OnlineManager.SessionUrl);
+	    var dictionary = new Dictionary<string, string>();
+	    dictionary.Add("userId", LoginUsername.text);
+	    loginService.SetUrlVariables(dictionary);
+	    loginService.Run(userLogin);
     }
 
 

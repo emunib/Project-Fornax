@@ -12,6 +12,8 @@ public class GameHostLobbyController : MonoBehaviour {
 	public GameObject text;
 
     private Getter<publicGameInfo> GetUsersService;
+	private Deleter LeaveRoomService;
+	private Deleter KickPlayerService;
 
     public GameObject Panel;
 	// Use this for initialization
@@ -30,7 +32,7 @@ public class GameHostLobbyController : MonoBehaviour {
         StartButton = GameObject.FindGameObjectWithTag("GameHostLobbyStartGameButton").GetComponent<Button>();
 
 	    GetUsersService = new Getter<publicGameInfo>(
-	        OnlineManager.ServiceUrl + "/games/" + OnlineManager.Game.gameID + "/lobbyinfo",
+	        OnlineManager.ServiceUrl + "/games/{gameID}/lobbyinfo",
 	        type =>
 	        {
 		        UnityEngine.Transform parent = GameObject.FindGameObjectWithTag("GameHostLobbyScroll ViewViewportContent").GetComponent<UnityEngine.Transform>();
@@ -71,9 +73,19 @@ public class GameHostLobbyController : MonoBehaviour {
 		            bttnText.text = "Lock Room";
 		        } */
 	        });
-        InvokeRepeating("UpdateList", 0.0f, 1f);
-	    
-	    
+		
+		LeaveRoomService = new Deleter(OnlineManager.ServiceUrl + "/games/{gameID}/users/{userID}", response => {
+			if (response.IsSuccessStatusCode)
+			{
+				gameObject.SetActive(false);
+				GameObject.Find("Canvas/Online/GameRegistry").SetActive(true);
+			}
+		});
+		
+		KickPlayerService = new Deleter(OnlineManager.ServiceUrl + "/games/{gameID}/users/{userID}", response =>
+		{
+
+		});
 	}
 
     void SwitchLock(){
@@ -82,21 +94,36 @@ public class GameHostLobbyController : MonoBehaviour {
         ses.publicID = "Bob";
     }
 
-    void LeaveClick(){
-        //OnlineManager.GameHost = null;
-        CancelInvoke();
-        //OnlineManager.Player.LeaveGame();
-        gameObject.SetActive(false);
-        GameObject.Find("Canvas/Online/GameRegistry").SetActive(true);
+    void LeaveClick()
+    {
+	    LeaveRoomService.SetHeader("PrivateID", OnlineManager.Player.privateID);
+	    var dictionary = new Dictionary<string, string>();
+	    dictionary.Add("gameID", OnlineManager.Game.gameID);
+	    dictionary.Add("userID", OnlineManager.Player.username);
+	    LeaveRoomService.SetUrlVariables(dictionary);
+	    LeaveRoomService.Run();
     }
 	
 	// Update is called once per frame
 	void UpdateList ()
 	{
+		var dictionary = new Dictionary<string, string>();
+		dictionary.Add("gameID", OnlineManager.Game.gameID);
+		GetUsersService.SetUrlVariables(dictionary);
 		GetUsersService.Run();
 	}
 
-    void Update()
+	private void OnEnable()
+	{
+		InvokeRepeating("UpdateList", 0.0f, 1f);
+	}
+
+	private void OnDisable()
+	{
+		CancelInvoke();
+	}
+
+	void Update()
     {
         
     }
@@ -120,7 +147,12 @@ public class GameHostLobbyController : MonoBehaviour {
         } else {
             newText.text = stat.username;
             newButton.onClick.AddListener(() => {
-                //OnlineManager.GameHost.KickPlayer(stat.Username);
+	            KickPlayerService.SetHeader("PrivateID", OnlineManager.Player.privateID);
+	            var dictionary = new Dictionary<string, string>();
+	            dictionary.Add("gameID", OnlineManager.Game.gameID);
+	            dictionary.Add("userID", stat.username);
+	            KickPlayerService.SetUrlVariables(dictionary);
+	            KickPlayerService.Run();
             });
         }
 

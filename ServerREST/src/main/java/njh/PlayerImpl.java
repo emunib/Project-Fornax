@@ -10,14 +10,13 @@ import java.util.Random;
 import java.util.TimeZone;
 
 public class PlayerImpl extends UserPublic implements Player {
-	private final String Password;
-	private final HashMap <String, SessionImpl> sessionHashMap;
-	private GameImpl activeGame;
+	protected final String Password;
+	protected SessionImpl session;
+	protected GameImpl activeGame;
 
 	public PlayerImpl(String username, String password){
 		setUsername(username);
 		Password = password;
-		sessionHashMap = new HashMap<>();
 	}
 
 	public boolean isEqualPassword(String password){
@@ -25,13 +24,12 @@ public class PlayerImpl extends UserPublic implements Player {
 	}
 
 	public boolean isValidSession(SessionInfo sessionInfo){
-		SessionImpl session = sessionHashMap.get(sessionInfo.getPublicID());
 		if (session == null) return false;
 		return session.isValidSession(sessionInfo);
 	}
 
 	public SessionImpl getSession(SessionInfo sessionInfo){
-		return sessionHashMap.get(sessionInfo.getPublicID());
+		return session;
 	}
 
 	@Override
@@ -48,10 +46,10 @@ public class PlayerImpl extends UserPublic implements Player {
 	public Response Logout(String sessionID, String PrivateID) {
 		Response response;
 		System.out.println("Logout was invoked... (sessionID = " + sessionID + " )");
-		SessionImpl session = sessionHashMap.get(sessionID);
 		if (session != null) {
 			if (session.isValidSession(PrivateID)) {
-				sessionHashMap.remove(sessionID);
+				SessionFactory.DiposeSession(session);
+				session = null;
 				response = Response.ok().build();
 			} else {
 				response = Response.status(Response.Status.UNAUTHORIZED).build();
@@ -69,13 +67,25 @@ public class PlayerImpl extends UserPublic implements Player {
 	}
 
 	@Override
-	public SessionInfo LoginUser(UserLogin userLogin) {
-		SessionInfo newsessioninfo = new SessionInfo();
+	public LoginResponse LoginUser(UserLogin userLogin) {
+		LoginResponse loginResponse = new LoginResponse();
+		if (session != null){
+			if (session.isActive()){
+				loginResponse.setResponse(LoginCode.ALREADYACTIVE);
+				return loginResponse;
+			} else {
+				Logout(session.getPrivateID(), session.getPublicID());
+			}
+		}
+
 		if (isEqualPassword(userLogin.getPassword())){
 			SessionImpl newSession = SessionFactory.GetNewSession(this);
-			sessionHashMap.put(newSession.getPublicID(), newSession);
-			newsessioninfo = newSession;
+			session = newSession;
+			loginResponse.setResponse(LoginCode.SUCCESS);
+			loginResponse.setSessionInfo(newSession);
+		} else {
+			loginResponse.setResponse(LoginCode.BADPASSWORD);
 		}
-		return newsessioninfo;
+		return loginResponse;
 	}
 }

@@ -13,21 +13,19 @@ interface Lookup
     String Lookup(String value);
 }
 
-public class Getter<ResponseType> : Lookup
+public abstract class CRUDop<ResponseType>: Lookup
 {
-    public delegate void Callback(ResponseType responseType);
-
-    private Callback callback;
-    private string resourceUrl;
-    private XmlSerializer responseSerializer;
-    private HttpClient client;
-    private Dictionary<String, String> dictionary;
-    private LinkedList<Url> urls;
-    public Getter(String nurl, Callback ncallback)
+    protected string resourceUrl;
+    protected HttpClient client;
+    protected Dictionary<String, String> dictionary;
+    protected LinkedList<Url> urls;
+    public CRUDop(String nurl)
     {
         urls = Parse(nurl, this);
-        callback = ncallback;
-        responseSerializer = new XmlSerializer(typeof(ResponseType)); 
+        if (urls.Count == 1)
+        {
+            resourceUrl = urls.First.Value.ToString();
+        }
         client = new HttpClient();
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(
@@ -43,27 +41,14 @@ public class Getter<ResponseType> : Lookup
             resourceUrl += url.ToString();
         }
     }
-    
-    public async void Run()
-    {
-        ResponseType response = await Work();
-        callback(response);
-    }
 
-    public async Task<ResponseType> Work()
-    {
-        HttpResponseMessage httpResponseMessage = await client.GetAsync(resourceUrl).ConfigureAwait(false);
-        Stream stream = await httpResponseMessage.Content.ReadAsStreamAsync();
-        ResponseType response = (ResponseType) responseSerializer.Deserialize(stream);
-        return response;
-    }
 
     public String Lookup(String value)
     {
         return dictionary[value];
     }
 
-    interface Url
+    protected interface Url
     {
         String ToString();
     }
@@ -123,6 +108,7 @@ public class Getter<ResponseType> : Lookup
         {
             if (str[i] == '{')
             {
+                i++;
                 break;
             }
             stringBuilder.Append(str[i]);
@@ -138,6 +124,7 @@ public class Getter<ResponseType> : Lookup
         {
             if (str[i] == '}')
             {
+                i++;
                 break;
             }
             stringBuilder.Append(str[i]);
